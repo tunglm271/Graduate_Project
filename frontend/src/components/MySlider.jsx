@@ -2,10 +2,10 @@ import React from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import slider1 from '../assets/images/slider/slider1.jpg';
-import slider2 from '../assets/images/slider/slider2.jpg';
-import slider3 from '../assets/images/slider/slider3.jpg';
-import slider4 from '../assets/images/slider/slider4.jpg';
+import slider1 from '@images/slider/slider1.jpg';
+import slider2 from '@images/slider/slider2.jpg';
+import slider3 from '@images/slider/slider3.jpg';
+import slider4 from '@images/slider/slider4.jpg';
 const MySlider = () => {
   const settings = {
     dots: true,        // Hiển thị các nút tròn dưới
@@ -13,7 +13,8 @@ const MySlider = () => {
     speed: 500,        // Thời gian trượt
     autoplay: true,    // Tự động chạy
     slidesToShow: 1,   // Hiển thị 1 slide
-    slidesToScroll: 1  // Trượt 1 slide mỗi lần
+    slidesToScroll: 1, // Trượt 1 slide mỗi lần
+    arrows: false      // Ẩn các nút điều hướng
   };
 
   return (

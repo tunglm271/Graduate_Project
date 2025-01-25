@@ -1,0 +1,125 @@
+
+#auth-layout {
+    background: linear-gradient(135deg, #00b5e2, #007bff);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.auth-card {
+    background-color: white;
+    position: relative;
+    border-radius: 20px;
+    padding: 15px;
+    min-width: 55%;
+    height: 80vh;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.auth-card > img {
+    width: 48%;
+    height: calc(100% - 30px);
+    right: 15px;
+    border-radius: 20px;
+    transition: all 1s ease;
+    position: absolute;
+}
+
+.heading-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.heading-section .logo {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+}
+
+.heading-section p {
+    text-align: center;
+}
+
+.heading-section .logo img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+}
+
+.form-section {
+    width: 50%;
+    padding: 40px 10px;
+    transition: all 1s ease;
+}
+
+.register-card {
+    text-align: center;
+    flex-direction: column;
+}
+
+.google-login-wrapper {
+    margin-top: 10px;
+  }
+
+.collaborator-form {
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    transition: all 1s ease;
+    width: 45%;
+}
+
+
+.fade {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.fade-in {
+    opacity: 1;
+    pointer-events: all;
+}
+
+
+.move-left {
+    transform: translateX(-100%);
+}
+
+@media (max-width: 600px) {
+    .auth-card {
+        flex-direction: column;
+        min-width: 90%;
+        padding: 20px;
+    }
+
+    .auth-card > img {
+        display: none;
+    }
+
+    .form-section {
+        width: 100%;
+        padding: 20px 10px;
+    }
+
+    .collaborator-form {
+        width: 100%;
+    }
+
+    .fade {
+        display: none;
+    }
+
+    .fade-in {
+        display: flex;
+    }
+}
+  

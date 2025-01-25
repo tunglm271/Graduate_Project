@@ -1,32 +1,48 @@
-import { useState } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import './App.css'
-import { MainLayout, AuthLayout } from './layouts' 
-import { Home } from './pages/user';
-import AppointmentPage from './pages/user/AppointmentPage';
-import Login from './pages/auth/Login';
+import { useState } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./App.css";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { PatientMainLayout, AuthLayout } from "./layouts";
+import {
+  PatientHomePage,
+  AppointmentPage,
+  ServicePage,
+  Login,
+  Register,
+} from "./pages";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import './i18n';
+
+const googleClientId =
+  "91407289131-f8lts1h15ppivupjb5e027806kk88s5o.apps.googleusercontent.com";
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <ProtectedRoute isAuthenticated={true} element={<PatientMainLayout />} />
+    ),
+    children: [
+      { path: "home", element: <PatientHomePage /> },
+      { path: "appointments", element: <AppointmentPage /> },
+      { path: "services/:id", element: <ServicePage /> },
+    ],
+  },
+  {
+    path: "/auth",
+    element: <AuthLayout />,
+    children: [
+      { path: "login", element: <Login /> },
+      { path: "register", element: <Register /> },
+    ],
+  },
+]);
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Home />} />
-          <Route path='/appoinments' element={<AppointmentPage />} />
-          <Route path='/services' element={<div></div>} />
-          <Route path='/health-profile' element={<div></div>} />
-        </Route>
-
-        <Route path="/auth" element={<AuthLayout />}>
-          <Route path="login" element={<Login />} />
-
-        </Route>
-
-      </Routes>
-    </BrowserRouter>
-  )
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <RouterProvider router={router} />;
+    </GoogleOAuthProvider>
+  );
 }
 
-export default App
+export default App;

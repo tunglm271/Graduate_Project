@@ -1,75 +1,159 @@
-import React, { useState } from "react";
-import colorImage from "../../assets/images/color-logo.png";
-import loginImage from "../../assets/images/login-image.jpg";
+import React, { useState, useRef } from "react";
+import "./auth.css"
+import colorImage from "@images/color-logo.png";
+import loginImage from "@images/login-image.jpg";
 import {
   TextField,
-  FormControlLabel,
-  Switch,
   Button,
-  FormGroup,
+  Box,
+  CircularProgress,
+  Alert,
+  Divider,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginRequest } from "../../service/BackendApi";
-import { useNavigate } from 'react-router-dom';
-
+import GoogleLoginButton from "../../components/GoogleLoginButton";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import LockIcon from "@mui/icons-material/Lock";
+import EmailIcon from "@mui/icons-material/Email";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const handleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
+  const [email, setEmail] = useState({
+    value: "",
+    error: false,
+    helperText: "",
+  });
+  const [password, setPassword] = useState({
+    value: "",
+    error: false,
+    helperText: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const loginFormRef = useRef(null);
+  const loginImageRef = useRef(null);
+  const collaboratorFormRef = useRef(null);
+
+  const handleShowPassword = () => setShowPassword(!showPassword);
+
+
+  const handleEmailChange = (event) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (event.target.value === "") {
+            setEmail({
+                value: event.target.value,
+                error: true,
+                helperText: "Email không được để trống",
+            });
+        } else if (!emailRegex.test(event.target.value)) {
+            setEmail({
+                value: event.target.value,
+                error: true,
+                helperText: "Email không đúng định dạng, ví dụ: abc@example.com",
+            });
+        } else {
+            setEmail({
+                ...email,
+                value: event.target.value,
+                error: false,
+                helperText: "",
+            });
+        }
+    }
+
+    const handlePasswordChange = (event) => {
+        const passwordValue = event.target.value;
+        if (passwordValue === "") {
+            setPassword({
+                value: passwordValue,
+                error: true,
+                helperText: "Mật khẩu không được để trống.",
+            });
+        } else if (passwordValue.length < 6) {
+            setPassword({
+                value: passwordValue,
+                error: true,
+                helperText: "Mật khẩu phải có ít nhất 6 ký tự.",
+            });
+        } else {
+            setPassword({
+                value: passwordValue,
+                error: false,
+                helperText: "",
+            });
+        }
+    };
+
 
   const handleLogin = async (event) => {
     event.preventDefault();
+
+    // Validate input fields
+    if (!email || !password && email.error === false && password.error === false) {
+      return;
+    }
+
+    setError(""); // Reset error message
+    setLoading(true); // Set loading state
+
     try {
       const response = await loginRequest(email, password);
-      console.log(response);
-      navigate('/');
-    } catch (error) {
-      console.error("Login error:", error);
+      console.log("Login success:", response);
+      navigate("/"); // Redirect to home page
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
   return (
     <div className="auth-card">
-      <div className="form-section">
+      <div className="form-section" ref={loginFormRef}>
         <div className="heading-section">
           <div className="logo">
-            <img src={colorImage} alt="" />
+            <img src={colorImage} alt="Doficy Logo" />
             <h1>Doficy</h1>
           </div>
-          <p>
-            Bạn chưa có tài khoản?
-            <Link
-              to="/register"
-              className="auth-link"
-              style={{
-                textDecoration: "none",
-                color: "#1976d2",
-                lineHeight: 1.6,
-              }}
-            >
-              {" "}
-              Đăng ký tại đây
-            </Link>
-          </p>
+          <GoogleLoginButton />
+          <Divider sx={{fontSize: '14px', marginTop: '10px', marginBottom: '10px'}}>Hoặc dùng email hoặc mật khẩu</Divider>
         </div>
-        <form style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+
+        <Box
+          component="form"
+          onSubmit={handleLogin}
+          style={{ display: "flex", flexDirection: "column"}}
+        >
+          {error && <Alert severity="error" sx={{marginTop: '5px'}}>{error}</Alert>}
+
           <TextField
             label="Email"
             type="email"
             variant="outlined"
             fullWidth
             margin="normal"
-            InputProps={{
-              style: { borderRadius: "20px" },
+            value={email.value}
+            onChange={handleEmailChange}
+            error={email.error}
+            helperText={email.helperText}
+            aria-label="Email field"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                      <EmailIcon />
+                  </InputAdornment>
+                ),
+              }
             }}
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
           />
+
           <TextField
             label="Mật khẩu"
             type={showPassword ? "text" : "password"}
@@ -77,52 +161,190 @@ const Login = () => {
             fullWidth
             margin="normal"
             InputProps={{
-              style: { borderRadius: "20px" },
+              style: { borderRadius: "5px" },
             }}
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            value={password.value}
+            error={password.error}
+            helperText={password.helperText}
+            onChange={handlePasswordChange}
+            aria-label="Password field"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                      <LockIcon />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleShowPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }
+            }}
           />
-          <FormControlLabel
-            control={
-              <Switch checked={showPassword} onChange={handleShowPassword} />
-            }
-            label="Hiện mật khẩu"
-            style={{ justifyContent: "flex-end", marginRight: "0" }}
-          />
+
+          <div style={{ display: "flex", flexDirection: "column", marginBottom: "25px", textAlign: "right"}}>
+            <Link
+              to="/forgot-password"
+              style={{
+                textDecoration: "none",
+                color: "#1976d2",
+                fontSize: "14px",
+              }}
+              className="auth-link"
+            >
+              Quên mật khẩu?
+            </Link>
+          </div>
+
           <Button
             variant="contained"
             color="primary"
             type="submit"
             style={{ padding: "10px 20px" }}
-            onClick={(event) => handleLogin(event)}
+            disabled={loading}
           >
-            Đăng nhập
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Đăng nhập"}
           </Button>
-        </form>
+        </Box>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            marginTop: "5px",
-            textAlign: "right",
-          }}
-        >
-          <Link
-            to="/forgot-password"
-            style={{
-              textDecoration: "none",
-              color: "#1976d2",
-              lineHeight: 1.6,
-            }}
-            className="auth-link"
-          >
-            Quên mật khẩu ?
-          </Link>
-        </div>
+        <p style={{ textAlign: "center", marginTop: "10px", fontSize: "14px" }}>  
+            Bạn chưa có tài khoản?
+            <Link
+              to="/auth/register"
+              className="auth-link"
+              style={{
+                textDecoration: "none",
+                color: "#1976d2",
+                lineHeight: 1.6,
+                textDecoration: "underline",
+              }}
+            >
+              {" "}
+              Đăng ký tại đây
+            </Link>
+          </p>
+        <Button style={{ display: "block", margin: "10px auto"}} 
+          onClick={() => {
+            loginFormRef.current.classList.add('fade')
+            loginImageRef.current.classList.add('move-left')
+            collaboratorFormRef.current.classList.add('fade-in') 
+          }}>
+          Tôi là cộng tác viên
+        </Button>
       </div>
 
-      <img src={loginImage} alt="" />
+      <img src={loginImage} alt="Login visual" ref={loginImageRef}/>
+      
+      <div className="collaborator-form" ref={collaboratorFormRef}>
+          <h3 style={{width: '100%', textAlign: 'center'}}>Đăng nhập với tư cách cơ sở y tế hoặc bác sĩ</h3>
+          <Box
+            component="form"
+            onSubmit={handleLogin}
+            style={{ display: "flex", flexDirection: "column"}}
+          >
+            {error && <Alert severity="error" sx={{marginTop: '5px'}}>{error}</Alert>}
+
+            <TextField
+              label="Email"
+              type="email"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={email.value}
+              onChange={handleEmailChange}
+              error={email.error}
+              helperText={email.helperText}
+              aria-label="Email field"
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                        <EmailIcon />
+                    </InputAdornment>
+                  ),
+                }
+              }}
+            />
+
+            <TextField
+              label="Mật khẩu"
+              type={showPassword ? "text" : "password"}
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              InputProps={{
+                style: { borderRadius: "5px" },
+              }}
+              value={password.value}
+              error={password.error}
+              helperText={password.helperText}
+              onChange={handlePasswordChange}
+              aria-label="Password field"
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                        <LockIcon />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleShowPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }
+              }}
+            />
+
+            <div style={{ display: "flex", flexDirection: "column", marginBottom: "25px", textAlign: "right"}}>
+              <Link
+                to="/forgot-password"
+                style={{
+                  textDecoration: "none",
+                  color: "#1976d2",
+                  fontSize: "14px",
+                }}
+                className="auth-link"
+              >
+                Quên mật khẩu?
+              </Link>
+            </div>
+
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              style={{ padding: "10px 20px" }}
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} color="inherit" /> : "Đăng nhập"}
+            </Button>
+          </Box>
+          <Button style={{ marginTop: "10px"}} 
+          onClick={() => {
+            loginFormRef.current.classList.remove('fade')
+            loginImageRef.current.classList.remove('move-left')
+            collaboratorFormRef.current.classList.remove('fade-in')
+            collaboratorFormRef.current.classList.add('fade') 
+          }}>
+            Đăng nhập với tư cách bệnh nhân
+        </Button>
+      </div>
+
     </div>
   );
 };

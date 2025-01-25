@@ -1,9 +1,11 @@
-import serviceImg from '../../assets/images/service.png';
+import { useNavigate } from 'react-router-dom';
+import serviceImg from '@images/service.png';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const ServiceCard = () => {
+    const navigate = useNavigate();
     return (
-        <div className="service-card">
+        <div className="service-card" onClick={() => navigate('/services/1')}>
             <div style={{position: 'relative'}}>
                 <img src={serviceImg} alt="" />
                 <span>90%</span>
