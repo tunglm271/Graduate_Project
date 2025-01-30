@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import "./auth.css"
 import colorImage from "@images/color-logo.png";
 import loginImage from "@images/login-image.jpg";
 import {
@@ -19,6 +18,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LockIcon from "@mui/icons-material/Lock";
 import EmailIcon from "@mui/icons-material/Email";
+import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState({
@@ -37,6 +37,7 @@ const Login = () => {
   const loginFormRef = useRef(null);
   const loginImageRef = useRef(null);
   const collaboratorFormRef = useRef(null);
+  const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
 
   const handleShowPassword = () => setShowPassword(!showPassword);
 
@@ -102,9 +103,10 @@ const Login = () => {
     setLoading(true); // Set loading state
 
     try {
-      const response = await loginRequest(email, password);
+      const response = await loginRequest(email.value, password.value);
       console.log("Login success:", response);
-      navigate("/"); // Redirect to home page
+      navigate("/"); 
+      showSuccessSnackbar("Đăng nhập thành công!");
     } catch (err) {
       console.error("Login error:", err);
       setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
@@ -136,6 +138,7 @@ const Login = () => {
             label="Email"
             type="email"
             variant="outlined"
+            placeholder="Nhập email của bạn"
             fullWidth
             margin="normal"
             value={email.value}
@@ -158,6 +161,7 @@ const Login = () => {
             label="Mật khẩu"
             type={showPassword ? "text" : "password"}
             variant="outlined"
+            placeholder="Nhập mật khẩu của bạn"
             fullWidth
             margin="normal"
             InputProps={{
@@ -221,7 +225,6 @@ const Login = () => {
               to="/auth/register"
               className="auth-link"
               style={{
-                textDecoration: "none",
                 color: "#1976d2",
                 lineHeight: 1.6,
                 textDecoration: "underline",

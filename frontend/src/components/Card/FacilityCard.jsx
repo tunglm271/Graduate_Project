@@ -6,16 +6,20 @@ const FacilityCard = () => {
     <div className="facility-card">
       <img src={facilityImg} alt="" />
       <div>
-        <h4 style={{ marginBottom: "0px" }}>
+        <h4 style={{ marginBottom: "0px", fontSize: '16px', fontWeight: '500' }}>
           Bệnh viện Đa khoa Quốc tế Vinmec
         </h4>
         <div className="row" style={{ padding: 0 }}>
           <p style={{fontSize: '12px'}}>Địa chỉ: Số 11 Thái Hà, Đống Đa, Hà Nội</p>
         </div>
-        <div style={{display: 'flex', gap: '10px', marginTop: '3px', padding: 0}}>
-          <Button variant="outlined">Liên hệ</Button>
+        <div style={{display: 'flex', gap: '10px', margin: '5px 0px', padding: 0}}>
+          <Button variant="outlined" sx={{
+            boxShadow: 'none',
+            padding: '3px 10px',
+          }}>Liên hệ</Button>
           <Button variant="contained" sx={{
             boxShadow: 'none',
+            padding: '3px 10px',
           }}>Đặt lịch</Button>
         </div>
       </div>

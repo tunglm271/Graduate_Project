@@ -34,6 +34,11 @@ const PatientHomePage = () => {
 
   return (
     <div id="home-page">
+      <h1 style={{marginBottom: '20px'}}>
+        {t("hello")},{" "}
+        <span style={{ color: "#212529" }}>Remy Sharp !</span>
+      </h1>
+
       <div
         style={{
           display: "flex",
@@ -44,10 +49,6 @@ const PatientHomePage = () => {
       >
         <div className="col-6">
           <div id="welcome">
-            <h1>
-              {t("hello")},{" "}
-              <span style={{ color: "#212529" }}>Remy Sharp !</span>
-            </h1>
             <div id="welcome-booking">
               <img src={doctorImg} alt="" />
               <h3>{t("welcome-heading")}</h3>
@@ -86,6 +87,7 @@ const PatientHomePage = () => {
             </div>
 
             <div id="appoinment-list">
+              <Appoinment />
               <Appoinment />
             </div>
           </div>

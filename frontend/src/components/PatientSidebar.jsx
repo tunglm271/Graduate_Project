@@ -39,7 +39,7 @@ const PatientSidebar = () => {
 
       <div id="nav-bar">
         <NavLink
-          to="/home"
+          to="/"
           icon={<HomeIcon size={26} />}
           text={t("homepage")}
           collapse={sidebarCollapse}

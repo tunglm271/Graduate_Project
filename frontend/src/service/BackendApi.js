@@ -24,6 +24,23 @@ export const loginRequest = async (email, password) => {
   }
 };
 
+export const registerRequest = async (username, email, phoneNumber, password, confirm_password) => {
+  try {
+    console.log("Registering with:", { username, email, phoneNumber, password });
+    const formData = new FormData();
+    formData.append("name", username);
+    formData.append("email", email);
+    formData.append("phoneNumber", phoneNumber);
+    formData.append("password", password);
+    formData.append("password_confirmation", confirm_password);
+    const response = await api.post("/api/register", formData);
+    return response.data;
+  } catch (error) {
+    console.error("Register error:", error);
+    throw error;
+  }
+}
+
 export const logoutRequest = async () => {
   try {
     const response = await api.post("/api/logout");

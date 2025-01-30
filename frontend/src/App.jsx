@@ -7,23 +7,32 @@ import {
   PatientHomePage,
   AppointmentPage,
   ServicePage,
+  MedicinePage,
   Login,
   Register,
 } from "./pages";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import './i18n';
+import { SnackbarProvider } from 'notistack';
+import Cookies from 'js-cookie';
 
-const googleClientId =
-  "91407289131-f8lts1h15ppivupjb5e027806kk88s5o.apps.googleusercontent.com";
+
+
+const googleClientId = "91407289131-f8lts1h15ppivupjb5e027806kk88s5o.apps.googleusercontent.com";
+const authToken = Cookies.get('authToken');
+const isAuthenticated = !!authToken;
+
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <ProtectedRoute isAuthenticated={true} element={<PatientMainLayout />} />
+      <ProtectedRoute isAuthenticated={isAuthenticated} element={<PatientMainLayout />} />
     ),
     children: [
-      { path: "home", element: <PatientHomePage /> },
+      { path: "", element: <PatientHomePage /> },
       { path: "appointments", element: <AppointmentPage /> },
+      { path: "medicines", element: <MedicinePage /> },
       { path: "services/:id", element: <ServicePage /> },
     ],
   },
@@ -39,9 +48,14 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <GoogleOAuthProvider clientId={googleClientId}>
-      <RouterProvider router={router} />;
-    </GoogleOAuthProvider>
+    <SnackbarProvider
+      maxSnack={3}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }} 
+    >
+      <GoogleOAuthProvider clientId={googleClientId}>
+        <RouterProvider router={router} />;
+      </GoogleOAuthProvider>
+    </SnackbarProvider>
   );
 }
 

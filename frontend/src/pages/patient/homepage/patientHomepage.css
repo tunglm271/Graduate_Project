@@ -241,23 +241,23 @@
   
   .facility-card {
     background-color: white;
-    border-radius: 20px;
+    border-radius: 5px;
+    height: 120px;
     box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
     display: flex;
     justify-content: space-between;
-    padding: 10px;
     align-items: center;
+    overflow: hidden;
   }
   
   .facility-card > div {
     padding: 0px 10px;
   }
   
-  .facility-card img {
-    width: 30%;
+  .facility-card  > img {
+    width: 40%;
     height: 100%;
     object-fit: cover;
-    border-radius: 20px;
   }
   
   
