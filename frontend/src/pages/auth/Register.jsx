@@ -1,11 +1,11 @@
-import { TextField, Button, InputAdornment } from '@mui/material';
+import { TextField, Button, InputAdornment, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { useState } from 'react';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import PhoneIcon from '@mui/icons-material/phone'
 import { Link } from 'react-router-dom';
-import { registerRequest } from '../../service/BackendApi';
+import { registerRequest } from '../../service/backendApi';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
@@ -17,7 +17,8 @@ const Register = () => {
         email: '',
         phoneNumber: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        role: ''
     });
 
     const handleChange = (e) => {
@@ -53,6 +54,19 @@ const Register = () => {
                 <Link to={'/auth/login'} style={{color: '#1976d2'}}>Đăng nhập</Link>
             </p>
             <form className='patient-register-form' onSubmit={handleSubmit}>
+                <FormControl fullWidth margin="normal">
+                    <InputLabel id="role">Vai trò</InputLabel>
+                    <Select
+                        label="Vai trò"
+                        name="role"
+                        value={form.role}
+                        onChange={handleChange}
+                    >
+                        <MenuItem value="patient">Bệnh nhân</MenuItem>
+                        <MenuItem value="doctor">Bác sĩ</MenuItem>
+                        <MenuItem value="health-faicility">Cơ sở y tế</MenuItem>
+                    </Select>
+                </FormControl>
                 <TextField
                     label="Tên đăng nhập"
                     name="username"

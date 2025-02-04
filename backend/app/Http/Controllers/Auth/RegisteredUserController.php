@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\HealthProfile;
+use App\Models\role\Doctor;
+use App\Models\role\Facility;
+
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -24,13 +28,41 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
             'password' => Hash::make($request->string('password')),
-            'role' => 'patient',
+            'role' => $request->role,
         ]);
 
+        switch ($user->role) {
+            case 'patient':
+                HealthProfile::create([
+                    'user_id' => $user->id,
+                    'name' => $user->name,
+                    'relationship' => 'self',
+                    'gender' => 'male',
+                    'height' => 0,
+                    'weight' => 0,
+                    'date_of_birth' => now(),
+                    'allergies' => null,
+                    'chronic_diseases' => null,
+                    'medical_insurance_number' => null,
+                ]);
+                break;
+            case 'doctor':
+                Doctor::create([
+                    'user_id' => $user->id,
+                    'address' => $request->address,
+                ]);
+                break;
+            case 'facility':
+                Facility::create([
+                    'user_id' => $user->id,
+                    'address' => $request->address,
+                ]);
+                break;
+        }
         event(new Registered($user));
 
-        Auth::login($user);
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([

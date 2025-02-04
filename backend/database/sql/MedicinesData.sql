@@ -1,4 +1,4 @@
-INSERT INTO medicine (id, name, description, indications) VALUES
+INSERT INTO medicines (id, name, description, indications) VALUES
 (1, 'Paracetamol', 'Giảm đau, hạ sốt', 'Sốt, đau đầu, cảm cúm'),
 (2, 'Ibuprofen', 'Giảm đau, chống viêm', 'Đau nhức, viêm khớp, sốt'),
 (3, 'Amoxicillin', 'Kháng sinh nhóm Penicillin', 'Nhiễm trùng hô hấp, tiết niệu'),

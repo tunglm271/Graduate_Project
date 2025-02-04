@@ -24,7 +24,7 @@ export const loginRequest = async (email, password) => {
   }
 };
 
-export const registerRequest = async (username, email, phoneNumber, password, confirm_password) => {
+export const registerRequest = async (username, email, phoneNumber, password, confirm_password, role) => {
   try {
     console.log("Registering with:", { username, email, phoneNumber, password });
     const formData = new FormData();
@@ -33,6 +33,7 @@ export const registerRequest = async (username, email, phoneNumber, password, co
     formData.append("phoneNumber", phoneNumber);
     formData.append("password", password);
     formData.append("password_confirmation", confirm_password);
+    formData.append("role", role);
     const response = await api.post("/api/register", formData);
     return response.data;
   } catch (error) {
@@ -48,6 +49,35 @@ export const logoutRequest = async () => {
     return response.data;
   } catch (error) {
     console.error("Logout error:", error);
+    throw error;
+  }
+}
+
+export const getMedicines = async () => {
+  try {
+    const response = await api.get("/api/medicines", {
+      headers: {
+        'Authorization': `Bearer ${Cookies.get('authToken')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Get medicines error:", error);
+    throw error;
+  }
+}
+
+
+export const getHealthProfiles = async () => {
+  try {
+    const response = await api.get("/api/health-profiles", {
+      headers: {
+        'Authorization': `Bearer ${Cookies.get('authToken')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Get health profiles error:", error);
     throw error;
   }
 }

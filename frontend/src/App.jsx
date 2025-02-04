@@ -8,6 +8,7 @@ import {
   AppointmentPage,
   ServicePage,
   MedicinePage,
+  HealthProfilePage,
   Login,
   Register,
 } from "./pages";
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
       { path: "appointments", element: <AppointmentPage /> },
       { path: "medicines", element: <MedicinePage /> },
       { path: "services/:id", element: <ServicePage /> },
+      { path: "health-profile", element: <HealthProfilePage /> },
     ],
   },
   {
