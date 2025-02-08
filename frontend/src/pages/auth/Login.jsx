@@ -105,7 +105,7 @@ const Login = () => {
     try {
       const response = await loginRequest(email.value, password.value);
       console.log("Login success:", response);
-      navigate("/"); 
+      navigate("/home"); 
       showSuccessSnackbar("Đăng nhập thành công!");
     } catch (err) {
       console.error("Login error:", err);

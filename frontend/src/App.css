@@ -1,0 +1,24 @@
+/* Apply custom scrollbar styles to all scrollbars in the app */
+* {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: gray #f0f0f0; /* Firefox: thumb color, track color */
+}
+
+*::-webkit-scrollbar {
+  width: 10px; /* Horizontal scrollbar width */
+  height: 10px; /* Vertical scrollbar height */
+}
+
+*::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #00bcd4;
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #008c99;
+}

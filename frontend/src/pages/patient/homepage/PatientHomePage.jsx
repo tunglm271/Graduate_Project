@@ -11,6 +11,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import FacilityCard from "../../../components/card/FacilityCard";
 import { getNews } from "../../../service/newsApi";
 import NewCard from "../../../components/card/NewCard";
+import HiddenText from "../../../components/HiddenText";
 
 const PatientHomePage = () => {
   const { t } = useTranslation();

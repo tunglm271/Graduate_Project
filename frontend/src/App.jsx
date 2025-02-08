@@ -9,6 +9,9 @@ import {
   ServicePage,
   MedicinePage,
   HealthProfilePage,
+  HealthProfileDetail,
+  HealthProfileEdit,
+  MedicalRecord,
   Login,
   Register,
 } from "./pages";
@@ -31,11 +34,15 @@ const router = createBrowserRouter([
       <ProtectedRoute isAuthenticated={isAuthenticated} element={<PatientMainLayout />} />
     ),
     children: [
-      { path: "", element: <PatientHomePage /> },
+      { path: "home", element: <PatientHomePage /> },
       { path: "appointments", element: <AppointmentPage /> },
       { path: "medicines", element: <MedicinePage /> },
       { path: "services/:id", element: <ServicePage /> },
       { path: "health-profile", element: <HealthProfilePage /> },
+      { path: "health-profile/:id", element: <HealthProfileDetail /> },
+      { path: "health-profile/:id/edit", element: <HealthProfileEdit /> },
+      { path: "health-profile/new", element: <HealthProfileEdit /> },
+      { path: "health-profile/:id/record/:recordId", element: <MedicalRecord /> },
     ],
   },
   {

@@ -6,7 +6,7 @@ const NavLink = ({ icon, text, collapse, to }) => {
     
     const url = useLocation();
     const isActive = url.pathname === to;
-    const linkClassName = isActive ? "nav-link active" : "nav-link";
+    const linkClassName = url.pathname.startsWith(to) ? "nav-link active" : "nav-link";
 
     return (
         <Link to={to} className={linkClassName} style={{justifyContent: collapse?"left":"center"}}>

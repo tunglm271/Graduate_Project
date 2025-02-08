@@ -23,7 +23,7 @@ const PatientSidebar = () => {
       }}
     >
       <Link
-        to="/"
+        to="/home"
         style={{
           display: "flex",
           flexDirection: sidebarCollapse ? "row" : "column",
@@ -39,7 +39,7 @@ const PatientSidebar = () => {
 
       <div id="nav-bar">
         <NavLink
-          to="/"
+          to="/home"
           icon={<HomeIcon size={26} />}
           text={t("homepage")}
           collapse={sidebarCollapse}

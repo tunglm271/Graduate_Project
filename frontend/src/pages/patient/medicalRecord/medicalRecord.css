@@ -1,0 +1,19 @@
+#medical-record-detail {
+    padding: 20px;
+}
+
+.appointment-infor-section {
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: white;
+    box-shadow: 0px 0px 10px rgba(173, 216, 230, 0.7);
+    border-radius: 20px;
+}
+
+.appoiment-result {
+    margin-top: 30px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(173, 216, 230, 0.7);
+}

@@ -3,5 +3,8 @@ export {default as AppointmentPage } from './patient/appointmentPage/Appointment
 export { default as ServicePage } from './patient/servicePage/ServicePage.jsx';
 export { default as MedicinePage } from './patient/medicinePage/PatientMedicinePage.jsx';
 export { default as HealthProfilePage } from './patient/healthProfiles/HealthProfiles.jsx';
+export { default as HealthProfileDetail } from './patient/healthProfiles/HealthProfileDetail.jsx';
+export {default as HealthProfileEdit } from './patient/healthProfiles/HealthProfileEdit.jsx';
+export {default as MedicalRecord} from './patient/medicalRecord/MedicalRecord.jsx';
 export { default as Login } from './auth/Login.jsx';
 export { default as Register } from './auth/Register.jsx';

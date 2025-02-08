@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('relationship')->nullable();
+            $table->string('avatar')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
             $table->enum('gender',['male','female']);
