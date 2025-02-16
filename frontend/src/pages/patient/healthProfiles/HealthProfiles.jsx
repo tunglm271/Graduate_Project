@@ -26,7 +26,7 @@ const HealthProfiles = () => {
             </Breadcrumbs>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
                 <h1>Danh sách hồ sơ sức khỏe</h1>
-                <Link to="/health-profiles/new">
+                <Link to="/health-profile/new">
                     <Button variant="outlined" color="primary" startIcon={<AddIcon />}>Thêm hồ sơ</Button>
                 </Link>
             </div>

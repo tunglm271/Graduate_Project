@@ -9,6 +9,7 @@ class HealthProfile extends Model
     protected $fillable = [
         'user_id',
         'name',
+        'avatar',
         'relationship',
         'gender',
         'height',

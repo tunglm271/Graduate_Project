@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateProfileRequest;
 use App\Models\HealthProfile;
 use Illuminate\Http\Request;
-
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class HealthProfileController extends Controller
 {
@@ -21,7 +21,10 @@ class HealthProfileController extends Controller
 
     public function create(Request $request)
     {   
+        
         $healthProfile = new HealthProfile();
+
+        
         $healthProfile->user_id = auth()->id();
         $healthProfile->name = $request->input('name');
         $healthProfile->relationship = $request->input('relationship');
@@ -30,6 +33,8 @@ class HealthProfileController extends Controller
         $healthProfile->height = $request->input('height');
         $healthProfile->weight = $request->input('weight');
         $healthProfile->allergies = null;
+        $uploadedFileUrl = cloudinary()->upload($request->file('avatar')->getRealPath())->getSecurePath();
+        $healthProfile->avatar = $uploadedFileUrl;
         $healthProfile->save();
 
         // Return a response

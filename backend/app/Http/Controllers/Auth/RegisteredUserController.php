@@ -32,7 +32,6 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->string('password')),
             'role' => $request->role,
         ]);
-
         switch ($user->role) {
             case 'patient':
                 HealthProfile::create([
@@ -58,6 +57,8 @@ class RegisteredUserController extends Controller
                 Facility::create([
                     'user_id' => $user->id,
                     'address' => $request->address,
+                    'facility_name' => $request->facility_name,
+                    'verification_status' => 'unverified',
                 ]);
                 break;
         }

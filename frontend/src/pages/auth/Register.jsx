@@ -35,7 +35,7 @@ const Register = () => {
             alert('Mật khẩu không khớp');
             return;
         }
-        registerRequest(form.username, form.email, form.phoneNumber, form.password, form.confirmPassword)
+        registerRequest(form.username, form.email, form.phoneNumber, form.password, form.confirmPassword, form.role)
             .then((res) => {
                 Cookies.set('authToken', res.token);
                 navigate('/home');

@@ -30,7 +30,7 @@ export const registerRequest = async (username, email, phoneNumber, password, co
     const formData = new FormData();
     formData.append("name", username);
     formData.append("email", email);
-    formData.append("phoneNumber", phoneNumber);
+    formData.append("phone", phoneNumber);
     formData.append("password", password);
     formData.append("password_confirmation", confirm_password);
     formData.append("role", role);
