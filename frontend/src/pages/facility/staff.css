@@ -1,0 +1,23 @@
+.schedule-button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.schedule-button:hover {
+    background-color: #e5e5e5;
+}
+
+.selected-schedule {
+    background-color: #007bff !important;
+    color: white !important;
+}
+
+.time-input {
+    width: 130px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #e5e5e5;
+}

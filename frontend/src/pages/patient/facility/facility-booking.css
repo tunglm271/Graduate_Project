@@ -1,0 +1,67 @@
+.booking-option {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
+    width: 100%;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: border-color, transform 0.3s ease-in-out;
+}
+
+.booking-option:hover {
+    border-color: #1e90ff;
+    transform: translateY(-2px);
+}
+
+.fade-in {
+    animation: fadeIn 0.5s;
+}
+
+.fade-out {
+    animation: fadeOut 0.5s;
+    display: none;
+    pointer-events: none;
+}
+
+.option-list {
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
+    padding-bottom: 40px;
+}
+
+.register-btn {
+    background: linear-gradient(36deg, #00b5f1, #00e0ff);
+    padding: 8px;
+    font-weight: 600;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.register-btn:hover {
+    background: linear-gradient(36deg, #00e0ff, #00b5f1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}

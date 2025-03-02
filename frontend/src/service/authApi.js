@@ -1,0 +1,50 @@
+import api from './api';
+import Cookies from 'js-cookie';
+
+export const loginRequest = async (email, password) => {
+  try {
+    console.log("Logging in with:", { email, password });
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+    const response = await api.post("/login", formData);
+    Cookies.set('token', response.data.token, { expires: 7, path: '/' });
+    Cookies.set('role', response.data.user.role_id, { expires: 7, path: '/' });
+    Cookies.set('name', response.data.user.name, { expires: 7, path: '/' });
+    Cookies.set('user_id', response.data.user.id , { expires: 7, path: '/' });
+    Cookies.set('avatar', response.data.user.avatar, { expires: 7, path: '/' });
+    return response.data;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
+};
+
+export const registerRequest = async (username, email, phoneNumber, password, confirm_password, role) => {
+  try {
+    console.log("Registering with:", { username, email, phoneNumber, password });
+    const formData = new FormData();
+    formData.append("name", username);
+    formData.append("email", email);
+    formData.append("phone", phoneNumber);
+    formData.append("password", password);
+    formData.append("password_confirmation", confirm_password);
+    formData.append("role_id", role);
+    const response = await api.post("/register", formData);
+    return response.data;
+  } catch (error) {
+    console.error("Register error:", error);
+    throw error;
+  }
+}
+
+export const logoutRequest = async () => {
+  try {
+    const response = await api.post("/logout");
+    Cookies.remove('token');
+    return response.data;
+  } catch (error) {
+    console.error("Logout error:", error);
+    throw error;
+  }
+}

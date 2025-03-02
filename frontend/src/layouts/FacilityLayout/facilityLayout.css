@@ -1,0 +1,73 @@
+.facility-layout {
+    max-height: 100vh;
+}
+
+.facility-sidebar {
+    background-color: var(--light-gray);
+    width: 250px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.3s ease-in-out;
+    border-right: 1.5px solid #d1d1d1;
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+}
+
+.facility-content {
+    min-height: 100vh;
+    /* background-color: var(--light-gray); */
+}
+
+.facility-header {
+    position: sticky;
+    z-index: 1;
+    top: 0;
+    left: 250px;
+    right: 0;
+    z-index: 100;
+    border-bottom: 1.5px solid #d1d1d1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 15px;
+    height: 70px;
+    background-color: white;
+}
+
+.facility-header-search {
+    color: #6a7282;
+    padding: 5px;
+    border: 0.5px solid #d1d1d1;
+    border-radius: 15px;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 30%;
+}
+
+.facility-header-search input:focus {
+    outline: none;
+}
+
+.cash-flow-line-chart {
+    padding: 10px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    min-width: 60%;
+}
+
+.reservation-search {
+    color: #6a7282;
+    padding: 5px;
+    border: 0.5px solid #d1d1d1;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 30%;
+}
