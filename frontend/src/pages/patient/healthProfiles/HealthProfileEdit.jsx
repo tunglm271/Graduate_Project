@@ -14,7 +14,8 @@ import {
     MenuItem, 
     ListItemIcon, 
     ListItemText,
-    Autocomplete 
+    Autocomplete, 
+    Button
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import RelationshipIcon from '@icon/RelationshipIcon';
@@ -30,27 +31,52 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useTranslation } from "react-i18next";
 import relationshipKeys from '../../../utlis/RelationshipData.jsx';
+import MultiSelectAutocomplete from '../../../components/MultiSelectAutocomplete.jsx';
+import AccessibilityIcon from '@mui/icons-material/Accessibility';
+import ScaleIcon from '@mui/icons-material/Scale';
+import EmailIcon from '@mui/icons-material/Email';
+import { getAllergies, getChronicDiseases, createHealthProfile } from '../../../service/backendApi.js';
+import useCustomSnackbar from '../../../hooks/useCustomSnackbar.jsx';
+import { useNavigate } from 'react-router-dom';
+
 const HealthProfileEdit = () => {
+    const { showSuccessSnackbar } = useCustomSnackbar();
+    const { navigate } = useNavigate();
     const { id } = useParams();
     const { t } = useTranslation();
     const [toggleCropDialog, setToggleCropDialog] = useState(false);
+    const [ allergies, setAllergies ] = useState([]);
+    const [ chronicDiseases, setChronicDiseases ] = useState([]);
     const [ image, setImage ] = useState();
+    const [croppedFile, setCroppedFile] = useState(null);
+    const [croppedPreviewURL, setCroppedPreviewURL] = useState(null);
     const [ profileValues, setProfileValues ] = useState({
         name: '',
         relationship: '',
         phone: '',
-        dateOfBirth: new Date(),
-        gender : '',
+        dateOfBirth: null, // Initialize with null for dayjs type
+        gender : 'male',
         email: '',
+        address: '',
+        healthInsuranceNumber: '',
+        height: 0,
+        weight: 0,
         allergies: [],
+        chronicDiseases: []
     });
     const fileInputRef = useRef(null);
     const isEditing = !!id;
 
 
     useEffect(() => {
-        console.log(toggleCropDialog);
-    },[toggleCropDialog])
+        getAllergies().then((data) => {
+            setAllergies(data);
+            console.log(data);
+        });
+        getChronicDiseases().then((data) => {
+            setChronicDiseases(data);
+        });
+    },[])
    
     const handleAvatarClick = () => {
         fileInputRef.current.click();
@@ -68,9 +94,32 @@ const HealthProfileEdit = () => {
         }
     };
 
-    const handleDateChange = (date) => {
-        setProfileValues({ ...profileValues, dateOfBirth: date });
+    const handleCropComplete = async (file, previewURL) => {
+        setCroppedFile(file);
+        setCroppedPreviewURL(previewURL);
     };
+
+
+    const handleSubmit = () => {
+        const data = {
+            name: profileValues.name,
+            relationship: profileValues.relationship,
+            phone: profileValues.phone,
+            dateOfBirth: profileValues.dateOfBirth?.$d,
+            gender: profileValues.gender,
+            email: profileValues.email,
+            address: profileValues.address,
+            healthInsuranceNumber: profileValues.healthInsuranceNumber,
+            height: profileValues.height,
+            weight: profileValues.weight,
+            allergies: profileValues.allergies,
+            chronicDiseases: profileValues.chronicDiseases
+        };
+        createHealthProfile(data, croppedFile).then((data) => {
+            showSuccessSnackbar('Tạo hồ sơ sức khỏe thành công');
+            navigate('/patient/health-profile');
+        });
+    }
 
     return (
         <div id='profile-edit-section'>
@@ -102,7 +151,8 @@ const HealthProfileEdit = () => {
                     onClick={handleAvatarClick}
                 >
                         <Avatar
-                            src="/path-to-image.jpg"
+                            src={croppedPreviewURL}
+                            alt="avatar"
                             sx={{ width: "100%", height: "100%" }}
                         />
 
@@ -159,6 +209,8 @@ const HealthProfileEdit = () => {
                         }}
                         options={relationshipKeys}
                         getOptionLabel={(option) => t(option)}
+                        value={profileValues.relationship}
+                        onChange={(e, value) => setProfileValues({ ...profileValues, relationship: value })}
                         renderInput={(params) => (
                             <TextField
                             {...params}
@@ -167,7 +219,7 @@ const HealthProfileEdit = () => {
                                 ...params.InputProps, // Ensures Autocomplete functionalities work
                                 startAdornment: (
                                 <InputAdornment position="start">
-                                    <PersonIcon />
+                                    <RelationshipIcon />
                                 </InputAdornment>
                                 ),
                             }}
@@ -196,7 +248,7 @@ const HealthProfileEdit = () => {
                             labelId="gender-select-label"
                             id="gender-simple-select"
                             value={profileValues.gender}
-                            onChange={(e) => setProfileValues({ ...profile, gender: e.target.value })}
+                            onChange={(e) => setProfileValues({ ...profileValues, gender: e.target.value })}
                             label={t("gender")}
                             renderValue={(
                                 (selected) => (
@@ -223,12 +275,12 @@ const HealthProfileEdit = () => {
                     </FormControl>
 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
+                        <DemoContainer components={['DatePicker']} sx={{ m: "auto 0"}}>
                             <DatePicker 
                                 label="Ngày sinh"  
                                 sx={{width: "100%"}}
                                 value={profileValues.dateOfBirth}
-                                onChange={handleDateChange}
+                                onChange={(date) => setProfileValues({ ...profileValues, dateOfBirth: date })}
                             />
                         </DemoContainer>
                     </LocalizationProvider>
@@ -239,10 +291,117 @@ const HealthProfileEdit = () => {
                         onChange={(e) => setProfileValues({ ...profileValues, email: e.target.value })}
                         fullWidth
                         margin="normal"
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <EmailIcon />
+                                    </InputAdornment>
+                                ),
+                            }
+                        }}
                     />
+                    <TextField
+                        label="Chiều cao (cm)"
+                        type="number"
+                        value={profileValues.height}
+                        onChange={(e) => setProfileValues({ ...profileValues, height: e.target.value })}
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <AccessibilityIcon />
+                                    </InputAdornment>
+                                ),
+                            }
+                        }}
+                    />
+                    <TextField
+                        label="Cân nặng (kg)"
+                        type='number'
+                        value={profileValues.weight}
+                        onChange={(e) => setProfileValues({ ...profileValues, weight: e.target.value })}
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <ScaleIcon />
+                                    </InputAdornment>
+                                ),
+                            }
+                        }}
+                    />
+
                 </div>
+                <div>
+                    <Box display={{ xs: "block", md: "flex", padding: "20px" }}>
+                        <h4 style={{ width: "20%"}}>Địa chỉ</h4>
+                        <TextField
+                            label="Địa chỉ"
+                            fullWidth
+                            sx={{ width: "80%" }}
+                            value={profileValues.address}
+                            onChange={(e) => setProfileValues({ ...profileValues, address: e.target.value })}
+                        />
+                    </Box>
+
+
+                    <Box display={{ xs: "block", md: "flex", padding: "20px" }}>
+                        <h4 style={{ width: "20%"}}>Mã số Bảo hiểm y tế</h4>
+                        <TextField
+                            label="Mã số BHYT"
+                            fullWidth
+                            sx={{ width: "80%" }}
+                            value={profileValues.healthInsuranceNumber}
+                            onChange={(e) => setProfileValues({ ...profileValues, healthInsuranceNumber: e.target.value })}
+                        />
+                    </Box>
+
+                    <Box display={{ xs: "block", md: "flex", padding: "20px" }}>
+                        <h4 style={{width: "20%"}}>Danh sách các bệnh di ứng</h4>
+                        <MultiSelectAutocomplete
+                            options={allergies}
+                            label="Allergies"
+                            sx={{ width: "80%" }}
+                            getOptionLabel={(option) => option.name}
+                            onChange={(allergies) => setProfileValues({ ...profileValues, allergies: allergies.map(a => a.id) })}
+                            renderOption={(props, option) => (
+                                <Box component="li" {...props} display="flex" justifyContent="space-between" width="100%">
+                                <Typography sx={{ mr: "10px" }}>{option.name}</Typography>
+                                <Typography variant="body2" color="gray">{option.description}</Typography>
+                                </Box>
+                            )}
+                        />
+                    </Box>
+                    <Box display={{ xs: "block", md: "flex", padding: "20px" }}>
+                        <h4 style={{width: "20%"}}>Danh sách các bệnh mãn tính</h4>
+                        <MultiSelectAutocomplete
+                            options={chronicDiseases}
+                            label="Chronic diseases"
+                            sx={{ width: "80%" }}
+                            getOptionLabel={(option) => option.name}
+                            onChange={(chronicDiseases) => setProfileValues({ ...profileValues, chronicDiseases: chronicDiseases.map(a => a.id) })}
+                            renderOption={(props, option) => (
+                                <Box component="li" {...props} display="flex" justifyContent="space-between" width="100%">
+                                <Typography sx={{ mr: "10px" }}>{option.name}</Typography>
+                                <Typography variant="body2" color="gray">{option.description}</Typography>
+                                </Box>
+                            )}
+                        />
+                    </Box>
+                </div>
+                <Button 
+                    variant="contained" 
+                    sx={{
+                        display: "block",
+                        margin: "auto",
+                        mt: 1,
+                        backgroundColor: "#007bff",
+                    }}
+                    onClick={() => handleSubmit()}
+                >Lưu thông tin</Button>
             </div>
-            <EditAvatarBox image={image} open={toggleCropDialog} onClose={() => setToggleCropDialog(false)}/>
+            <EditAvatarBox image={image} open={toggleCropDialog} onClose={() => setToggleCropDialog(false)}  onCropComplete={handleCropComplete}/>
         </div>
     );
 };

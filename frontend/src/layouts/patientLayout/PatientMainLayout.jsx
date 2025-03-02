@@ -4,8 +4,10 @@ import PatientHeader from '../../components/PatientHeader';
 import PatientSidebar from '../../components/PatientSidebar';
 import PatientFooter from '../../components/PatientFooter';
 import { PateintLayoutProvider } from '../../context/PateintLayoutProvider';
+import Chat from '../../components/Chat';
+const PatientMainLayout = () => {
 
-const PatientMainLayout = ({children}) => {
+
     return (
         <PateintLayoutProvider>
             <div>
@@ -17,6 +19,7 @@ const PatientMainLayout = ({children}) => {
                         <PatientFooter /> 
                     </main>
                 </div>
+                <Chat />
             </div>
         </PateintLayoutProvider>
     );

@@ -63,7 +63,7 @@ const PatientSidebar = () => {
           collapse={sidebarCollapse}
         />
         <NavLink
-          to="/medicine"
+          to="/medicines"
           icon={<PillIcon size={24} />}
           text={t("medicine-management")}
           collapse={sidebarCollapse}

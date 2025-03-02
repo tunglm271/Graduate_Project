@@ -5,10 +5,11 @@ import React from 'react';
 const useCustomSnackbar = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const showSnackbar = (message, variant) => {
+  const showSnackbar = (message, variant, onExited) => {
     enqueueSnackbar(message, {
       variant,
       autoHideDuration: 6000,
+      onExited: onExited || undefined, // Only adds `onExited` if provided
       content: (key) => (
         <Alert
           onClose={() => closeSnackbar(key)}
@@ -22,20 +23,20 @@ const useCustomSnackbar = () => {
     });
   };
 
-  const showSuccessSnackbar = (message) => {
-    showSnackbar(message, 'success');
+  const showSuccessSnackbar = (message, onExited) => {
+    showSnackbar(message, 'success', onExited);
   };
 
-  const showErrorSnackbar = (message) => {
-    showSnackbar(message, 'error');
+  const showErrorSnackbar = (message, onExited) => {
+    showSnackbar(message, 'error', onExited);
   };
 
-  const showWarningSnackbar = (message) => {
-    showSnackbar(message, 'warning');
+  const showWarningSnackbar = (message, onExited) => {
+    showSnackbar(message, 'warning', onExited);
   };
 
-  const showInfoSnackbar = (message) => {
-    showSnackbar(message, 'info');
+  const showInfoSnackbar = (message, onExited) => {
+    showSnackbar(message, 'info', onExited);
   };
 
   return {

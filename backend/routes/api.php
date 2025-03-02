@@ -19,13 +19,13 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('medicines', [MedicineController::class, 'index']);
-    Route::get('allegries', [AllegryController::class, 'getAllergies']);
-    Route::get('diseases', [DiseaseController::class, 'getDiseases']);
+    Route::get('allergies', [AllegryController::class, 'getAllergies']);
+    Route::get('chronic-diseases', [DiseaseController::class, 'getDiseases']);
 
     Route::prefix('health-profiles')->group(function () {
         Route::post('', [HealthProfileController::class, 'create'])->middleware('role:patient');
         Route::get('', [HealthProfileController::class, 'index']);
-        Route::get('{id}', [HealthProfileController::class, 'show'])->middleware('role:patient');
+        Route::get('{id}', [HealthProfileController::class, 'showDetail'])->middleware('role:patient');
         Route::put('{id}', [HealthProfileController::class, 'update'])->middleware('role:patient');
         Route::delete('{id}', [HealthProfileController::class, 'destroy'])->middleware('role:patient');
     });

@@ -5,9 +5,9 @@ import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import PhoneIcon from '@mui/icons-material/phone'
 import { Link } from 'react-router-dom';
-import { registerRequest } from '../../service/backendApi';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { registerRequest } from '../../service/authApi';
 
 const Register = () => {
     const navigate = useNavigate();

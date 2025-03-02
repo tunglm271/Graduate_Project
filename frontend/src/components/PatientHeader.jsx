@@ -48,7 +48,7 @@ const PatientHeader = () => {
                 <MenuIcon size="30px"/>
             </button>
 
-            <div id="search-bar">
+            {/* <div id="search-bar">
                 <input type="text" />
                 <SearchIcon sx={{
                     position: "absolute",
@@ -56,7 +56,7 @@ const PatientHeader = () => {
                     top: "50%",
                     transform: "translateY(-50%)",
                 }}/>
-            </div>
+            </div> */}
 
             <Button sx={{
                 display: {

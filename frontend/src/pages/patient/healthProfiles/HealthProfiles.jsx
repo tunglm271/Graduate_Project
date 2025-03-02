@@ -1,10 +1,10 @@
 import './healthProfiles.css'
-import { getHealthProfiles } from '../../../service/BackendApi';
 import { useEffect, useState } from 'react';
 import ProfileCard from '../../../components/card/ProfileCard';
 import { Breadcrumbs, Typography, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
+import { getHealthProfiles } from '../../../service/healthProfileApi';
 const HealthProfiles = () => {
 
     const [healthProfiles, setHealthProfiles] = useState([]);

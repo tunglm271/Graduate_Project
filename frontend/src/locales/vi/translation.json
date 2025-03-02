@@ -11,13 +11,15 @@
     "hello": "Xin chào",
     "welcome-heading": "Cập nhật liên tục tiến trình lịch khám của bạn",
     "gender": "Giới tính",
+    "male": "Nam",
+    "female": "Nữ",
     "name": "Tên",
     "date-of-birth": "Ngày sinh",
     "address": "Địa chỉ",
     "phone": "Điện thoại",
     "relationship": "Mối quan hệ",
     "avatar": "Hình đại diện",
-    "father": "Cha",
+    "father": "Bố",
     "mother": "Mẹ",
     "son": "Con trai",
     "daughter": "Con gái",
@@ -33,5 +35,6 @@
     "aunt": "Dì",
     "nephew": "Cháu trai",
     "niece": "Cháu gái",
-    "cousin": "Anh chị em họ"
+    "cousin": "Anh chị em họ",
+    "self": "Tôi"
 }

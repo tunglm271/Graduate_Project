@@ -1,7 +1,12 @@
-import { useState } from 'react';
-import { Tab, Tabs, Box, Avatar } from '@mui/material';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Tab, Tabs, Box, Avatar, ListItem, ListItemAvatar, Typography, ListItemText, List, Stack } from '@mui/material';
+import { getHealthProfiles } from '../../../service/healthProfileApi';
 import "./appointment.css"
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import AppointmentCard from '../../../components/card/AppointmentCard';
+
+
 function a11yProps(index) {
     return {
       id: `simple-tab-${index}`,
@@ -10,36 +15,60 @@ function a11yProps(index) {
 }
 
 const AppointmentPage = () => {
-
+    const navigate = useNavigate();
+    const [ searchParams, setSearchParams ] = useSearchParams();
+    const profileId = searchParams.get('profileId');
     const [value, setValue] = useState(0);
-
+    const [healthProfiles, setHealthProfiles] = useState([]);
+    const { t } = useTranslation();
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
+    useEffect(() => {
+        getHealthProfiles().then((response) => {
+            setHealthProfiles(response);
+        })
+    },[])
+
     return (
-        <div style={{display: 'flex', justifyContent: 'space-between', padding: '30px'}}>
+        <div style={{display: 'flex', justifyContent: 'space-between', padding: '30px', gap: "20px"}}>
             <div id='profile-list'>
                 <h4>Hồ sơ sức khỏe</h4>
-                <div className='profile-row'>
-                    <Avatar sx={{border: "2px solid blue"}} alt='Remy Sharp' src='https://mui.com/static/images/avatar/1.jpg' />
-                    <p>Tôi</p>
-                </div>
-
-                <div className='profile-row'>
-                    <Avatar alt='Remy Sharp' src='https://mui.com/static/images/avatar/2.jpg' />
-                    <p>Bố</p>
-                </div>
-
-                <div className='profile-row'>
-                    <Avatar alt='Remy Sharp' src='https://mui.com/static/images/avatar/3.jpg' />
-                    <p>Mẹ</p>
-                </div>
-
-                <div className='profile-row'>
-                    <Avatar alt='Remy Sharp' src='https://mui.com/static/images/avatar/4.jpg' />
-                    <p>Em gái</p>
-                </div>
+                <List>
+                    {healthProfiles.map((profile, index) => {
+                        return (
+                            <ListItem 
+                                key={index} 
+                                sx={{ 
+                                    p: 1, 
+                                    borderRadius: 2,
+                                }}
+                                button
+                                onClick={() => {
+                                    setSearchParams({profileId: profile.id});
+                                    console.log(profile.id, profileId);
+                                }}
+                            >
+                                <ListItemAvatar>
+                                    <Avatar sx={{ boxSizing: "content-box" ,border: profileId == profile.id ? "2px solid #007bff": "none" }} alt='Remy Sharp' src={profile.avatar} />
+                                </ListItemAvatar>
+                            <ListItemText 
+                                primary={
+                                    <Typography sx={{ fontWeight: 'bold', fontSize: '14px' }}>
+                                        {profile.name}
+                                    </Typography>
+                                } 
+                                secondary={
+                                    <Typography sx={{ fontSize: '10px' }}>
+                                    #{t(profile.relationship)}
+                                    </Typography>
+                                } 
+                            />
+                            </ListItem>
+                        )
+                    })}
+                </List>
             </div>
 
             <div id='appointment-tab'>
@@ -57,12 +86,20 @@ const AppointmentPage = () => {
                         </React.Fragment>}
                         {...a11yProps(0)} 
                     />    
-                    <Tab label="Đang thực hiện" {...a11yProps(2)} />
-                    <Tab label="Chờ thanh toán" {...a11yProps(3)} />
+                     <Tab label={
+                        <React.Fragment>
+                            <p>Đã chỉ định bác sĩ<span style={{ color: '#1976d2' }}>(0)</span></p>
+                        </React.Fragment>}
+                        {...a11yProps(0)} 
+                    />    
                     <Tab label="Đã hoàn thành" {...a11yProps(4)} />
                     <Tab label="Đã hủy" {...a11yProps(5)} />
                     </Tabs>
                 </Box>
+                <Stack direction="column" spacing={2} style={{marginTop: '20px'}}>
+                     <AppointmentCard />
+                     <AppointmentCard />
+                </Stack>
             </div>
         </div>
     );

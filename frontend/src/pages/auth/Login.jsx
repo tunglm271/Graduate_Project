@@ -12,13 +12,13 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { loginRequest } from "../../service/BackendApi";
 import GoogleLoginButton from "../../components/GoogleLoginButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LockIcon from "@mui/icons-material/Lock";
 import EmailIcon from "@mui/icons-material/Email";
 import useCustomSnackbar from "../../hooks/useCustomSnackbar";
+import { loginRequest } from "../../service/authApi";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState({
@@ -105,8 +105,8 @@ const Login = () => {
     try {
       const response = await loginRequest(email.value, password.value);
       console.log("Login success:", response);
-      navigate("/home"); 
       showSuccessSnackbar("Đăng nhập thành công!");
+      navigate("/home");
     } catch (err) {
       console.error("Login error:", err);
       setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");

@@ -115,9 +115,9 @@
     color: var(--primary-color);
   }
   
-  .service-card > div > img {
-    width: 100px;
-    height: 100px;
+  .service-card img {
+    width: 160px;
+    height: 100%;
     object-fit: cover;
     border-radius: 20px;
   }
@@ -258,6 +258,51 @@
     width: 40%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .facility-vertical-card {
+    flex-direction: column;
+    display: flex;
+    gap: 10px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    width: 250px;
+    box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
+  }
+
+  .facility-vertical-card img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    margin: 0 auto;
+    padding-top: 10px;
+  }
+
+  .facility-vertical-card h3 {
+    width: 80%;
+    margin: 1rem 0;
+  }
+
+  .facility-vertical-card p {
+    font-size: 0.9rem;
+    display: flex;
+    gap: 3px;
+    align-items: start;
+  }
+
+  .facility-vertical-card a {
+    background-color: #007bff;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .facility-vertical-card a:hover {
+    background-color: white;
+    color: #007bff;
+    border: 1px solid #007bff;
   }
   
   

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './healthProfiles.css'
 import { Breadcrumbs, Typography, Tabs, Tab, Box, Avatar, ListItem, ListItemIcon, ListItemText, Stack, Button } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -7,14 +7,32 @@ import CallIcon from '@mui/icons-material/Call';
 import WcIcon from '@mui/icons-material/Wc';
 import AvatarFrame from '@images/avatar-frame.png';
 import HealthProfileHistory from './HealthProfileHistory';
+import { getProfileDetail } from '../../../service/healthProfileApi';
+import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+
 const HealthProfileDetail = () => {
+    const { id } = useParams();
+    const { t } = useTranslation();
+    const [profile, setProfile] = useState(null);
+    useEffect(() => {
+        getProfileDetail(id).then((data) => {
+            setProfile(data);
+            console.log(data);
+        }).catch((error) => {
+            console.log(error);
+        })
+    },[])
     const [tabValue, setTabValue] = useState(0);
+
+
+
     return (
         <div className='health-profile-detail'>
             <Breadcrumbs>
                 <Typography>Home</Typography>
                 <Typography>Health Profiles</Typography>
-                <Typography>Nguyen Van A (Bố)</Typography>
+                <Typography>{profile?.name} ({t(profile?.relationship)})</Typography>
             </Breadcrumbs>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', alignItems: 'start', gap: '30px' }}>
                 <div className='main-content'>
@@ -44,7 +62,8 @@ const HealthProfileDetail = () => {
                             }}
                         >
                             <Avatar
-                                src={'https://mui.com/static/images/avatar/2.jpg'}
+                                src={profile?.avatar}
+                                alt="avatar"
                                 sx={{
                                     width: "100%",
                                     height: "100%",
@@ -59,25 +78,25 @@ const HealthProfileDetail = () => {
                                 <ListItemIcon>
                                     <AccountCircleIcon />
                                 </ListItemIcon>
-                                <ListItemText primary='Nguyen Van A' secondary="Họ và tên"/>
+                                <ListItemText primary={profile?.name} secondary="Họ và tên"/>
                             </ListItem>
                             <ListItem sx={{ paddingY: 0 }}>
                                 <ListItemIcon>
                                     <HomeIcon />
                                 </ListItemIcon>
-                                <ListItemText primary='Hanoi, Vietnam' secondary="Địa chỉ"/>
+                                <ListItemText primary={profile?.address || "Không có"} secondary="Địa chỉ"/>
                             </ListItem>
                             <ListItem sx={{ paddingY: 0 }}>
                                 <ListItemIcon>
                                     <CallIcon />
                                 </ListItemIcon>
-                                <ListItemText primary='0123456789' secondary="Số điện thoại"/>
+                                <ListItemText primary={profile?.phone} secondary="Số điện thoại"/>
                             </ListItem>
                             <ListItem sx={{ paddingY: 0 }}>
                                 <ListItemIcon>
                                     <WcIcon />
                                 </ListItemIcon>
-                                <ListItemText primary='Nam' secondary="Giới tính"/>
+                                <ListItemText primary={t(profile?.gender)} secondary="Giới tính"/>
                             </ListItem>
                         </div>
 

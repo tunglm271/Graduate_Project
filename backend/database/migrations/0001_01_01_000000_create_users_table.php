@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->rememberToken();
             $table->timestamps();
-            $table->enum('role', ['patient', 'doctor','facility', 'admin']);
+            // $table->enum('role', ['patient', 'doctor','facility', 'admin']);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
