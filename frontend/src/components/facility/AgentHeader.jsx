@@ -2,11 +2,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import InfoIcon from '@mui/icons-material/Info';
 import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ConversationList from '../ConversationList';
 import { IconButton, Stack, Divider, Badge, Avatar, ListItemButton, ListItemAvatar, ListItemText, Typography } from '@mui/material';
+import InpatientIcon from '@icon/service-category/InpatientIcon';
 import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
-const FacilityHeader = () => {
+const AgentHeader = () => {
     return (
         <div className="facility-header">
             <h2>Trang chủ</h2>
@@ -45,6 +45,7 @@ const FacilityHeader = () => {
                     }}/>
                 </Badge>
             </IconButton>
+            <ConversationList />
             <Divider orientation='vertical' flexItem />
             <ListItemButton sx={{ flexGrow: 0 }}>
                 <ListItemAvatar>
@@ -64,23 +65,8 @@ const FacilityHeader = () => {
                     }
                 />
             </ListItemButton>
-            {/* <IconButton 
-                sx={{
-                    position: "absolute", 
-                    top: "10", 
-                    left: "0", 
-                    backgroundColor: "#f5f5f5", 
-                    borderRadius: "50%", 
-                    transform: "translate(50%,0)",
-                    border: "1.5px solid #d1d1d1",
-                    zindex: 1000,
-                    p: 0
-                }} 
-                onClick={()=>setOpen(!open)}>
-               {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton> */}
         </div>
     );
 }
 
-export default FacilityHeader;
+export default AgentHeader;

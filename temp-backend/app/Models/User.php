@@ -10,7 +10,6 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Models\Role\Patient;
 use App\Models\Role\Doctor;
 use App\Models\Role\MedicalFacility;
-use App\Models\chat\Conversation;
 
 class User extends \TCG\Voyager\Models\User
 {
@@ -79,10 +78,5 @@ class User extends \TCG\Voyager\Models\User
     public function medicalFacility()
     {
         return $this->hasOne(MedicalFacility::class);
-    }
-
-    public function conversations()
-    {
-        return Conversation::forUser($this->id);
     }
 }

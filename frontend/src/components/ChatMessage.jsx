@@ -1,16 +1,18 @@
 import Cookies from 'js-cookie';
 
-export const ChatMessage = ({message}) => {
+const ChatMessage = ({message}) => {
     const userId = Cookies.get('user_id');
-    const sent = message.user_id == userId;
+    const sent = message.senderId == userId;
     return (
         <div className={`flex items-start gap-2 chat-message ${sent ? 'sent-message' : 'receive-message'}`} >
-            <img src={message.avatar} alt="" />
+            <img src={message.senderAvatar} alt="" />
             <div>
-                <h5 style={{marginBottom: "0.2rem"}}>{message.username}</h5>
-                <p>{message.message}</p>
+                <h5 style={{marginBottom: "0.2rem"}}>{message.senderName}</h5>
+                <p>{message.content}</p>
                 <p className='text-xs'>{message.sent_at}</p>
             </div>
         </div>
     );
 }
+
+export default ChatMessage;

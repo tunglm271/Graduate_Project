@@ -11,7 +11,7 @@ class UpdateHealthProfileRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,13 @@ class UpdateHealthProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'sometimes|required|string|max:255',
+            'relationship' => 'sometimes|required|string|max:255',
+            'date_of_birth' => 'sometimes|required|date',
+            'gender' => 'sometimes|required|string|max:10',
+            'height' => 'sometimes|required|numeric',
+            'weight' => 'sometimes|required|numeric',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 }

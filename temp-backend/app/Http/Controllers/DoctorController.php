@@ -19,7 +19,8 @@ class DoctorController extends Controller
     public function index(Request $request)
     {
         $facility_id = $request->user()->medicalFacility->id;
-        return Doctor::where('medical_facility_id', $facility_id)->first();
+        $doctors = Doctor::where('medical_facility_id', $facility_id)->with('user')->get();
+        return response()->json($doctors);
     }
 
     /**
@@ -52,9 +53,15 @@ class DoctorController extends Controller
             'password' => $random_password,
         ];
 
-        Mail::to($fields['email'])->send(new DoctorMail($data));
+        Mail::to($fields['email'])->queue(new DoctorMail($data));
 
         return response()->json($doctor, 201);
+    }
+
+
+    public function createSchedule(Request $request) {
+        $doctor = $request->user()->doctor;
+        
     }
 
     /**

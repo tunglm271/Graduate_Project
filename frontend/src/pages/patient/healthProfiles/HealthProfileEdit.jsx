@@ -21,7 +21,6 @@ import PersonIcon from '@mui/icons-material/Person';
 import RelationshipIcon from '@icon/RelationshipIcon';
 import EditAvatarBox from '../../../components/dialog/EditAvatarBox';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
-import WcIcon from '@mui/icons-material/Wc';
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import EditIcon from "@mui/icons-material/Edit";
@@ -35,18 +34,18 @@ import MultiSelectAutocomplete from '../../../components/MultiSelectAutocomplete
 import AccessibilityIcon from '@mui/icons-material/Accessibility';
 import ScaleIcon from '@mui/icons-material/Scale';
 import EmailIcon from '@mui/icons-material/Email';
-import { getAllergies, getChronicDiseases, createHealthProfile } from '../../../service/backendApi.js';
 import useCustomSnackbar from '../../../hooks/useCustomSnackbar.jsx';
+import healthProfileApi from '../../../service/healthProfileApi';
 import { useNavigate } from 'react-router-dom';
+import { getDiseases, getAllergies } from '../../../hooks/useCachedData.js';
+import dayjs from 'dayjs';
 
 const HealthProfileEdit = () => {
-    const { showSuccessSnackbar } = useCustomSnackbar();
-    const { navigate } = useNavigate();
+    const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
+    const navigate = useNavigate();
     const { id } = useParams();
     const { t } = useTranslation();
     const [toggleCropDialog, setToggleCropDialog] = useState(false);
-    const [ allergies, setAllergies ] = useState([]);
-    const [ chronicDiseases, setChronicDiseases ] = useState([]);
     const [ image, setImage ] = useState();
     const [croppedFile, setCroppedFile] = useState(null);
     const [croppedPreviewURL, setCroppedPreviewURL] = useState(null);
@@ -62,22 +61,40 @@ const HealthProfileEdit = () => {
         height: 0,
         weight: 0,
         allergies: [],
-        chronicDiseases: []
+        diseases: []
     });
     const fileInputRef = useRef(null);
     const isEditing = !!id;
-
+    const { data: diseases = [] } = getDiseases();
+    const { data: allergies = [] } = getAllergies();
 
     useEffect(() => {
-        getAllergies().then((data) => {
-            setAllergies(data);
-            console.log(data);
-        });
-        getChronicDiseases().then((data) => {
-            setChronicDiseases(data);
-        });
-    },[])
-   
+        if (isEditing) {
+            healthProfileApi.getById(id)
+            .then((res) => {
+                setProfileValues({
+                    ...profileValues,
+                    name: res.data.name,
+                    relationship: res.data.relationship,
+                    gender: res.data.gender,
+                    email: res.data.email,
+                    phone: res.data.phone,
+                    height: res.data.height,
+                    weight: res.data.weight,
+                    allergies: res.data.allergies.map(a => a.id),
+                    diseases: res.data.diseases.map(d => d.id),
+                    dateOfBirth: dayjs(res.data.date_of_birth),
+                });
+                setCroppedPreviewURL(res.data.avatar);
+                console.log(res.data);
+            })
+            .catch((error) => {
+                showErrorSnackbar(error);
+            });
+        }
+    }, [isEditing]);
+
+
     const handleAvatarClick = () => {
         fileInputRef.current.click();
     };
@@ -101,24 +118,40 @@ const HealthProfileEdit = () => {
 
 
     const handleSubmit = () => {
-        const data = {
-            name: profileValues.name,
-            relationship: profileValues.relationship,
-            phone: profileValues.phone,
-            dateOfBirth: profileValues.dateOfBirth?.$d,
-            gender: profileValues.gender,
-            email: profileValues.email,
-            address: profileValues.address,
-            healthInsuranceNumber: profileValues.healthInsuranceNumber,
-            height: profileValues.height,
-            weight: profileValues.weight,
-            allergies: profileValues.allergies,
-            chronicDiseases: profileValues.chronicDiseases
-        };
-        createHealthProfile(data, croppedFile).then((data) => {
+        const formData = new FormData();
+        if(croppedFile) {
+            formData.append('avatar', croppedFile);
+        }
+        formData.append("name", profileValues.name);
+        formData.append("relationship", profileValues.relationship);
+        formData.append("phone", profileValues.phone);
+        formData.append("date_of_birth", new Date(profileValues.dateOfBirth?.$d).toISOString().split("T")[0]);
+        formData.append('gender', profileValues.gender);
+        formData.append("email", profileValues.email);
+        formData.append("height", profileValues.height);
+        formData.append("weight", profileValues.weight);
+        formData.append("healthInsuranceNumber", profileValues.healthInsuranceNumber);
+        formData.append("allergies", JSON.stringify(profileValues.allergies));
+        formData.append("diseases", JSON.stringify(profileValues.diseases));
+
+        if(isEditing) {
+            healthProfileApi.update(id, formData)
+            .then((data) => {
+                showSuccessSnackbar('Cập nhật hồ sơ sức khỏe thành công');
+                navigate('/health-profile');
+            })
+            return;
+        }
+        
+        healthProfileApi.create(formData)
+        .then((data) => {
             showSuccessSnackbar('Tạo hồ sơ sức khỏe thành công');
-            navigate('/patient/health-profile');
+            navigate('/health-profile');
+        })
+        .catch((error) => {
+            showErrorSnackbar(error);
         });
+
     }
 
     return (
@@ -188,7 +221,7 @@ const HealthProfileEdit = () => {
                 <div className="profile-edit-form">
                     <TextField
                         label="Name"
-                        value={profileValues.name}
+                        value={profileValues.name || ''}
                         onChange={(e) => setProfileValues({ ...profileValues, name: e.target.value })}
                         fullWidth
                         margin="normal"
@@ -357,34 +390,36 @@ const HealthProfileEdit = () => {
                         />
                     </Box>
 
-                    <Box display={{ xs: "block", md: "flex", padding: "20px" }}>
+                    <Box display={{ xs: "block", md: "flex", padding: "20px", gap: "10px" }}>
                         <h4 style={{width: "20%"}}>Danh sách các bệnh di ứng</h4>
                         <MultiSelectAutocomplete
                             options={allergies}
                             label="Allergies"
                             sx={{ width: "80%" }}
                             getOptionLabel={(option) => option.name}
+                            value={allergies.filter(a => profileValues.allergies.includes(a.id))}
                             onChange={(allergies) => setProfileValues({ ...profileValues, allergies: allergies.map(a => a.id) })}
                             renderOption={(props, option) => (
                                 <Box component="li" {...props} display="flex" justifyContent="space-between" width="100%">
-                                <Typography sx={{ mr: "10px" }}>{option.name}</Typography>
-                                <Typography variant="body2" color="gray">{option.description}</Typography>
+                                    <Typography sx={{ mr: "10px" }}>{option.name}</Typography>
+                                    <Typography variant="body2" color="gray">{option.description}</Typography>
                                 </Box>
                             )}
                         />
                     </Box>
-                    <Box display={{ xs: "block", md: "flex", padding: "20px" }}>
-                        <h4 style={{width: "20%"}}>Danh sách các bệnh mãn tính</h4>
+                    <Box display={{ xs: "block", md: "flex", padding: "20px", gap: "10px" }}>
+                        <h4 style={{ maxWidth: "20%"}}>Danh sách các bệnh mãn tính</h4>
                         <MultiSelectAutocomplete
-                            options={chronicDiseases}
+                            options={diseases}
                             label="Chronic diseases"
                             sx={{ width: "80%" }}
                             getOptionLabel={(option) => option.name}
-                            onChange={(chronicDiseases) => setProfileValues({ ...profileValues, chronicDiseases: chronicDiseases.map(a => a.id) })}
+                            value={diseases.filter(a => profileValues.diseases.includes(a.id))}
+                            onChange={(diseases) => setProfileValues({ ...profileValues, diseases: diseases.map(a => a.id) })}
                             renderOption={(props, option) => (
                                 <Box component="li" {...props} display="flex" justifyContent="space-between" width="100%">
-                                <Typography sx={{ mr: "10px" }}>{option.name}</Typography>
-                                <Typography variant="body2" color="gray">{option.description}</Typography>
+                                    <Typography sx={{ mr: "10px" }}>{option.name}</Typography>
+                                    <Typography variant="body2" color="gray">{option.description}</Typography>
                                 </Box>
                             )}
                         />

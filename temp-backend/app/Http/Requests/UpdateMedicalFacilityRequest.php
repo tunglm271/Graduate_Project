@@ -22,15 +22,24 @@ class UpdateMedicalFacilityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'facility_name' => 'string|max:255',
-            'address' => 'string|max:255',
+            'facility_name' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'status' => 'boolean',
-            'website' => 'nullable|url',
+            'status' => 'nullable|string|in:pending,approved,rejected',
+            'working_time' => 'nullable|string|max:255',
+            'thumbnail' => 'nullable',
+            'logo' => 'nullable',
+            'website' => 'nullable|url|max:255',
+            'lat' => 'nullable|numeric',
+            'lng' => 'nullable|numeric',
+            'legal_representative_name' => 'nullable|string|max:255',
+            'legal_representative_id' => 'nullable|string|max:50',
             'tax_code' => 'nullable|string|max:50',
-            'thumbnail' => 'nullable|file|mimes:jpg,jpeg,png',
             'medical_practice_license' => 'nullable|string|max:255',
-            'bussiness_registration_certificate' => 'nullable|string|max:255',
+            'issuance_date' => 'nullable|date',
+            'issuance_place' => 'nullable|string|max:255',
+            'business_registration_certificate' => 'nullable|string|max:255',
         ];
     }
 }

@@ -11,7 +11,7 @@ class StoreHealthProfileRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class StoreHealthProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'relationship' => 'required|string|max:255',
+            'date_of_birth' => 'required|date',
+            'gender' => 'required|string|max:10',
+            'height' => 'required|numeric',
+            'weight' => 'required|numeric',
         ];
     }
 }

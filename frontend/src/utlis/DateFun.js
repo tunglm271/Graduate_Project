@@ -40,3 +40,30 @@ export const formatDateTime = (date, locale = "default") => {
         year: "numeric"
       });
 }
+
+export const timeAgo = (updatedAt) => {
+    const { seconds, nanoseconds } = updatedAt;
+
+    // Chuyển đổi thành milliseconds
+    const timestampMs = seconds * 1000 + nanoseconds / 1_000_000;
+    const updatedDate = new Date(timestampMs);
+    const now = new Date();
+    
+    // Tính chênh lệch thời gian (milliseconds)
+    const diffMs = now - updatedDate;
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffWeeks = Math.floor(diffDays / 7);
+
+    if (diffMinutes < 60) {
+        return `${diffMinutes} phút trước`;
+    } else if (diffHours < 24) {
+        return `${diffHours} giờ trước`;
+    } else if (diffDays < 7) {
+        return `${diffDays} ngày trước`;
+    } else {
+        return `${diffWeeks} tuần trước`;
+    }
+}
+

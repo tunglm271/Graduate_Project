@@ -1,32 +1,34 @@
-import api from "./backendApi";
-import Cookies from 'js-cookie';
+import api from "./api";
+const resource = "/health-profiles";
 
-export const getHealthProfiles = async () => {
-    try {
-      const response = await api.get("/api/health-profiles", {
-        headers: {
-          'Authorization': `Bearer ${Cookies.get('authToken')}`
-        }
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Get health profiles error:", error);
-      throw error;
-    }
-  }
-  
+const healthProfileApi = {
+  getAll() {
+    return api.get(resource);
+  },
 
+  getById(id) {
+    return api.get(`${resource}/${id}`);
+  },
 
-export const getProfileDetail = async (id) => {
-    try {
-        const response = await api.get(`/api/health-profiles/${id}`, {
-        headers: {
-            'Authorization': `Bearer ${Cookies.get('authToken')}`
-        }
-        });
-        return response.data;
-    } catch (error) {
-        console.error("Get profile detail error:", error);
-        throw error;
-    }
-}
+  create(formData) {
+    return api.post(resource, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+
+  update(id, formData) {
+    return api.post(`${resource}/${id}?_method=PUT`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+
+  delete(id) {
+    return api.delete(`${resource}/${id}`);
+  },
+};
+
+export default healthProfileApi;

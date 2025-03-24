@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, Box, Avatar, ListItem, ListItemAvatar, Typography, ListItemText, List, Stack } from '@mui/material';
-import { getHealthProfiles } from '../../../service/healthProfileApi';
 import "./appointment.css"
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -26,9 +25,7 @@ const AppointmentPage = () => {
     };
 
     useEffect(() => {
-        getHealthProfiles().then((response) => {
-            setHealthProfiles(response);
-        })
+
     },[])
 
     return (

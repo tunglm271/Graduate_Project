@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role\MedicalFacility;
 use App\Http\Requests\StoreMedicalFacilityRequest;
+use Illuminate\Http\Request;
 use App\Http\Requests\UpdateMedicalFacilityRequest;
 use Gate;
 
@@ -14,11 +15,19 @@ class MedicalFacilityController extends Controller
      */
     public function index()
     {
+        $facilities = MedicalFacility::select('facility_name','address','phone')->get();
+        
         return response()->json(MedicalFacility::all());
     }
 
     public function show(MedicalFacility $medicalFacility)
     {
+        return response()->json($medicalFacility);
+    }
+
+
+    public function detail(Request $request) {
+        $medicalFacility = $request->user()->medicalFacility;
         return response()->json($medicalFacility);
     }
 

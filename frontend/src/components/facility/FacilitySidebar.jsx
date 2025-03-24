@@ -27,7 +27,7 @@ const FacilitySidebar = () => {
                 <span className="font-semibold text-xl">Docify Clinic</span>
             </Link>
 
-            <ListItem component={Link} to={"/facility/dashboard"} sx={{
+            <ListItem component={Link} to={"/facility/profile"} sx={{
                 backgroundColor: "#f5f5f5",
                 borderRadius: "10px",
                 margin: "10px 0",

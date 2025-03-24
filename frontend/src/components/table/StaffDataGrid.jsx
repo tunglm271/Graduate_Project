@@ -42,31 +42,7 @@ const ActionCell = ({ id, setData = null }) => {
     );
   };
 
-
-const rows = [
-  {
-    id: 1,
-    avatar: "https://i.pravatar.cc/40?img=1",
-    name: "John Doe",
-    phone: "123-456-7890",
-    email: "john.doe@example.com",
-    workingDays: ["Mon", "Wed", "Fri"],
-    service: "Haircut",
-  },
-  {
-    id: 2,
-    avatar: "https://i.pravatar.cc/40?img=2",
-    name: "Jane Smith",
-    phone: "987-654-3210",
-    email: "jane.smith@example.com",
-    workingDays: ["Tue", "Thu", "Sat"],
-    service: "Massage",
-  },
-];
-
-const StaffDataGrid = ({ setDataCount }) => {
-    const [ data, setData ] = useState([]);
-
+const StaffDataGrid = ({ setData, data }) => {
     const columns = [
         {
           field: "name",
@@ -74,7 +50,7 @@ const StaffDataGrid = ({ setDataCount }) => {
           width: 200,
           renderCell: (params) => (
             <Box display="flex" alignItems="center" gap={1} sx={{ height:"100%" }}>
-              <Avatar src={params.row.avatar} alt={params.row.name} />
+              <Avatar src={params.row.user.avatar} alt={params.row.name} />
               <Typography>{params.row.name}</Typography>
             </Box>
           ),
@@ -85,9 +61,9 @@ const StaffDataGrid = ({ setDataCount }) => {
           width: 250,
           renderCell: (params) => (
             <Box sx={{ height:"100%", paddingTop: "5px" }}>
-              <Typography variant="body2">{params.row.phone}</Typography>
+              <Typography variant="body2">{params.row.phone || "Không có SĐT"}</Typography>
               <Typography variant="body2" color="primary" sx={{ textDecoration: "underline" }}>
-                {params.row.email}
+                {params.row.user.email}
               </Typography>
             </Box>
           ),
@@ -99,7 +75,7 @@ const StaffDataGrid = ({ setDataCount }) => {
           renderCell: (params) => (
             <Box display="flex" justifyContent="flex-start" sx={{ width: "100%", height:"100%" }}>
               <AvatarGroup max={7} spacing={-5} sx={{ justifyContent: "flex-start", height:"100%" }}>
-                {params.row.workingDays.map((day, index) => (
+                {["Mon", "Fri", "Thu"].map((day, index) => (
                   <Avatar
                     key={index}
                     sx={{
@@ -135,11 +111,6 @@ const StaffDataGrid = ({ setDataCount }) => {
         },
       ];
 
-    useEffect(() => {
-        setData(rows);
-        setDataCount(data.length);
-    })
-
   return (
     <div style={{ height: 400, width: "100%" }}>
       <DataGrid
@@ -147,7 +118,6 @@ const StaffDataGrid = ({ setDataCount }) => {
         columns={columns}
         checkboxSelection
         pageSizeOptions={[5, 10]}
-        onRowSelectionModelChange={(ids) => setDataCount(ids.length)}
         sx={{ 
             border: "none",
             boxShadow: "none",

@@ -1,4 +1,4 @@
-import FacilityHeader from "../../components/facility/FacilityHeader";
+import AgentHeader from "../../components/facility/AgentHeader";
 import FacilitySidebar from "../../components/facility/FacilitySidebar";
 import "./facilityLayout.css"
 import { Outlet } from "react-router-dom";
@@ -8,10 +8,9 @@ const FacilityLayout = () => {
         <div className="facility-layout">
             <FacilitySidebar />
             <div style={{ flex: 1, marginLeft: "250px" }}>
-                <FacilityHeader />
+                <AgentHeader />
                 <div className="facility-content">
                     <Outlet />
-
                 </div>
             </div>
         </div>

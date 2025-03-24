@@ -19,10 +19,19 @@ return new class extends Migration
             $table->string('address');
             $table->text('description')->nullable();
             $table->enum('status', ['unverified', 'pending', 'rejected', 'done'])->default('pending');
-            $table->string('tax_code')->nullable();
+            $table->string('working_time')->nullable();
             $table->string('thumbnail')->nullable();
-            $table->string('medical_practice_license')->nullable();
-            $table->string('bussiness_registration_certificate')->nullable();
+            $table->string('logo')->nullable();
+            $table->string('website')->nullable();
+            $table->float('lat')->nullable()->default(0.00);
+            $table->float('lng')->nullable()->default(0.00);
+
+            $table->string('legal_representative_name');
+            $table->string('legal_representative_id');
+            $table->string('tax_code')->nullable();
+            $table->string('medical_practice_license');
+            $table->date('issuance_date');
+            $table->string('issuance_place');
 
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
         });

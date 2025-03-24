@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Role\Patient;
+use App\Models\Allergy;
+use App\Models\Disease;
 class HealthProfile extends Model
 {
     /** @use HasFactory<\Database\Factories\HealthProfileFactory> */
@@ -27,13 +29,13 @@ class HealthProfile extends Model
         return $this->belongsTo(Patient::class);
     }
 
-    public function chronicDiseases()
-    {
-        return $this->belongsToMany(ChronicDisease::class, 'health_profile_chronic_disease');
-    }
-
     public function allergies()
     {
         return $this->belongsToMany(Allergy::class, 'health_profile_allergy');
+    }
+
+    public function diseases() 
+    {
+        return $this->belongsToMany(Disease::class,"health_profile_disease");
     }
 }

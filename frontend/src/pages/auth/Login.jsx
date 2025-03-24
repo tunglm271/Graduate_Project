@@ -18,6 +18,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LockIcon from "@mui/icons-material/Lock";
 import EmailIcon from "@mui/icons-material/Email";
 import useCustomSnackbar from "../../hooks/useCustomSnackbar";
+import Cookies from "js-cookie";
 import { loginRequest } from "../../service/authApi";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -106,7 +107,9 @@ const Login = () => {
       const response = await loginRequest(email.value, password.value);
       console.log("Login success:", response);
       showSuccessSnackbar("Đăng nhập thành công!");
-      navigate("/home");
+      const intendedRoute = Cookies.get("intendedRoute");
+      Cookies.remove("intendedRoute");
+      navigate(intendedRoute || "/home");
     } catch (err) {
       console.error("Login error:", err);
       setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");

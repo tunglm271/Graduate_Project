@@ -14,7 +14,8 @@ class HealthProfileController extends Controller
      */
     public function index(Request $request)
     {
-        $profiles = HealthProfile::where('patient_id', $request->user()->patient->id)->get();
+        $profiles = HealthProfile::where('patient_id', $request->user()->patient->id)->with(['diseases','allergies'])->get();
+        return $profiles;
     }
 
     /**
@@ -22,7 +23,32 @@ class HealthProfileController extends Controller
      */
     public function store(StoreHealthProfileRequest $request)
     {
+        $validatedData = $request->validated();
+
+        $healthProfile = new HealthProfile($validatedData);
+        $healthProfile->patient_id = $request->user()->patient->id;
+    
+        if ($request->hasFile('avatar')) {
+            $uploadedFileUrl = cloudinary()->upload($request->file('avatar')->getRealPath())->getSecurePath();
+            $healthProfile->avatar = $uploadedFileUrl;
+        }
         
+        $healthProfile->save();
+
+        if($request->has('allergies')) {
+            $allergyIds = json_decode($request->input('allergies'));
+            $healthProfile->allergies()->sync($allergyIds);
+        }
+
+        if ($request->has('diseases')) {
+            $diseaseIds = json_decode($request->input('diseases'));
+            $healthProfile->diseases()->sync($diseaseIds);
+        }
+    
+        return response()->json([
+            'message' => 'Health profile created successfully',
+            'health_profile_id' => $healthProfile->id
+        ], 201);
     }
 
     /**
@@ -30,7 +56,7 @@ class HealthProfileController extends Controller
      */
     public function show(HealthProfile $healthProfile)
     {
-        //
+        return $healthProfile->load(['diseases','allergies']);
     }
 
     /**
@@ -38,7 +64,31 @@ class HealthProfileController extends Controller
      */
     public function update(UpdateHealthProfileRequest $request, HealthProfile $healthProfile)
     {
-        //
+        $validatedData = $request->validated();
+        $healthProfile->update($validatedData);
+
+        if ($request->hasFile('avatar')) {
+            $uploadedFileUrl = cloudinary()->upload($request->file('avatar')->getRealPath())->getSecurePath();
+            $healthProfile->avatar = $uploadedFileUrl;
+            $healthProfile->save();
+        }
+
+        $healthProfile->save();
+        
+        if($request->has('allergies')) {
+            $allergyIds = json_decode($request->input('allergies'));
+            $healthProfile->allergies()->sync($allergyIds);
+        }
+
+        if ($request->has('diseases')) {
+            $diseaseIds = json_decode($request->input('diseases'));
+            $healthProfile->diseases()->sync($diseaseIds);
+        }
+        
+        return response()->json([
+            'message' => 'Health profile updated successfully',
+            'health_profile' => $healthProfile
+        ], 200);
     }
 
     /**
@@ -46,6 +96,10 @@ class HealthProfileController extends Controller
      */
     public function destroy(HealthProfile $healthProfile)
     {
-        //
+        $healthProfile->delete();
+
+        return response()->json([
+            'message' => 'Health profile deleted successfully'
+        ], 200);
     }
 }

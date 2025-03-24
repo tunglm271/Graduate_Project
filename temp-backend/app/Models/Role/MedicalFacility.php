@@ -15,15 +15,22 @@ class MedicalFacility extends Model
     protected $fillable = [
         'user_id',
         'facility_name',
+        'phone',
         'address',
         'description',
         'status',
-        'website',
-        'tax_code',
+        'working_time',
         'thumbnail',
-        'status',
+        'logo',
+        'website',
+        'lat',
+        'lng',
+        'legal_representative_name',
+        'legal_representative_id',
+        'tax_code',
         'medical_practice_license',
-        'bussiness_registration_certificate'
+        'issuance_date',
+        'issuance_place',
     ];
 
     public function user()

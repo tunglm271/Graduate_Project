@@ -1,47 +1,34 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import Pusher from "pusher-js";
-import api from "../service/api";
 import { Divider, IconButton } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SendIcon from "@mui/icons-material/Send";
-import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon"; // Icon emoji
+import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
-import Cookies from 'js-cookie';
-import { ChatMessage } from "./ChatMessage";
-import { PatientLayoutContext } from "../context/PateintLayoutProvider";
+import ChatMessage from "./ChatMessage";
+import { fetchMessages, sendMessage } from "../service/firebase/message";
+import AppContext from "../context/AppContext";
 
-const Chat = () => {
-    const { toggleChatbox, setToggleChatbox } = useContext(PatientLayoutContext);
+const NewChat = () => {
+    const { chatbox, setChatbox } = useContext(AppContext);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const messageInputRef = useRef(null);
     const pickerRef = useRef(null);
-    const userId = Cookies.get('user_id');
-    const contactId = userId == 5 ? 4 : 5;
+    const chatboxBodyRef = useRef(null);
 
     useEffect(() => {
-        api.get("/get-messages", { params: { contact: contactId } }).then((response) => {
-            setMessages(response.data.messages || []);
-        });
-        const pusher = new Pusher("d9c184afb3717502398b", { cluster: "ap1" });
-        const sortIds = [userId, contactId].sort((a, b) => a - b);
-        const channel = pusher.subscribe("conversation." + sortIds[0] + "." + sortIds[1]);
+        const unsubscribe = fetchMessages(chatbox?.contactId, setMessages);
+        return () => unsubscribe();
+    }, [chatbox]);
 
-        channel.bind("message", (data) => {
-            const parsedData = JSON.parse(data.message);
-            if (parsedData.user_id != userId) {
-                setMessages((prevMessages) => [...prevMessages, parsedData]);
-            }
-        });
+    useEffect(() => {
+        if (chatboxBodyRef.current) {
+            chatboxBodyRef.current.scrollTop = chatboxBodyRef.current.scrollHeight;
+        }
+    }, [messages]);  
 
-        return () => {
-            channel.unbind_all();
-            channel.unsubscribe();
-            pusher.disconnect();
-        };
-    }, []);
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -65,23 +52,14 @@ const Chat = () => {
         messageInputRef.current.style.height = messageInputRef.current.scrollHeight + "px";
     };
 
-    const sendMessage = async () => {
-        if (!input.trim()) return;
-        const message = input.trim();
-        const newMessage = {
-            user_id: userId,
-            message: message,
-            username: Cookies.get('name'),
-            avatar: Cookies.get('avatar'),
-            sent_at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        };
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-        try {
-            await api.post("/send-message", { message: input, contact: contactId });
-            setInput("");
-        } catch (error) {
-            console.error("Error sending message:", error);
-        }
+    const handleSendMessage = async () => {
+       if (!input.trim()) return;
+       await sendMessage({
+              id: chatbox.contactId,
+              name: chatbox.contactName,
+              avatar: chatbox.avatar,
+       }, input);
+       setInput("");
     };
 
     const addEmoji = (emoji) => {
@@ -89,15 +67,15 @@ const Chat = () => {
     };
 
     return (
-        <div className="chatbox" style={{ display: toggleChatbox ? "block" : "none" }}>
+        <div className="chatbox" style={{ display: chatbox != null ? "block" : "none" }}>
             <div className="chatbox-header">
-                <h4>Chat App</h4>
-                <IconButton sx={{ padding: "5px", color: "#007fbd" }} onClick={() => setToggleChatbox(false)}>
+                <h4>{chatbox?.contactName || "Chat app"}</h4>
+                <IconButton sx={{ padding: "5px", color: "#007fbd" }} onClick={() => setChatbox(null)}>
                     <CancelIcon sx={{ fontSize: "20px" }} />
                 </IconButton>
             </div>
             <Divider />
-            <div className="chatbox-body">
+            <div className="chatbox-body" ref={chatboxBodyRef}>
                 <ul>
                     {messages.map((msg, index) => (
                         <li key={index}>
@@ -124,14 +102,14 @@ const Chat = () => {
                     onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
                             e.preventDefault();
-                            sendMessage();
+                            handleSendMessage();
                         }
                     }}
                 />
                 <IconButton onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
                     <InsertEmoticonIcon sx={{ fontSize: "20px", color: "#007fbd" }} />
                 </IconButton>
-                <IconButton onClick={sendMessage} sx={{ color: "#007fbd" }}>
+                <IconButton onClick={handleSendMessage} sx={{ color: "#007fbd" }}>
                     <SendIcon sx={{ fontSize: "20px" }} />
                 </IconButton>
             </div>
@@ -139,4 +117,4 @@ const Chat = () => {
     );
 };
 
-export default Chat;
+export default NewChat;

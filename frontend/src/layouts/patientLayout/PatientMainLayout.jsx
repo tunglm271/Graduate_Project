@@ -4,9 +4,15 @@ import PatientHeader from '../../components/PatientHeader';
 import PatientSidebar from '../../components/PatientSidebar';
 import PatientFooter from '../../components/PatientFooter';
 import { PateintLayoutProvider } from '../../context/PateintLayoutProvider';
-import Chat from '../../components/Chat';
-const PatientMainLayout = () => {
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
+
+const PatientMainLayout = () => {
+    const location = useLocation();
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location]);
 
     return (
         <PateintLayoutProvider>
@@ -19,7 +25,6 @@ const PatientMainLayout = () => {
                         <PatientFooter /> 
                     </main>
                 </div>
-                <Chat />
             </div>
         </PateintLayoutProvider>
     );

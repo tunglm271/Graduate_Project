@@ -53,7 +53,6 @@ export const getChronicDiseases = async () => {
 }
 export const createHealthProfile = async (data, avatar) => {
   try {
-    console.log(avatar);
     const formData = new FormData();
     formData.append('avatar', avatar);
     formData.append("name", data.name);

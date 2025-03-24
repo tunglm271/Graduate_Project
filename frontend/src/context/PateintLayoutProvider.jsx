@@ -4,13 +4,11 @@ export const PatientLayoutContext = createContext();
 
 export const PateintLayoutProvider = ({ children }) => {
     const [sidebarCollapse, setSidebarCollapse] = useState(true);
-    const [toggleChatbox, setToggleChatbox] = useState(true);
     useEffect(() => {
         const content = document.getElementById("content")
         content.style.marginLeft = sidebarCollapse ? "220px" : "120px";
         content.style.width = sidebarCollapse ? "calc(100% - 220px)" : "calc(100% - 120px)";
     }, [sidebarCollapse]);
-
 
     useEffect(() => {
         const handleResize = () => {
@@ -27,7 +25,7 @@ export const PateintLayoutProvider = ({ children }) => {
       }, []);
 
     return (
-        <PatientLayoutContext.Provider value={{ sidebarCollapse, setSidebarCollapse, toggleChatbox, setToggleChatbox }}>
+        <PatientLayoutContext.Provider value={{ sidebarCollapse, setSidebarCollapse }}>
             {children}
         </PatientLayoutContext.Provider>
     );

@@ -7,20 +7,17 @@ import CallIcon from '@mui/icons-material/Call';
 import WcIcon from '@mui/icons-material/Wc';
 import AvatarFrame from '@images/avatar-frame.png';
 import HealthProfileHistory from './HealthProfileHistory';
-import { getProfileDetail } from '../../../service/healthProfileApi';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-
+import healthProfileApi from '../../../service/healthProfileApi';
 const HealthProfileDetail = () => {
     const { id } = useParams();
     const { t } = useTranslation();
     const [profile, setProfile] = useState(null);
     useEffect(() => {
-        getProfileDetail(id).then((data) => {
-            setProfile(data);
-            console.log(data);
-        }).catch((error) => {
-            console.log(error);
+        healthProfileApi.getById(id).then(res => {
+            setProfile(res.data);
+            console.log(res.data);
         })
     },[])
     const [tabValue, setTabValue] = useState(0);
@@ -101,7 +98,7 @@ const HealthProfileDetail = () => {
                         </div>
 
                         <Stack direction='row' spacing={2} justifyContent='center'>
-                            <Button variant='outlined'>Chỉnh sửa</Button>
+                            <Button variant='outlined' href={`/health-profile/${id}/edit`}>Chỉnh sửa</Button>
                             <Button variant='outlined' color="error">Xóa</Button>
                         </Stack>
                     </div>

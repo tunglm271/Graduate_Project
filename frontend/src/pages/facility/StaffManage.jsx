@@ -4,11 +4,20 @@ import AddIcon from '@mui/icons-material/Add';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { Link } from 'react-router-dom';
 import StaffDataGrid from '../../components/table/StaffDataGrid';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CreateDoctorDialog from '../../components/dialog/CreateDoctorDialog';
+import doctorApi from '../../service/Doctorapi';
 const StaffManage = () => {
-    const [dataCount, setDataCount] = useState(0);
+    const [ data, setData ] = useState([]);
     const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        doctorApi.getAll().then(res => {
+            console.log(res.data);
+            setData(res.data);
+        });
+    }, []);
+
     return (
         <div>
             <Box sx={{
@@ -23,7 +32,7 @@ const StaffManage = () => {
                     <div className='rounded-sm bg-gray-300' style={{padding: '0.3rem'}}>
                         <StethoscopeIcon />
                     </div>
-                    <p className='text-gray-500'><span className='font-bold text-xl text-black'>10</span> Bác sĩ</p>
+                    <p className='text-gray-500'><span className='font-bold text-xl text-black'>{data.length || 0}</span> Bác sĩ</p>
                 </div>
                 <Stack direction={"row"} spacing={2}>
                     <Button color='warning' variant='outlined' startIcon={<FilterListIcon />}>
@@ -35,7 +44,7 @@ const StaffManage = () => {
                 </Stack>
             </Box>
             <div style={{ padding: "1rem" }}>
-                <StaffDataGrid setDataCount={setDataCount}/>
+                <StaffDataGrid setData={setData} data={data}/>
             </div>
             <CreateDoctorDialog open={open} onClose={() => setOpen(false)}/>
         </div>

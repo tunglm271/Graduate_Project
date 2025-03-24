@@ -31,24 +31,22 @@ class HealthProfileController extends Controller
 
     public function create(Request $request)
     {   
-        
-        $healthProfile = new HealthProfile();
-        $healthProfile->user_id = auth()->id();
-        $healthProfile->name = $request->input('name');
-        $healthProfile->relationship = $request->input('relationship');
-        $healthProfile->date_of_birth = $request->input('dateOfBirth');
-        $healthProfile->gender = $request->input('gender');
-        $healthProfile->height = $request->input('height');
-        $healthProfile->weight = $request->input('weight');
-        $healthProfile->allergies = null;
-        if($request->file('avatar')) {
+        $validatedData = $request->validated();
+
+        $healthProfile = new HealthProfile($validatedData);
+        $healthProfile->user_id = $request->user()->id;
+    
+        if ($request->hasFile('avatar')) {
             $uploadedFileUrl = cloudinary()->upload($request->file('avatar')->getRealPath())->getSecurePath();
             $healthProfile->avatar = $uploadedFileUrl;
         }
+    
         $healthProfile->save();
-
-        // Return a response
-        return response()->json(['message' => 'Health profile created successfully'], 201);
+    
+        return response()->json([
+            'message' => 'Health profile created successfully',
+            'health_profile_id' => $healthProfile->id
+        ], 201);
     }
 
 

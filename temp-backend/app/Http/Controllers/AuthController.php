@@ -44,13 +44,25 @@ class AuthController extends Controller
                         'relationship' => 'Self',
                     ]);
                     break;
-                case 3:
-                    $user->doctor()->create();
-                    break;
                 case 4:
                     $user->medicalFacility()->create([
                         'facility_name' => $request->facility_name,
+                        'phone' => $request->phone ?? null,
                         'address' => $request->address,
+                        'description' => $request->description ?? null,
+                        'status' => 'pending',
+                        'working_time' => $request->working_time ?? null,
+                        'thumbnail' => $request->thumbnail ?? null,
+                        'logo' => $request->logo ?? null,
+                        'website' => $request->website ?? null,
+                        'lat' => $request->lat ?? null,
+                        'lng' => $request->lng ?? null,
+                        'legal_representative_name' => $request->legal_representative_name,
+                        'legal_representative_id' => $request->legal_representative_id,
+                        'tax_code' => $request->tax_code ?? null,
+                        'medical_practice_license' => $request->medical_practice_license,
+                        'issuance_date' => $request->issuance_date,
+                        'issuance_place' => $request->issuance_place,
                     ]);
                     break;
             }

@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 const FacilityVerticalCard = ({facility}) => {
     return (
         <div className="facility-vertical-card">
-            <img src={facility.avatar} alt="" />
-            <h3>{facility.name}</h3>
+            <img src={facility.logo} alt="" />
+            <h3>{facility.facility_name}</h3>
             <p>
                 <LocationOnIcon />
                 {facility.address}
@@ -14,6 +14,9 @@ const FacilityVerticalCard = ({facility}) => {
                 {/* <PhoneIcon /> */}
                 {facility.phone}
             </p>
+            <Link to={`/clinic/${facility.id}`} className="btn btn-primary">
+                Xem chi tiết
+            </Link>
             <Link to={`/booking/${facility.id}`} className="btn btn-primary">
                 Đặt lịch ngay
             </Link>

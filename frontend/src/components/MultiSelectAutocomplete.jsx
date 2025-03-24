@@ -4,7 +4,6 @@ import TextField from "@mui/material/TextField";
 const MultiSelectAutocomplete = ({ options, label, onChange, getOptionLabel, ...params }) => {
   return (
     <Autocomplete
-    className="bg-gray-600"
       multiple
       options={options}
       getOptionLabel={getOptionLabel}

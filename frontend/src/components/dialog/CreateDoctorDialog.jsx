@@ -11,14 +11,17 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
+import doctorApi from "../../service/Doctorapi";
+import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 
 const specialties = ["Cardiology", "Neurology", "Orthopedics", "Pediatrics"];
 
 const CreateDoctorDialog = ({open, onClose}) => {
+    const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
     const [activeStep, setActiveStep] = useState(0);
     const [formData, setFormData] = useState({
-      fullName: "",
-      specialty: "",
+      name: "",
+      specialization: "",
       position: "",
       email: "",
       phone: "",
@@ -34,8 +37,15 @@ const CreateDoctorDialog = ({open, onClose}) => {
       };
 
     const handleSubmit = () => {
-    console.log("Doctor Data:", formData);
-    onClose();
+        console.log("Doctor Data:", formData);
+        doctorApi.create(formData)
+        .then(() => {
+            showSuccessSnackbar("Doctor created successfully");
+        })
+        .catch((error) => {
+            showErrorSnackbar("Failed to create doctor");
+        });
+        onClose();
     };
 
 
@@ -55,8 +65,8 @@ const CreateDoctorDialog = ({open, onClose}) => {
                 <TextField
                 fullWidth
                 label="Full Name"
-                name="fullName"
-                value={formData.fullName}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 margin="normal"
                 />
@@ -64,8 +74,8 @@ const CreateDoctorDialog = ({open, onClose}) => {
                 fullWidth
                 select
                 label="Specialty"
-                name="specialty"
-                value={formData.specialty}
+                name="specialization"
+                value={formData.specialization}
                 onChange={handleChange}
                 margin="normal"
                 >
@@ -115,8 +125,8 @@ const CreateDoctorDialog = ({open, onClose}) => {
             )}
             {activeStep === 2 && (
             <div>
-                <p><strong>Full Name:</strong> {formData.fullName}</p>
-                <p><strong>Specialty:</strong> {formData.specialty}</p>
+                <p><strong>Full Name:</strong> {formData.name}</p>
+                <p><strong>Specialty:</strong> {formData.specialization}</p>
                 <p><strong>Position:</strong> {formData.position}</p>
                 <p><strong>Email:</strong> {formData.email}</p>
                 <p><strong>Phone:</strong> {formData.phone}</p>

@@ -11,15 +11,24 @@ import DnaIcon from "@icon/service-category/DnaIcon";
 import ToothIcon from "@icon/service-category/ToothIcon";
 import GeneralIcon from "@icon/service-category/GeneralIcon";
 import InternalMedicineIcon from "@icon/service-category/InternalMedicineIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import VerticalServiceCard from "../../../components/card/VerticalServiceCard";
 import FacilityVerticalCard from "../../../components/card/FacilityVerticalCard";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { facilities } from "../../../utlis/fakeData";
+import facilityApi from "../../../service/FacilityApi";
 const Services = () => {
     const [filterOpen, setFilterOpen] = useState(false);
+    const [facilityList, setFacilityList] = useState([]);
+
+    useEffect(() => {
+        facilityApi.getAll().then((res) => {
+            console.log(res.data);
+            setFacilityList(res.data);
+        });
+    }, []);
+
     const settings = {
         dots: true,
         infinite: true,
@@ -100,10 +109,9 @@ const Services = () => {
                 <h2>Cơ sở y tế đặt khám nhiều nhất</h2>
             </div>
             <div className="flex justify-between">
-                <FacilityVerticalCard facility={facilities[0]}/>
-                <FacilityVerticalCard facility={facilities[1]}/>
-                <FacilityVerticalCard facility={facilities[2]}/>
-                <FacilityVerticalCard facility={facilities[0]}/>
+                {facilityList.map((facility, index) => (
+                    <FacilityVerticalCard key={index} facility={facility} />
+                ))}
             </div>
 
             <FilterPopUp open={filterOpen} onClose={() => setFilterOpen(false)} />

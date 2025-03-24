@@ -8,7 +8,10 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import LanguageSelect from "./LanguageSelect";
 import AvatarWithStatus from "./AvatarWithStatus";
 import { PatientLayoutContext } from "../context/PateintLayoutProvider";
+import ConversationList from "./ConversationList";
+import { getUser } from "../utlis/auth";
 const PatientHeader = () => {
+    const user = getUser();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const header = useRef(null);
@@ -114,6 +117,8 @@ const PatientHeader = () => {
                         }}/>
                     </Badge>
                 </IconButton>
+
+                <ConversationList />
                 
                 <Button 
                     sx={{
@@ -127,13 +132,13 @@ const PatientHeader = () => {
                     id="user-menu-btn"
                     onClick={userMenuClick}
                 >
-                    <AvatarWithStatus avatar="https://material-ui.com/static/images/avatar/1.jpg" />
+                    <AvatarWithStatus avatar={user.avatar} />
                     <Typography display={{
                         xs: "none",
                         sm: "none",
                         md: "none",
                         lg: "block",
-                    }}>Remy Sharp</Typography>
+                    }}>{user.name}</Typography>
                     <ArrowDropDownIcon
                         sx={{
                             transition: 'transform 0.3s ease-in-out',

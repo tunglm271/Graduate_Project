@@ -9,23 +9,26 @@ use App\Http\Controllers\HealthProfileController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\PatientController;
-use App\Http\Controllers\ChatController;
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
+use App\Http\Controllers\DiseaseController;
+use App\Http\Controllers\AllergyController;
+use App\Http\Controllers\MedicineController;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('medical-facilities', MedicalFacilityController::class)->except('store');
-    Route::post('/send-message', [ChatController::class, 'sendMessage']);
+    Route::get('my-facility', [MedicalFacilityController::class, 'detail']);
     Route::apiResource('doctors', DoctorController::class);
     Route::apiResource('patients', PatientController::class)->except('store');
     Route::apiResource('schedules', ScheduleController::class);
     Route::apiResource('medical-services', MedicalServiceController::class);
     Route::apiResource('health-profiles', HealthProfileController::class);
-
-    Route::get('/get-messages', [ChatController::class, 'getMessages']);
+    Route::get('diseases', [DiseaseController::class, 'index']);
+    Route::get('allergies', [AllergyController::class, 'index']);
+    Route::get('medicines', [MedicineController::class, 'index']);
 });
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+
+
