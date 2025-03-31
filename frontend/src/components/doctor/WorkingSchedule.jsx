@@ -1,5 +1,5 @@
 import { useCalendarApp, ScheduleXCalendar } from '@schedule-x/react';
-import { createEventRecurrencePlugin } from "@schedule-x/event-recurrence";
+import { createEventRecurrencePlugin, createEventsServicePlugin  } from "@schedule-x/event-recurrence";
 import { createCalendarControlsPlugin } from '@schedule-x/calendar-controls'
 import {
   createViewDay,
@@ -7,49 +7,71 @@ import {
   createViewMonthGrid,
   createViewWeek,
 } from '@schedule-x/calendar';
-import { createEventsServicePlugin } from '@schedule-x/events-service';
 import '@schedule-x/theme-default/dist/index.css';
 import { useState, useEffect } from 'react';
-import { Menu, MenuItem, Typography } from '@mui/material';
+import { Menu, MenuItem } from '@mui/material';
 import "./schedule.css";
+import doctorApi from '../../service/Doctorapi';
+
+function createSchedule(data) {
+  const dayMap = {
+    'Thứ Hai': 'MO',
+    'Thứ Ba': 'TU',
+    'Thứ Tư': 'WE',
+    'Thứ Năm': 'TH',
+    'Thứ Sáu': 'FR',
+    'Thứ Bảy': 'SA',
+    'Chủ Nhật': 'SU',
+  };
+
+  return data.map((item) => {
+    const dayCode = dayMap[item.day_of_week] || 'MO';
+    const startTime = item.start_time.slice(0, 5);
+    const endTime = item.end_time.slice(0, 5);
+
+    return {
+      id: item.id,
+      title: 'Working Schedule',
+      start: `2025-01-01 ${startTime}`,
+      end: `2025-01-01 ${endTime}`,
+      location: "Phòng khám",
+      rrule: 'FREQ=WEEKLY;BYDAY=' + dayCode,
+    };
+  });
+}
 
 const WorkingSchedule = () => {
   const eventsService = useState(() => createEventsServicePlugin())[0];
 
-  // State lưu vị trí hiển thị Menu
   const [menuPosition, setMenuPosition] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [schedules, setSchedules] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    doctorApi.getDoctorSchedule()
+      .then((response) => {
+        const convertedSchedules = createSchedule(response.data);
+        setSchedules(convertedSchedules);
+        eventsService.set(convertedSchedules);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching schedules:", error);
+        setLoading(false);
+      });
+  }, []);
 
   const handleClickDateTime = (dateTime) => {
-    
-    // Tách ngày và giờ từ datetime
     const [date, time] = dateTime.split(' ');
     const [hour, minute] = time.split(':').map(Number);
     setSelectedDate(date);
-
-    // Tìm cột chứa ngày được click
     const dayColumn = document.querySelector(`[data-time-grid-date="${date}"]`);
-    
     if (dayColumn) {
       const rect = dayColumn.getBoundingClientRect();
-      const columnTop = rect.top;
-      const columnLeft = rect.left;
-
-      // 📌 **Tính toán vị trí theo thời gian**
-      const columnHeight = rect.height; // Chiều cao của cột trong lịch
-      const minutesPerDay = 14 * 60; // Tổng số phút hiển thị
-
-      // Tính toán vị trí dựa trên số phút từ 06:00 đến giờ hiện tại
-      const currentMinutes = (hour - 6) * 60 + minute;
-      const positionY = (currentMinutes / minutesPerDay) * columnHeight;
-
-      setMenuPosition({
-        top: columnTop + positionY,
-        left: columnLeft + 100, // Dịch sang phải một chút cho đẹp
-      });
+      const positionY = ((hour - 6) * 60 + minute) / (14 * 60) * rect.height;
+      setMenuPosition({ top: rect.top + positionY, left: rect.left + 100 });
     } else {
-      // Nếu không tìm thấy, hiển thị menu ở giữa màn hình
       setMenuPosition({ top: window.innerHeight / 2, left: window.innerWidth / 2 });
     }
   };
@@ -57,46 +79,15 @@ const WorkingSchedule = () => {
   const handleClose = () => {
     setMenuPosition(null);
   };
-  const calendarControls =  useState(() => createCalendarControlsPlugin())[0];
 
+  const calendarControls = useState(() => createCalendarControlsPlugin())[0];
   const calendar = useCalendarApp({
-    dayBoundaries: {
-      start: '06:00',
-      end: '20:00',
-    },
-    weekOptions: {
-      gridHeight: 1000,
-    },
-    callbacks: {
-      onClickDateTime: handleClickDateTime, // Gọi khi click vào một slot thời gian
-    },
+    dayBoundaries: { start: '06:00', end: '20:00' },
+    weekOptions: { gridHeight: 1000 },
+    callbacks: { onClickDateTime: handleClickDateTime },
     views: [createViewDay(), createViewWeek(), createViewMonthGrid(), createViewMonthAgenda()],
-    events: [
-      {
-        id: '1',
-        title: 'Event 1',
-        start: '2023-12-16',
-        end: '2023-12-16',
-      },
-      {
-        id: 123,
-        title: 'Bi-Weekly Event Monday and Wednesday',
-        start: '2024-02-05 08:00',
-        end: '2024-02-05 11:00',
-        rrule: 'FREQ=WEEKLY;BYDAY=MO,WE',
-      },
-      {
-        id: 132,
-        title: 'Bi-Weekly Event Test',
-        start: '2024-02-05 14:00',
-        end: '2024-02-05 15:00',
-        rrule: 'FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE',
-      },
-    ],
     plugins: [eventsService, createEventRecurrencePlugin(), calendarControls],
-
   });
-
 
   useEffect(() => {
     eventsService.getAll();
@@ -108,15 +99,12 @@ const WorkingSchedule = () => {
     calendarControls.setDate(newDate);
     const dayColumn = document.querySelector(`[data-time-grid-date="${newDate}"]`);
     const rect = dayColumn.getBoundingClientRect();
-    const left = rect.left;
-    setMenuPosition({ ...menuPosition, left: left + 100 });
-  }
+    setMenuPosition({ top: menuPosition.top, left: rect.left + 100 });
+  };
 
   return (
     <div>
       <ScheduleXCalendar calendarApp={calendar} />
-
-      {/* MUI Menu */}
       <Menu
         open={Boolean(menuPosition)}
         onClose={handleClose}
@@ -132,7 +120,7 @@ const WorkingSchedule = () => {
             onChange={handleDateChange} 
           />
         </div>
-        <MenuItem disabled>Thời gian: {selectedDate}</MenuItem>
+        <MenuItem disabled>Thời gian: {selectedDate?.toDateString()}</MenuItem>
         <MenuItem onClick={() => alert(`Thêm sự kiện vào ${selectedDate}`)}>Thêm sự kiện</MenuItem>
         <MenuItem onClick={handleClose}>Đóng</MenuItem>
       </Menu>

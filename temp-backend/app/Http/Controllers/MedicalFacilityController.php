@@ -22,7 +22,8 @@ class MedicalFacilityController extends Controller
 
     public function show(MedicalFacility $medicalFacility)
     {
-        return response()->json($medicalFacility);
+
+        return response()->json($medicalFacility->load(['services','doctors']));
     }
 
 

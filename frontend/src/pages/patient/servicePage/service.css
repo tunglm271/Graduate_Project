@@ -176,6 +176,7 @@
 }
 
 .vertical-service-card {
+    display: block;
     background-color: white;
     box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
     border-radius: 10px;

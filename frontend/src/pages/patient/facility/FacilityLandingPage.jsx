@@ -11,30 +11,7 @@ import { useContext, useEffect, useState } from "react";
 import facilityApi from "../../../service/FacilityApi";
 import Map from "../../../components/Map";
 
-
-const doctor = [
-    {
-        name: "Nguyễn Văn A",
-        position: "Bác sĩ chuyên khoa",
-        specialization: "Nhi khoa",
-        avatar: "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
-        experiment: "10 năm kinh nghiệm"
-    },
-    {
-        name: "Nguyễn Văn B",
-        position: "Bác sĩ chuyên khoa",
-        specialization: "Nội tiết - tiêu hóa",
-        avatar: "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
-        experiment: "10 năm kinh nghiệm"
-    },
-    {
-        name: "Nguyễn Văn C",
-        position: "Bác sĩ chuyên khoa",
-        specialization: "Da liễu",
-        avatar: "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
-        experiment: "10 năm kinh nghiệm"
-    },
-]
+const doctorDefaultImg = "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
 
 
 const FacilityLandingPage = () => {
@@ -51,14 +28,8 @@ const FacilityLandingPage = () => {
 
 
     const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
         slidesToShow: 4,
         slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 3000,
-        arrows: true,
       };
     
 
@@ -104,9 +75,9 @@ const FacilityLandingPage = () => {
 
                     <div className="facility-doctors">
                         <ul>
-                            {doctor.map((doc, index) => (
+                            {facility?.doctors && facility.doctors.map((doc, index) => (
                                 <li key={index} className="flex gap-4 items-center justify-start" style={{padding: "1rem"}}>
-                                    <img src={doc.avatar} alt="doctor-avatar" className="doctor-avatar" />
+                                    <img src={doc.avatar || doctorDefaultImg} alt="doctor-avatar" className="doctor-avatar" />
                                     <div>
                                         <p className="font-semibold">{doc.name}</p>
                                         <p>{doc.position}</p>
@@ -133,13 +104,9 @@ const FacilityLandingPage = () => {
                             color: "#007bff"
                         }}>Các dịch vụ</p>
                         <Slider {...settings} style={{padding: "5px 0"}}>
-                            <VerticalServiceCard />
-                            <VerticalServiceCard />
-                            <VerticalServiceCard />
-                            <VerticalServiceCard />
-                            <VerticalServiceCard />
-                            <VerticalServiceCard />
-                            <VerticalServiceCard />
+                           {facility.services?.map((service, index) => (
+                                <VerticalServiceCard key={index} service={service} />
+                            ))}
                         </Slider>
                     </div>
                 </div>

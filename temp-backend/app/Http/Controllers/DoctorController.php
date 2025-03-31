@@ -7,6 +7,7 @@ use App\Http\Requests\StoreDoctorRequest;
 use App\Http\Requests\UpdateDoctorRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Schedule;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DoctorMail;
@@ -54,6 +55,19 @@ class DoctorController extends Controller
         ];
 
         Mail::to($fields['email'])->queue(new DoctorMail($data));
+        if($request->input('schedule')) {
+            $schedule = json_decode($request->input('schedule'));
+            foreach ($schedule as $day => $times) {
+                foreach ($times as $time) {
+                    Schedule::create([
+                        'doctor_id' => $doctor->doctor->id,
+                        'day_of_week' => $day,
+                        'start_time' => $time->start,
+                        'end_time' => $time->end,
+                    ]);
+                }
+            }
+        }
 
         return response()->json($doctor, 201);
     }
@@ -86,5 +100,10 @@ class DoctorController extends Controller
     public function destroy(Doctor $doctor)
     {
         //
+    }
+
+    public function getDoctorSchedule(Request $request) {
+        $schedules = $request->user()->doctor->schedule;
+        return response()->json($schedules);
     }
 }

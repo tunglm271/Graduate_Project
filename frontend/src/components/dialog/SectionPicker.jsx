@@ -33,74 +33,67 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   }));
 
 
-const SectionPicker = () => {
+const SectionPicker = ({ sectionList, onSelectSection, selectedSection }) => {
     const [shift, setShift] = useState('morning');
-    const sectionListMorning = ['07:00 - 07:30', '07:30 - 08:00', '08:00 - 08:30', '08:30 - 09:00', '09:00 - 09:30', '09:30 - 10:00', '10:00 - 10:30', '10:30 - 11:00', '11:00 - 11:30', '11:30 - 12:00'];
-    const sectionListAftermoon = ['12:00 - 13:00', '13:00 - 14:00', '14:00 - 15:00', '15:00 - 16:00', '16:00 - 17:00'];
-    const sectionListNight = ['17:00 - 18:00', '18:00 - 19:00']; 
-    const [sectionList, setSectionList] = useState(sectionListMorning);
-    const [selectedSection, setSelectedSection] = useState();
-    useEffect(() => {
-        if (shift === 'morning') {
-            setSectionList(sectionListMorning);
-        } else if (shift === 'aftermoon') {
-            setSectionList(sectionListAftermoon);
-        } else {
-            setSectionList(sectionListNight);
-        }
-        setSelectedSection();
-    }, [shift]);
-
-
     const handleShift = (event, newShift) => {
         setShift(newShift);
     }
 
     return (
-        <div style={{margin: '20px 0'}}>
-             <Paper
-                elevation={0}
-                sx={(theme) => ({
-                display: 'flex',
-                border: `1px solid ${theme.palette.divider}`,
-                flexWrap: 'wrap',
-                width: 'fit-content',
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                })}
-            >
-                <StyledToggleButtonGroup
-                size="small"
-                value={shift}
-                exclusive
-                onChange={handleShift}
-                aria-label="text alignment"
-                >
-                <ToggleButton value="morning" aria-label="morning">
-                    Ca sáng
-                </ToggleButton>
-                <ToggleButton value="aftermoon" aria-label="aftermoon">
-                    Ca chiều
-                </ToggleButton>
-                <ToggleButton value="night" aria-label="night">
-                    Ca tối
-                </ToggleButton>
-                </StyledToggleButtonGroup>
-            </Paper>
+      <div style={{margin: '20px 0'}}>
+         <Paper
+          elevation={0}
+          sx={(theme) => ({
+          display: 'flex',
+          border: `1px solid ${theme.palette.divider}`,
+          flexWrap: 'wrap',
+          width: 'fit-content',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          })}
+        >
+          <StyledToggleButtonGroup
+          size="small"
+          value={shift}
+          exclusive
+          onChange={handleShift}
+          aria-label="text alignment"
+          >
+          <ToggleButton value="morning" aria-label="morning">
+            Ca sáng
+          </ToggleButton>
+          <ToggleButton value="aftermoon" aria-label="aftermoon">
+            Ca chiều
+          </ToggleButton>
+          <ToggleButton value="night" aria-label="night">
+            Ca tối
+          </ToggleButton>
+          </StyledToggleButtonGroup>
+        </Paper>
 
-            <div className="section-grid">
-                {sectionList.map((section, index) => (
-                    <div key={index} className="section-item">
-                        <button className="section-option" 
-                          style={{backgroundColor: selectedSection === index ? '#007bff' : 'white', color: selectedSection === index ? 'white' : 'black'}}
-                          onClick={() => setSelectedSection(index)}
-                        >
-                          {section}
-                        </button>
-                    </div>
-                ))}
-            </div>
+        <div className="section-grid">
+          { sectionList.length === 0 ? (
+            <p className="text-center w-full">
+                Không có ca khám nào trong ngày này
+            </p>
+          ) 
+          : 
+          sectionList.map((section, index) => {
+            const formatTime = (time) => time.slice(0, 5);
+            const isSelected = selectedSection?.start_time === section.start_time && selectedSection?.end_time === section.end_time;
+            return (
+              <div key={index} className="section-item">
+                <button className="section-option" 
+                    style={{backgroundColor: isSelected ? '#007bff' : 'white', color: isSelected ? 'white' : 'black'}}
+                    onClick={() => onSelectSection(section)}
+                >
+                  {formatTime(section.start_time)} - {formatTime(section.end_time)}
+                </button>
+              </div>
+            );
+          })}
         </div>
+      </div>
     );
 }
 

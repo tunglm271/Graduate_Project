@@ -1,6 +1,6 @@
 import "./service.css"
 import { Breadcrumbs, Divider, List, ListItem, ListItemText } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Typography from '@mui/material/Typography';
 import serviceImg from "../../../assets/images/service.png";
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
@@ -8,26 +8,36 @@ import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import {Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
 import BookingPopUp from "../../../components/dialog/BookingPopUp";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import medicalServiceApi from "../../../service/medicalServiceAPi";
 const ServicePage = () => {
+    const { id } = useParams();
+    const [service, setService] = useState({});
     const [toogleBookingPopUp, setToogleBookingPopUp] = useState(false);
 
+    useEffect(() => {
+        medicalServiceApi.getById(id).then((res) => {
+            setService(res.data);
+            console.log(res.data);
+        }).catch((err) => {
+            console.log(err);
+        })
+    },[id])
 
     return (
         <div id='service-page'>
             <Breadcrumbs aria-label="breadcrumb">
                 <Link to="/services" style={{ color: '#007bff' }}>Dịch vụ</Link>
-                <Typography sx={{ color: 'text.primary', fontStyle: 'italic' }}>Gói tầm soát ưng thư nâng cao cho bệnh nhân dưới 40</Typography>
+                <Typography sx={{ color: 'text.primary', fontStyle: 'italic' }}>{service?.name}</Typography>
             </Breadcrumbs>
 
 
             <div id='service-content'>
                 <img src={serviceImg} alt="" />
                 <div className="service-title">
-                    <h3>Gói tầm soát ưng thư nâng cao cho bệnh nhân dưới 40</h3>
-                    <h2 style={{display: 'flex', alignItems: 'center', gap: '20px', marginTop: '10px'}}>1,355,000 đ <span style={{background: 'red', color:'white', fontSize: '14px', padding: '3px', borderRadius: '15px'}}>-9%</span></h2>
-                    <h4>1,485,000 đ</h4>
+                    <h3>{service?.name}</h3>
+                    <h2 style={{display: 'flex', alignItems: 'center', gap: '20px', marginTop: '10px'}}>{service?.price} đ <span style={{background: 'red', color:'white', fontSize: '14px', padding: '3px', borderRadius: '15px'}}>-9%</span></h2>
+                    <h4>{service?.price} đ</h4>
                 </div>
 
                 <div className='service-infor'>
@@ -43,7 +53,7 @@ const ServicePage = () => {
                             </li>
                             <li>
                                 <span>Thời gian thực hiện</span>
-                                <span>60 phút</span>
+                                <span>{service?.duration} phút</span>
                             </li>
                             <li>
                                 <span>Địa điểm thực hiện</span>
@@ -51,7 +61,7 @@ const ServicePage = () => {
                             </li>
                             <li>
                                 <span>Giới tính</span>
-                                <span>Nam</span>
+                                <span>{service?.service_audience_gender}</span>
                             </li>
                             <li>
                                 <span>Độ tuổi</span>
@@ -91,12 +101,7 @@ const ServicePage = () => {
                             <span>Mô tả chi tiết</span>
                         </h4>
                         <Divider />
-                        <p>Dịch vụ được cung cấp từ Thứ 2 đến Thứ 7 hàng tuần, khung giờ từ 7:00 sáng đến 5:00 chiều. </p>
-                        <p>Dịch vụ khám sức khỏe tổng quát định kỳ giúp phát hiện sớm các vấn đề tiềm ẩn về sức khỏe, hỗ trợ bệnh nhân nắm bắt tình trạng cơ thể, từ đó đưa ra các giải pháp kịp thời nhằm cải thiện và duy trì sức khỏe.</p>
-                        <p>Nội dung chính của dịch vụ:
-                            Khám lâm sàng toàn diện, bao gồm: kiểm tra huyết áp, đo chỉ số BMI, kiểm tra nhịp tim, phổi và các cơ quan khác.
-                            Xét nghiệm máu để phát hiện các bất thường về chức năng gan, thận, đường huyết, mỡ máu,...
-                            Siêu âm ổ bụng, đo điện tim, và chụp X-quang nếu cần.</p>
+                        <p>{service?.description}</p>
                 </div>
             </div>
 
@@ -106,28 +111,7 @@ const ServicePage = () => {
                     <BookmarksIcon fontSize='small' color='primary' />
                     <span>Hạng mục xét nghiệm</span>
                 </h4>
-
-                {/* <LabTestDropDown title={"Xét nghiệm tổng máu 27 chỉ số"}>
-                    Đánh giá các chỉ số sau trong máu:
-                       <ul>
-                        <li>AST(GOT)</li>
-                        <li>Billrubin trực tiếp</li>
-                        <li>Billrubin gián tiếp</li>
-                        <li>GGT</li>
-                        <li>glucose máu</li>
-                       </ul>
-                </LabTestDropDown>
-                <LabTestDropDown title={"Xét nghiệm tổng phân tích nước tiểu"}>
-                    Đánh giá các chỉ số sau trong máu:
-                       <ul>
-                        <li>AST(GOT)</li>
-                        <li>Billrubin trực tiếp</li>
-                        <li>Billrubin gián tiếp</li>
-                        <li>GGT</li>
-                        <li>glucose máu</li>
-                       </ul>
-                </LabTestDropDown> */}
-                <Accordion>
+                <Accordion sx={{ boxShadow: 'none' }}>
                     <AccordionSummary expandIcon={<ArrowDropDownIcon />}
                         sx={{
                             boxShadow: 'none', // Remove the shadow
@@ -148,7 +132,7 @@ const ServicePage = () => {
                         </ul>
                     </AccordionDetails>
                 </Accordion>
-                <Accordion>
+                <Accordion sx={{ boxShadow: 'none' }}>
                     <AccordionSummary expandIcon={<ArrowDropDownIcon />}
                         sx={{
                             boxShadow: 'none', // Remove the shadow
@@ -177,7 +161,7 @@ const ServicePage = () => {
             </div>
 
 
-            <BookingPopUp open={toogleBookingPopUp} onClose={() => setToogleBookingPopUp(false)} />
+            <BookingPopUp open={toogleBookingPopUp} onClose={() => setToogleBookingPopUp(false)} facility={service?.medical_facility} id={id}/>
         </div>
     );
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\MedicalService;
-
+use App\Models\Appointment;
 class MedicalFacility extends Model
 {
     /** @use HasFactory<\Database\Factories\Role\MedicalFacilityFactory> */
@@ -46,5 +46,10 @@ class MedicalFacility extends Model
     public function doctors()
     {
         return $this->hasMany(Doctor::class);
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'facility_id');
     }
 }

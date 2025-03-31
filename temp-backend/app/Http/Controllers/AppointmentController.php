@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use App\Http\Requests\StoreAppointmentRequest;
 use App\Http\Requests\UpdateAppointmentRequest;
-
+use App\Models\MedicalService;
+use Illuminate\Http\Request;
 class AppointmentController extends Controller
 {
     /**
@@ -16,12 +17,30 @@ class AppointmentController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    public function indexByFacility(Request $request)
+    {
+        return $request->user()->medicalFacility->appointments()->with('healthProfile')->get();
+    }
+
+
     public function store(StoreAppointmentRequest $request)
     {
-        //
+        $fields = $request->validated();
+        $facility = MedicalService::find($fields['medical_service_id'])->medicalFacility;
+        Appointment::create([
+            'medical_service_id' => $fields['medical_service_id'],
+            'health_profile_id' => $fields['health_profile_id'],
+            'facility_id' => $facility->id,
+            'date' => $fields['date'],
+            'start_time' => $fields['start_time'],
+            'end_time' => $fields['end_time'],
+            'reason' => $fields['reason'] ?? null,
+            'status' => "pending",
+        ]);
+
+        return response()->json([
+            'message' => 'Appointment created successfully',
+        ], 201);
     }
 
     /**

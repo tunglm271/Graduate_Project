@@ -12,6 +12,7 @@ import StepLabel from '@mui/material/StepLabel';
 import facilityImg from '../../assets/images/facility.jpg';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import { Autocomplete, TextField, Button, styled, IconButton } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import dayjs from 'dayjs';
 import "./BookingPopUp.css";
 import MonthPicker from './monthPicker';
@@ -19,6 +20,10 @@ import DatePicker from './DatePicker';
 import SectionPicker from './SectionPicker';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import DeleteIcon from '@mui/icons-material/Delete';
+import healthProfileApi from '../../service/healthProfileApi';
+import medicalServiceApi from '../../service/medicalServiceAPi';
+import useCustomSnackbar from '../../hooks/useCustomSnackbar';
+import appointmentApi from '../../service/appointmentApi';
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -36,40 +41,25 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-export default function BookingPopUp({open, onClose}) {
+export default function BookingPopUp({open, onClose, facility, id}) {
+    const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
+    const [profileOption, setProfileOption] = useState([]);
+    useEffect(() => {
+      healthProfileApi.getAll().then((res) => {
+        setProfileOption(res.data);
+        console.log(res.data);
+      })
+      },[])
 
-    const profileOption = [
-      {
-        name: 'A',
-        fullName: 'Nguyễn Văn A',
-        dateOfBirth: '01/01/1990',
-        gender: "Nam",
-        phone: '0123456789',
-        relationship: "Tôi"
-      },
-      {
-        name: 'B',
-        fullName: 'Nguyễn Văn B',
-        dateOfBirth: '01/01/1990',
-        gender: "Nữ",
-        phone: '0123456789',
-        relationship: "Em gái"
-      },
-      {
-        name: 'C',
-        fullName: 'Nguyễn Văn C',
-        dateOfBirth: '12/01/1970',
-        gender: "Nam",
-        phone: '0123456789',
-        relationship: "Bố"
-      }
-    ]
 
     const [chosenProfile, setChosenProfile] = useState(profileOption[0]);
     const [month, setMonth] = useState(new Date());
     const [date, setDate] = useState(dayjs());
     const [activeStep, setActiveStep] = useState(0);
     const [postedFiles, setPostedFiles] = useState([]);
+    const [sectionList, setSectionList] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedSection, setSelectedSection] = useState(null);
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
@@ -81,14 +71,50 @@ export default function BookingPopUp({open, onClose}) {
           onClose();
           setChosenProfile([]);
         }
+        if(activeStep == 2) {
+          handleSubmit();
+        }
         setActiveStep(newActiveStep);
-      };
+    };
+
+    useEffect(() => {
+      if (activeStep === 1) {
+        setLoading(true);
+        medicalServiceApi.getValiableSlots(id, date.format('YYYY-MM-DD')).then((res) => {
+          setSelectedSection(null);
+          setSectionList(res.data);
+          console.log(res.data);
+          setLoading(false);
+        }).catch((err) => {
+          console.log(err);
+        })
+      }
+    },[date])
 
     const steps = [
         'Nhập thông tin khám',
         'Chọn ngày khám',
         'Tài liệu đính kèm',
-      ];
+    ];
+
+    const handleSubmit = () => {
+      const formData = new FormData();
+      formData.append('health_profile_id', chosenProfile.id);
+      formData.append('medical_service_id', id);
+      formData.append('date', date.format('YYYY-MM-DD'));
+      formData.append('start_time', selectedSection.start_time);
+      formData.append('end_time', selectedSection.end_time);
+      appointmentApi.create(formData).then((res) => {
+        console.log(res.data);
+        showSuccessSnackbar("Đặt lịch khám thành công!");
+        setPostedFiles([]);
+        setActiveStep(0);
+        onClose();
+      }).catch((err) => {
+        console.log(err);
+        showErrorSnackbar(err.response.data.message);
+      })
+    }
 
 
   return (
@@ -120,8 +146,11 @@ export default function BookingPopUp({open, onClose}) {
                 <div className='facility-popup-card'>
                     <img src={facilityImg} alt="" />
                     <div>
-                        <h4>Phòng khám Đa khoa Hà Nội</h4>
-                        <p style={{display: 'flex', alignItems: 'center', fontSize: '14px'}}><LocationOnIcon sx={{color: "#007bff"}}/>Địa chỉ: 123 Phố Vọng, Hai Bà Trưng, Hà Nội</p>
+                        <h4>{facility?.facility_name}</h4>
+                        <p style={{display: 'flex', alignItems: 'center', fontSize: '14px'}}>
+                          <LocationOnIcon sx={{color: "#007bff"}}/>
+                          Địa chỉ: {facility?.address}
+                        </p>
                     </div>
                 </div>
 
@@ -143,7 +172,7 @@ export default function BookingPopUp({open, onClose}) {
                 renderInput={(params) => <TextField {...params} label="Chọn người khám" />}
                 renderOption={(props, option) => (
                     <li {...props} style={{display: 'flex', gap: '10px'}}>
-                        <div>{option.fullName}</div>
+                        <div>{option.name}</div>
                         <div style={{color: 'gray', fontSize: '14px'}}>{option.relationship}</div>
                     </li>
                 )}
@@ -164,11 +193,11 @@ export default function BookingPopUp({open, onClose}) {
                   <ul>
                     <li>
                         <span>Họ và tên </span>
-                        <span>{chosenProfile.fullName}</span>
+                        <span>{chosenProfile.name}</span>
                     </li>
                     <li>
                         <span>Ngày sinh </span>
-                        <span>{chosenProfile.dateOfBirth}</span>
+                        <span>{chosenProfile.date_of_birth}</span>
                     </li>
                     <li>
                         <span>Giới tính </span>
@@ -214,8 +243,11 @@ export default function BookingPopUp({open, onClose}) {
               </div>
 
               <DatePicker month={month} date={date} setDate={setDate} />
-
-              <SectionPicker />
+              {loading ?
+              <CircularProgress />
+              :
+              <SectionPicker sectionList={sectionList} onSelectSection={setSelectedSection} selectedSection={selectedSection} />
+              }
             </div>
             }
 

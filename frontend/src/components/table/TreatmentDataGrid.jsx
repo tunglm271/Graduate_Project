@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { IconButton, Typography, Avatar, AvatarGroup, Pagination, Box, Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
+import { IconButton, Typography, Avatar, AvatarGroup, Pagination, Box, Menu, MenuItem, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
 import { Star, Visibility } from "@mui/icons-material";
 import TreatmentCategoryChip from "../chip/TreatmentCategoryChip";
 import medicalServiceApi from "../../service/medicalServiceAPi";
@@ -85,9 +85,11 @@ const TreatmentDataGrid = ({setDataCount}) => {
             ) : doctors.length === 1 ? (
               <Avatar alt={doctors[0].name} src={doctors[0].avatar} sx={{ width: 30, height: 30 }} />
             ) : (
-              <AvatarGroup max={3} sx={{ '& .MuiAvatar-root': { width: 20, height: 20 } }}>
+              <AvatarGroup max={3} sx={{ '& .MuiAvatar-root': { width: 25, height: 25 } }}>
                 {doctors.map((doc, index) => (
-                  <Avatar key={index} alt={doc.name} src={doc.avatar} />
+                  <Tooltip title={doc.name} key={index}>
+                    <Avatar key={index} alt={doc.name} src={doc.avatar} />
+                  </Tooltip>
                 ))}
               </AvatarGroup>
             )}
@@ -111,7 +113,7 @@ const TreatmentDataGrid = ({setDataCount}) => {
   ];
 
   useEffect(() => {
-    medicalServiceApi.getAll()
+    medicalServiceApi.getByFacility()
       .then(response => {
         setData(response.data);
         setDataCount(response.data.length);

@@ -20,6 +20,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 import Cookies from "js-cookie";
 import { loginRequest } from "../../service/authApi";
+import { use } from "react";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState({
@@ -109,7 +110,20 @@ const Login = () => {
       showSuccessSnackbar("Đăng nhập thành công!");
       const intendedRoute = Cookies.get("intendedRoute");
       Cookies.remove("intendedRoute");
-      navigate(intendedRoute || "/home");
+      if(intendedRoute) {
+        navigate(intendedRoute);
+      } else {
+        const userRole = Cookies.get("role");
+        if(userRole == 1) {
+          navigate("/home");
+        }
+        else if(userRole == 3) {
+          navigate("/doctor");
+        }
+        else if(userRole == 4) {
+          navigate("/facility/dashboard");
+        }
+      }
     } catch (err) {
       console.error("Login error:", err);
       setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");

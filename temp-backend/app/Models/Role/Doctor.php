@@ -3,6 +3,7 @@
 namespace App\Models\Role;
 
 use App\Models\MedicalService;
+use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
@@ -17,6 +18,7 @@ class Doctor extends Model
         'medical_facility_id',
         'name',
         'phone',
+        'position',
         'specialization',
         'about',
     ];
@@ -33,5 +35,10 @@ class Doctor extends Model
 
     public function handleService($service) {
         return $this->belongsToMany(MedicalService::class, 'doctor_services', 'doctor_id', 'service_id');
+    }
+
+    public function schedule()
+    {
+        return $this->hasMany(Schedule::class);
     }
 }

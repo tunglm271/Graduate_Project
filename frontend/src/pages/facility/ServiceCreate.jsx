@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { Box, Button, MenuItem, TextField } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import medicalServiceApi from "../../service/medicalServiceAPi";
+import MultiSelectAutocomplete from "../../components/MultiSelectAutocomplete";
+import doctorApi from "../../service/Doctorapi";
 const categorys = [
     { value: "General Check-up", label: "Khám tổng quát" },
     { value: "Specialist Consultation", label: "Khám chuyên khoa" },
@@ -23,6 +25,7 @@ const ServiceCreate = () => {
     const [thumbnailUrl, setThumbnailUrl] = useState(null);
     const [toggleGenderRequirement, setToggleGenderRequirement] = useState(false);
     const [toggleAgeRequirement, setToggleAgeRequirement] = useState(false);
+    const [doctorOptions, setDoctorOptions] = useState([]);
     const [formData, setFormData] = useState({
         name: "",
         category: "",
@@ -34,7 +37,19 @@ const ServiceCreate = () => {
         min_age_requirement: "",
         max_age_requirement: "",
         instruction_note: "",
+        doctors: [],
     });
+
+    useEffect(() => {
+        doctorApi.getAll()
+            .then(response => {
+                setDoctorOptions(response.data);
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching doctor data", error);
+            });
+    }, []);
 
     useEffect(() => {
         if (isEditMode) {
@@ -69,10 +84,11 @@ const ServiceCreate = () => {
     
         const data = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
-            if (value !== null) {
+            if (value !== null && key !== "doctors") {
                 data.append(key, value);
             }
         });
+        data.append("doctors", JSON.stringify(formData.doctors));
         for (let [key, value] of data.entries()) {
             console.log(key, value);
         }
@@ -132,11 +148,14 @@ const ServiceCreate = () => {
                         </Stack>
                         <Divider />
                         <h4 style={{margin: "1rem 0"}}>Bác sĩ phụ trách</h4>
-                        <TextField select label="Chọn bác sĩ phụ trách" name="category" value={formData.category} onChange={handleChange} fullWidth>
-                                {categorys.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
-                                ))}
-                        </TextField>
+                        <MultiSelectAutocomplete
+                            label="Chọn bác sĩ"
+                            options={doctorOptions}
+                            value={doctorOptions.filter((doctor) => formData.doctors.includes(doctor.id))}
+                            onChange={(values) => setFormData({...formData, doctors: values.map((value) => value.id)})}
+                            getOptionLabel={(option) => option.name}
+                            fullWidth
+                        />
                     </div>
                     <div style={{ width: "50%", display: "flex", flexDirection: "column", gap: "1rem"}}>
                         <h4 style={{marginBottm: "1rem"}}>Đối tượng khám</h4>

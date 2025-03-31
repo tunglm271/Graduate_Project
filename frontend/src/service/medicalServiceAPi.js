@@ -7,6 +7,10 @@ const medicalServiceApi = {
     return api.get(resource);
   },
 
+  getByFacility() {
+    return api.get(`my-medical-services`);
+  },
+
   getById(id) {
     return api.get(`${resource}/${id}`);
   },
@@ -29,6 +33,10 @@ const medicalServiceApi = {
 
   delete(id) {
     return api.delete(`${resource}/${id}`);
+  },
+
+  getValiableSlots(serviceId, date) {
+    return api.get(`service/valiable-slots?id=${serviceId}&date=${date}`);
   },
 };
 

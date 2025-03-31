@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('name');
-            $table->string('phone')->nullable()->unique();
+            $table->string('phone')->nullable();
+            $table->string('position')->default('doctor');
             $table->string('specialization');
             $table->text('about')->nullable();
 

@@ -1,11 +1,26 @@
 import {Tabs, Tab, Box, Button, Stack } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import ReservationTable from '../../components/facility/ReservationTable';
+import appointmentApi from '../../service/appointmentApi';
 const FacilityReservations = () => {
     const [viewType, setViewType] = useState('uncofirmed');
+    const [appointments, setAppointments] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        appointmentApi.getFacilityAppointments().then((res) => {
+            setAppointments(res.data);
+            console.log(res.data);
+            setLoading(false);
+        }
+        ).catch((err) => {
+            console.log(err);
+            setLoading(false);
+        });
+    }, []);
 
     return (
         <div>

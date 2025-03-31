@@ -10,26 +10,44 @@ import {
   StepLabel,
   TextField,
   MenuItem,
+  Slide
 } from "@mui/material";
 import doctorApi from "../../service/Doctorapi";
+import WorkSchedule from "../WorkSchedule";
 import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 
 const specialties = ["Cardiology", "Neurology", "Orthopedics", "Pediatrics"];
 
 const CreateDoctorDialog = ({open, onClose}) => {
+    const daysOfWeek = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"];
     const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
     const [activeStep, setActiveStep] = useState(0);
+    const [preStep, setPreStep] = useState(0);
     const [formData, setFormData] = useState({
       name: "",
       specialization: "",
       position: "",
       email: "",
       phone: "",
-      schedule: "",
     });
+    const [weekSchedule, setWeekSchedule] = useState(
+      daysOfWeek.reduce((acc, day) => ({ ...acc, [day]: [] }), {})
+    );
   
-    const handleNext = () => setActiveStep((prev) => prev + 1);
-    const handleBack = () => setActiveStep((prev) => prev - 1);
+    const updateShifts = (day, shifts) => {
+      setWeekSchedule({ ...weekSchedule, [day]: shifts });
+    };
+  
+  
+    const handleNext = () => {
+        setPreStep(activeStep);
+        setActiveStep((prev) => prev + 1);
+    };
+    
+    const handleBack = () => {
+        setPreStep(activeStep);
+        setActiveStep((prev) => prev - 1);
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -37,8 +55,8 @@ const CreateDoctorDialog = ({open, onClose}) => {
       };
 
     const handleSubmit = () => {
-        console.log("Doctor Data:", formData);
-        doctorApi.create(formData)
+        console.log(weekSchedule);
+        doctorApi.create(formData, weekSchedule)
         .then(() => {
             showSuccessSnackbar("Doctor created successfully");
         })
@@ -61,83 +79,97 @@ const CreateDoctorDialog = ({open, onClose}) => {
             ))}
             </Stepper>
             {activeStep === 0 && (
-            <>
-                <TextField
-                fullWidth
-                label="Full Name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                margin="normal"
-                />
-                <TextField
-                fullWidth
-                select
-                label="Specialty"
-                name="specialization"
-                value={formData.specialization}
-                onChange={handleChange}
-                margin="normal"
-                >
-                {specialties.map((option) => (
-                    <MenuItem key={option} value={option}>
-                    {option}
-                    </MenuItem>
-                ))}
-                </TextField>
-                <TextField
-                fullWidth
-                label="Position"
-                name="position"
-                value={formData.position}
-                onChange={handleChange}
-                margin="normal"
-                />
-                <TextField
-                fullWidth
-                label="Email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                margin="normal"
-                />
-                <TextField
-                fullWidth
-                label="Phone Number"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                margin="normal"
-                />
-            </>
+            <Slide direction={activeStep > preStep ? "left" : "right"} in={activeStep === 0} mountOnEnter unmountOnExit  timeout={400}>
+                <div>
+                    <TextField
+                    fullWidth
+                    label="Full Name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    margin="normal"
+                    />
+                    <TextField
+                    fullWidth
+                    select
+                    label="Specialty"
+                    name="specialization"
+                    value={formData.specialization}
+                    onChange={handleChange}
+                    margin="normal"
+                    >
+                    {specialties.map((option) => (
+                        <MenuItem key={option} value={option}>
+                        {option}
+                        </MenuItem>
+                    ))}
+                    </TextField>
+                    <TextField
+                    fullWidth
+                    label="Position"
+                    name="position"
+                    value={formData.position}
+                    onChange={handleChange}
+                    margin="normal"
+                    />
+                    <TextField
+                    fullWidth
+                    label="Email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    margin="normal"
+                    />
+                    <TextField
+                    fullWidth
+                    label="Phone Number"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    margin="normal"
+                    />
+                </div>
+            </Slide>
             )}
             {activeStep === 1 && (
-            <TextField
-                fullWidth
-                label="Working Schedule"
-                name="schedule"
-                value={formData.schedule}
-                onChange={handleChange}
-                margin="normal"
-                multiline
-                rows={3}
-            />
+            <Slide direction={activeStep > preStep ? "left" : "right"} in={activeStep === 1} mountOnEnter unmountOnExit  timeout={400}>
+                <div>
+                    {daysOfWeek.map((day) => (
+                        <WorkSchedule key={day} day={day} shifts={weekSchedule[day]} setShifts={(shifts) => updateShifts(day, shifts)} />
+                    ))}
+                </div>
+            </Slide>
             )}
             {activeStep === 2 && (
-            <div>
-                <p><strong>Full Name:</strong> {formData.name}</p>
-                <p><strong>Specialty:</strong> {formData.specialization}</p>
-                <p><strong>Position:</strong> {formData.position}</p>
-                <p><strong>Email:</strong> {formData.email}</p>
-                <p><strong>Phone:</strong> {formData.phone}</p>
-                <p><strong>Schedule:</strong> {formData.schedule}</p>
-            </div>
+            <Slide direction={activeStep > preStep ? "left" : "right"} in={activeStep === 2} mountOnEnter unmountOnExit  timeout={400}>    
+                <div>
+                    <p><strong>Full Name:</strong> {formData.name}</p>
+                    <p><strong>Specialty:</strong> {formData.specialization}</p>
+                    <p><strong>Position:</strong> {formData.position}</p>
+                    <p><strong>Email:</strong> {formData.email}</p>
+                    <p><strong>Phone:</strong> {formData.phone}</p>
+                    <p><strong>Schedule:</strong></p>
+                    <ul>
+                        {Object.entries(weekSchedule).map(([day, shifts]) => (
+                            shifts.length > 0 &&
+                            <li key={day}>
+                                <strong>{day}</strong>
+                                <ul>
+                                    {shifts.map((shift,index) => (
+                                    <li key={index}>{shift.start} - {shift.end}</li>
+                                    ))}
+                                </ul>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </Slide>
             )}
         </DialogContent>
         <DialogActions>
             {activeStep > 0 && <Button onClick={handleBack}>Back</Button>}
             {activeStep < 2 ? (
-            <Button onClick={handleNext} variant="contained">
+            <Button onClick={handleNext} variant="contained" disabled={formData.name === "" || formData.email === ""}>
                 Next
             </Button>
             ) : (
