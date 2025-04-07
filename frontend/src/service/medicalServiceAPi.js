@@ -38,6 +38,11 @@ const medicalServiceApi = {
   getValiableSlots(serviceId, date) {
     return api.get(`service/valiable-slots?id=${serviceId}&date=${date}`);
   },
+
+  getDoctor(serviceId,appointmentId) {
+    return api.get(`service/doctors?id=${serviceId}&appointment_id=${appointmentId}`);
+  },
+  
 };
 
 export default medicalServiceApi;

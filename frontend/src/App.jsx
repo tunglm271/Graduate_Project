@@ -24,6 +24,8 @@ import {
   HealthProfileDetail,
   HealthProfileEdit,
   MedicalRecord,
+  BillPage,
+  PaymentResult,
   FacilityBooking,
   FacilityLandingPage,
   FacilityDashboard,
@@ -33,10 +35,11 @@ import {
   ServiceManage,
   ServiceCreate,
   ServiceDetail,
-  ServiceAssignmentPage,
   StaffManage,
   StaffCreate,
   StaffDetail,
+  ServiceAssignmentPage,
+  ReservationList,
   Login,
   Register,
   NotFound
@@ -62,6 +65,8 @@ const router = createBrowserRouter([
       { path: "health-profile/:id/edit", element: <HealthProfileEdit /> },
       { path: "health-profile/new", element: <HealthProfileEdit /> },
       { path: "health-profile/:id/record/:recordId", element: <MedicalRecord /> },
+      { path: "appointments/:id/bill", element: <BillPage />},
+      { path: "appointments/:id/bill/payment-result", element: <PaymentResult />},
       { path: "/conversation", element: <ConversationList onSelectConversation={null}/> }
     ],
   },
@@ -88,7 +93,8 @@ const router = createBrowserRouter([
     element: <ProtectedRoute role={3} element={<DoctorLayout />} />,
     children: [
       { path: "", element: <WorkingSchedule /> },
-      { path: "service-assignment", element: <ServiceAssignmentPage /> }
+      { path: "service-assignment", element: <ServiceAssignmentPage /> },
+      { path: "reservations", element: <ReservationList /> },
     ]
   },
   {

@@ -16,52 +16,52 @@ import {
   useGridRootProps,
 } from '@mui/x-data-grid';
 
-export const STATUS_OPTIONS = ['Open', 'PartiallyFilled', 'Filled', 'Rejected'];
+export const STATUS_OPTIONS = ['rejected', 'pending', 'assigned', 'completed'];
 
 const StyledChip = styled(Chip)(({ theme }) => ({
   justifyContent: 'left',
   '& .icon': {
     color: 'inherit',
   },
-  '&.Open': {
-    color: (theme.vars || theme).palette.info.dark,
-    border: `1px solid ${(theme.vars || theme).palette.info.main}`,
+  '&.rejected': {
+    color: (theme.vars || theme).palette.error.dark,
+    border: `1px solid ${(theme.vars || theme).palette.error.main}`,
   },
-  '&.Filled': {
-    color: (theme.vars || theme).palette.success.dark,
-    border: `1px solid ${(theme.vars || theme).palette.success.main}`,
-  },
-  '&.PartiallyFilled': {
+  '&.pending': {
     color: (theme.vars || theme).palette.warning.dark,
     border: `1px solid ${(theme.vars || theme).palette.warning.main}`,
   },
-  '&.Rejected': {
-    color: (theme.vars || theme).palette.error.dark,
-    border: `1px solid ${(theme.vars || theme).palette.error.main}`,
+  '&.assigned': {
+    color: (theme.vars || theme).palette.info.dark,
+    border: `1px solid ${(theme.vars || theme).palette.info.main}`,
+  },
+  '&.completed': {
+    color: (theme.vars || theme).palette.success.dark,
+    border: `1px solid ${(theme.vars || theme).palette.success.main}`,
   },
 }));
 
 const Status = React.memo((props) => {
   const { status } = props;
-
+  console.log(status);
   let icon = null;
-  if (status === 'Rejected') {
+  if (status === 'rejected') {
     icon = <ReportProblemIcon className="icon" />;
-  } else if (status === 'Open') {
+  } else if (status === 'pending') {
     icon = <InfoIcon className="icon" />;
-  } else if (status === 'PartiallyFilled') {
+  } else if (status === 'assigned') {
     icon = <AutorenewIcon className="icon" />;
-  } else if (status === 'Filled') {
+  } else if (status === 'completed') {
     icon = <DoneIcon className="icon" />;
   }
 
   let label = status;
-  if (status === 'PartiallyFilled') {
-    label = 'Chờ thực hiện';
-  } else if (status === 'Rejected') {
+  if (status === 'pending') {
+    label = 'Chưa chỉ định';
+  } else if (status === 'assigned') {
+    label = 'Đã chỉ định';
+  } else if (status === 'rejected') {
     label = 'Đã hủy';
-  } else if (status === 'Open') {
-    label = 'Chờ xử lý';
   } else {
     label = "Hoàn thành"
   }
@@ -154,7 +154,7 @@ export function renderStatus(params) {
     return '';
   }
 
-  return <Status status={params.value} />;
+  return <Status status={params.row.status} />;
 }
 
 export function renderEditStatus(params) {

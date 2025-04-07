@@ -115,6 +115,7 @@ const StaffDataGrid = ({ setData, data }) => {
     <div style={{ height: 400, width: "100%" }}>
       <DataGrid
         rows={data}
+        loading={!data.length}
         columns={columns}
         checkboxSelection
         pageSizeOptions={[5, 10]}

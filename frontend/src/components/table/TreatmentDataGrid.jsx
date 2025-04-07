@@ -132,6 +132,7 @@ const TreatmentDataGrid = ({setDataCount}) => {
     <div style={{ width: "100%" }}>
       <DataGrid 
         rows={data.slice((page - 1) * rowsPerPage, page * rowsPerPage)}
+        loading={!data.length}
         columns={columns} 
         checkboxSelection 
         disablePagination

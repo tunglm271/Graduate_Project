@@ -9,6 +9,8 @@ export {default as HealthProfileEdit } from './patient/healthProfiles/HealthProf
 export {default as MedicalRecord} from './patient/medicalRecord/MedicalRecord.jsx';
 export {default as FacilityBooking} from './patient/facility/FacilityBooking.jsx';
 export {default as FacilityLandingPage} from './patient/facility/FacilityLandingPage.jsx';
+export {default as BillPage} from "./patient/bill/BillPage.jsx"
+export { default as PaymentResult } from "./patient/bill/PaymentResult.jsx"
 
 export { default as FacilityDashboard} from './facility/FacilityDashboard.jsx';
 export { default as FacilityReservations } from './facility/FacilityReservations.jsx';
@@ -20,7 +22,9 @@ export { default as StaffManage } from './facility/StaffManage.jsx';
 export { default as StaffCreate } from './facility/StaffCreate.jsx';
 export { default as StaffDetail } from './facility/StaffDetail.jsx';
 export { default as FacilityProfile } from './facility/FacilityProfile.jsx';
+
 export { default as ServiceAssignmentPage } from './doctor/service-assignment/ServiceAssignmentPage.jsx';
+export { default as ReservationList } from './doctor/reservations-list/ReservationsList.jsx';
 
 export { default as Login } from './auth/Login.jsx';
 export { default as Register } from './auth/Register.jsx';

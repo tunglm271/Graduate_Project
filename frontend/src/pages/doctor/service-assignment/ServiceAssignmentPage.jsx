@@ -1,6 +1,6 @@
 import "./service-assignment.css"
 import { useState } from "react";
-import { Box, Step, StepLabel, Stepper, Button, Typography, Autocomplete, TextField, Stack, ToggleButtonGroup, ToggleButton, Checkbox, Slide } from "@mui/material";
+import { Box, Step, StepLabel, Stepper, Button, Autocomplete, TextField, Stack, ToggleButtonGroup, ToggleButton, Checkbox, Slide } from "@mui/material";
 import ScheduleButton from "../../../components/ScheduleButton";
 const steps = ["Thông tin", "Chỉ định", "Đặt lịch"];
 const patient = [

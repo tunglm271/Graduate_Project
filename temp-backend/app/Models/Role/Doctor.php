@@ -7,6 +7,7 @@ use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\Appointment;
 use App\Models\Role\MedicalFacility;
 
 class Doctor extends Model
@@ -40,5 +41,10 @@ class Doctor extends Model
     public function schedule()
     {
         return $this->hasMany(Schedule::class);
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
     }
 }

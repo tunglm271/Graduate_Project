@@ -51,4 +51,9 @@ class Appointment extends Model
         return $this->belongsTo(MedicalFacility::class);
     }
 
+    public function bill() 
+    {
+        return $this->hasOne(Bill::class);
+
+    }
 }

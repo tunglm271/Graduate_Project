@@ -2,9 +2,7 @@ import "./service.css"
 import { Breadcrumbs, Divider, List, ListItem, ListItemText } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import Typography from '@mui/material/Typography';
-import serviceImg from "../../../assets/images/service.png";
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
-// import LabTestDropDown from "../../../components/LabTestDropDown";
 import {Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
 import BookingPopUp from "../../../components/dialog/BookingPopUp";
@@ -33,7 +31,7 @@ const ServicePage = () => {
 
 
             <div id='service-content'>
-                <img src={serviceImg} alt="" />
+                <img src={service?.thumbnail} alt="" />
                 <div className="service-title">
                     <h3>{service?.name}</h3>
                     <h2 style={{display: 'flex', alignItems: 'center', gap: '20px', marginTop: '10px'}}>{service?.price} đ <span style={{background: 'red', color:'white', fontSize: '14px', padding: '3px', borderRadius: '15px'}}>-9%</span></h2>

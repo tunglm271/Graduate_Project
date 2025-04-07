@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             VoyagerDatabaseSeeder::class,
             UserSeeder::class,
             MedicalServiceSeeder::class,
+            IndicatorSeeder::class,
         ]);   
     }
 }

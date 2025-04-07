@@ -33,7 +33,15 @@ const appointmentApi = {
 
     getFacilityAppointments() {
         return api.get(`appointment/facility`);
-    }
+    },
+
+    getDoctorAppointments() {
+        return api.get(`appointment/doctor`);
+    },
+
+    assignDoctor(appointmentId, doctorId) {
+        return api.post(`appointment/assign-doctor`, { appointment_id: appointmentId, doctor_id: doctorId });
+    },
 };
 
 export default appointmentApi;

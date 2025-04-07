@@ -5,10 +5,13 @@ import AddIcon from '@mui/icons-material/Add';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import ReservationTable from '../../components/facility/ReservationTable';
 import appointmentApi from '../../service/appointmentApi';
+import ReservationPopUp from '../../components/dialog/ReservationPopUp';
 const FacilityReservations = () => {
-    const [viewType, setViewType] = useState('uncofirmed');
+    const [viewType, setViewType] = useState(0);
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [reservation, setReservation] = useState(null);
+    const [reservationId, setReservationId] = useState(null);
 
     useEffect(() => {
         appointmentApi.getFacilityAppointments().then((res) => {
@@ -21,6 +24,12 @@ const FacilityReservations = () => {
             setLoading(false);
         });
     }, []);
+
+    useEffect(() => {
+        if(reservationId) {
+            setReservation(appointments.find((item) => item.id === reservationId));
+        }
+    }, [reservationId, appointments]);
 
     return (
         <div>
@@ -46,8 +55,9 @@ const FacilityReservations = () => {
                         </Button>
                     </Stack>
                 </div>
-                <ReservationTable />
+                <ReservationTable appointments={appointments} setReservationId={setReservationId}/>
             </div>
+            {Boolean(reservationId) && <ReservationPopUp open={Boolean(reservationId)} reservation={reservation} onClose={() => setReservationId(null)}/>}
         </div>
     );
 }

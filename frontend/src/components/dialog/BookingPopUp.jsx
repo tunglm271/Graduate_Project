@@ -100,6 +100,7 @@ export default function BookingPopUp({open, onClose, facility, id}) {
     const handleSubmit = () => {
       const formData = new FormData();
       formData.append('health_profile_id', chosenProfile.id);
+      console.log(chosenProfile.id);
       formData.append('medical_service_id', id);
       formData.append('date', date.format('YYYY-MM-DD'));
       formData.append('start_time', selectedSection.start_time);

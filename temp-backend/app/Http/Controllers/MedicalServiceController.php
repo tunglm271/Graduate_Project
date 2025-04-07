@@ -142,4 +142,25 @@ class MedicalServiceController extends Controller
     
         return response()->json($result);
     }
+
+    public function getDoctorsForAppointment(Request $request)
+    {
+        $id = $request->query('id');
+        $appointmentId = $request->query('appointment_id');
+        $appointment = Appointment::find($appointmentId);
+        $medicalService = MedicalService::find($id);
+        $doctors = $medicalService->doctors()->with('schedule')->get();
+        $valiabeDoctors = [];
+        foreach($doctors as $doctor) {
+            $appointmentCount = Appointment::where('doctor_id', $doctor->id)
+                ->where('date', $appointment->date)
+                ->where('start_time', $appointment->start_time)
+                ->where('end_time', $appointment->end_time)
+                ->count();
+            if($appointmentCount < 3) {
+                $valiabeDoctors[] = $doctor;
+            }
+        }
+        return response()->json($valiabeDoctors);
+    }
 }

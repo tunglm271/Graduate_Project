@@ -38,4 +38,9 @@ class HealthProfile extends Model
     {
         return $this->belongsToMany(Disease::class,"health_profile_disease");
     }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
 }
