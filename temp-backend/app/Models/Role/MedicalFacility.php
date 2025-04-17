@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\MedicalService;
 use App\Models\Appointment;
+use App\Models\HealthProfile;
 class MedicalFacility extends Model
 {
     /** @use HasFactory<\Database\Factories\Role\MedicalFacilityFactory> */
@@ -51,5 +52,10 @@ class MedicalFacility extends Model
     public function appointments()
     {
         return $this->hasMany(Appointment::class, 'facility_id');
+    }
+
+    public function patients()
+    {
+        return $this->hasManyThrough(HealthProfile::class, Appointment::class, 'facility_id', 'id', 'id', 'health_profile_id');
     }
 }

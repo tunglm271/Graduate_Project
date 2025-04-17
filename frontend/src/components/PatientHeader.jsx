@@ -1,5 +1,5 @@
 import { useRef, useState, useContext, useEffect } from "react";
-import { Button, IconButton, Typography, Menu, MenuItem, Stack, Avatar, Badge, styled } from "@mui/material";
+import { Button, IconButton, Typography, Menu, MenuItem, Stack, Badge, Divider, MenuList, ListItemIcon, ListItemText } from "@mui/material";
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from "@icon/MenuIcon"
@@ -10,7 +10,16 @@ import AvatarWithStatus from "./AvatarWithStatus";
 import { PatientLayoutContext } from "../context/PateintLayoutProvider";
 import ConversationList from "./ConversationList";
 import { getUser } from "../utlis/auth";
+import { logoutRequest } from "../service/authApi";
+import { useNavigate } from "react-router-dom";
+import useCustomSnackbar from "../hooks/useCustomSnackbar";
+import LogoutIcon from '@mui/icons-material/Logout';
+import SettingsIcon from '@mui/icons-material/Settings';
+import PersonIcon from '@mui/icons-material/Person'
+
 const PatientHeader = () => {
+    const { showSuccessSnackbar } = useCustomSnackbar();
+    const navigate = useNavigate();
     const user = getUser();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -24,6 +33,15 @@ const PatientHeader = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const handleLogout = async () => {
+        logoutRequest()
+            .then((res) => {
+                console.log(res);
+                navigate("/auth/login");
+                showSuccessSnackbar("Đăng xuất thành công");
+            })
+    }
 
     useEffect(() => {
         const handleScroll = () => {
@@ -51,16 +69,6 @@ const PatientHeader = () => {
                 <MenuIcon size="30px"/>
             </button>
 
-            {/* <div id="search-bar">
-                <input type="text" />
-                <SearchIcon sx={{
-                    position: "absolute",
-                    right: "3%",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                }}/>
-            </div> */}
-
             <Button sx={{
                 display: {
                     xs: "block",
@@ -81,9 +89,6 @@ const PatientHeader = () => {
             <Stack direction="row" spacing={3} sx={{
                 alignItems: "center",
             }}>
-                
-
-
                 <Button variant="contained" startIcon={<AddIcon />} sx={{
                     borderRadius: "7px",
                     display: {
@@ -158,21 +163,47 @@ const PatientHeader = () => {
                     anchorEl={anchorEl}
                     open={open}
                     onClose={handleClose}
-                    MenuListProps={{
-                        'aria-labelledby': 'basic-button',
-                    }}
                     anchorOrigin={{
                         vertical: 'bottom',
                         horizontal: 'right',
                     }}
-                    sx={{
-                        marginTop: '10px',
-                        width: '250px'
-                    }}
+                    slotProps={
+                        { paper: { sx: { width: 250, marginTop: 2 } } }
+                    }
                 >
-                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={handleClose}>My account</MenuItem>
-                    <MenuItem onClick={handleClose}>Logout</MenuItem>
+                    <Stack direction="row" spacing={2} sx={{ padding: "10px", alignItems: "center" }}>
+                        <AvatarWithStatus avatar={user.avatar} />
+                        <Stack>
+                            <Typography fontWeight="bold">{user.name}</Typography>
+                            <Typography color="gray" variant="caption">Tài khoản bệnh nhân</Typography>
+                        </Stack>
+                    </Stack>
+
+                    <Divider />
+
+                    <MenuList>
+                        <MenuItem onClick={handleClose}>
+                            <ListItemIcon>
+                                <PersonIcon fontSize="small" />
+                            </ListItemIcon>
+                            <ListItemText>Profile</ListItemText>
+                        </MenuItem>
+                        <MenuItem onClick={() => {
+                            handleClose();
+                            navigate("/settings");
+                        }}>
+                            <ListItemIcon>
+                                <SettingsIcon fontSize="small" />
+                            </ListItemIcon>
+                            <ListItemText>Settings</ListItemText>
+                        </MenuItem>
+                        <MenuItem onClick={handleLogout}>
+                            <ListItemIcon>
+                                <LogoutIcon fontSize="small" />
+                            </ListItemIcon>
+                            <ListItemText>Logout</ListItemText>
+                        </MenuItem>
+                    </MenuList>
                 </Menu>
             </Stack>
         </div>

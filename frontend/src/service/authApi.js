@@ -42,9 +42,47 @@ export const logoutRequest = async () => {
   try {
     const response = await api.post("/logout");
     Cookies.remove('token');
+    Cookies.remove('role');
+    Cookies.remove('name');
+    Cookies.remove('user_id');
+    Cookies.remove('avatar');
+    
     return response.data;
   } catch (error) {
     console.error("Logout error:", error);
+    throw error;
+  }
+}
+
+export const getUserRequest = async () => {
+  try {
+    const response = await api.get("/user");
+    return response.data;
+  } catch (error) {
+    console.error("Get user error:", error);
+    throw error;
+  }
+}
+
+export const updateUserRequest = async (avatar,name, current_password, new_password) => {
+  try {
+    const formData = new FormData();
+    if(avatar) {
+      formData.append("avatar", avatar);
+    }
+    formData.append("name", name);
+    if (current_password !== "" || new_password !== "") {
+      formData.append("current_password", current_password);
+      formData.append("new_password", new_password);
+    }    
+    const response = await api.post("/user/update", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Update user error:", error);
     throw error;
   }
 }

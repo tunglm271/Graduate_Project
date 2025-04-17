@@ -2,6 +2,7 @@
 
 namespace App\Models\Role;
 
+use App\Models\HealthProfile;
 use App\Models\MedicalService;
 use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,5 +47,10 @@ class Doctor extends Model
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    public function patients()
+    {
+        return $this->hasManyThrough(HealthProfile::class, Appointment::class,'doctor_id', 'id', 'id', 'health_profile_id');
     }
 }

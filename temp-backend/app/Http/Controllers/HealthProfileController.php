@@ -56,7 +56,7 @@ class HealthProfileController extends Controller
      */
     public function show(HealthProfile $healthProfile)
     {
-        return $healthProfile->load(['diseases','allergies']);
+        return $healthProfile->load(['diseases','allergies','appointments']);
     }
 
     /**

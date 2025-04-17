@@ -15,12 +15,16 @@ use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\IndicatorController;
+
 Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::get('user', [AuthController::class, 'getUser']);
+    Route::post('user/update', [AuthController::class, 'updateUser']);
     Route::apiResource('medical-facilities', MedicalFacilityController::class)->except('store');
     Route::get('my-facility', [MedicalFacilityController::class, 'detail']);
     Route::apiResource('doctors', DoctorController::class);
     Route::get("doctor/schedule", [DoctorController::class, 'getDoctorSchedule']);
     Route::apiResource('patients', PatientController::class)->except('store');
+    Route::get('patient/doctor', [PatientController::class, 'indexByDoctor']);
     Route::apiResource('schedules', ScheduleController::class);
     Route::apiResource('medical-services', MedicalServiceController::class);
     Route::get('service/valiable-slots', [MedicalServiceController::class, 'getAvaliableSlots']);

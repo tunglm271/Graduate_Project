@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -110,6 +110,37 @@ class AuthController extends Controller
         return response()->json([
             'user' => $user,
             'token' => $token,
+        ]);
+    }
+
+    public function getUser(Request $request)
+    {
+        return response()->json([
+            'user' => $request->user()
+        ]);
+    }
+
+    public function updateUser(UpdateUserRequest $request)
+    {
+        $data = $request->validated();
+        $user = $request->user();
+        if($request->hasFile('avatar')) {
+            $avatar_url = cloudinary()->upload($request->file('avatar')->getRealPath())->getSecurePath();
+            $user->avatar = $avatar_url;
+        }
+
+        if(isset($data['new_password']) && Hash::check($data['current_password'], $user->password)) {
+            $user->password = Hash::make($data['new_password']);
+        }
+
+        if(isset($data['name'])) {
+            $user->name = $data['name'];
+        }
+        $user->save();
+
+        return response()->json([
+            'message' => 'User updated successfully',
+            'user' => $user
         ]);
     }
 

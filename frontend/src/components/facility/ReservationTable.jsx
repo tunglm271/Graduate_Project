@@ -46,6 +46,7 @@ export default function ReservationTable({ appointments, setReservationId }) {
       ),
     },
     {
+      field: "view",
       width: 80,
       sortable: false,
       resizable: false,

@@ -19,7 +19,6 @@ import {
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import RelationshipIcon from '@icon/RelationshipIcon';
-import EditAvatarBox from '../../../components/dialog/EditAvatarBox';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
@@ -39,16 +38,16 @@ import healthProfileApi from '../../../service/healthProfileApi';
 import { useNavigate } from 'react-router-dom';
 import { getDiseases, getAllergies } from '../../../hooks/useCachedData.js';
 import dayjs from 'dayjs';
+import AvatarEditor from '../../../components/AvatarEditor.jsx';
 
 const HealthProfileEdit = () => {
     const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
+    const [ loading, setLoading ] = useState(false);
+    const [croppedPreviewURL, setCroppedPreviewURL] = useState(null);
     const navigate = useNavigate();
     const { id } = useParams();
     const { t } = useTranslation();
-    const [toggleCropDialog, setToggleCropDialog] = useState(false);
-    const [ image, setImage ] = useState();
-    const [croppedFile, setCroppedFile] = useState(null);
-    const [croppedPreviewURL, setCroppedPreviewURL] = useState(null);
+    const [ image, setImage ] = useState(null);
     const [ profileValues, setProfileValues ] = useState({
         name: '',
         relationship: '',
@@ -63,7 +62,6 @@ const HealthProfileEdit = () => {
         allergies: [],
         diseases: []
     });
-    const fileInputRef = useRef(null);
     const isEditing = !!id;
     const { data: diseases = [] } = getDiseases();
     const { data: allergies = [] } = getAllergies();
@@ -95,37 +93,18 @@ const HealthProfileEdit = () => {
     }, [isEditing]);
 
 
-    const handleAvatarClick = () => {
-        fileInputRef.current.click();
-    };
-
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                setImage(reader.result);
-                setToggleCropDialog(true);
-            };
-        }
-    };
-
-    const handleCropComplete = async (file, previewURL) => {
-        setCroppedFile(file);
-        setCroppedPreviewURL(previewURL);
-    };
-
-
     const handleSubmit = () => {
+        setLoading(true);
         const formData = new FormData();
-        if(croppedFile) {
-            formData.append('avatar', croppedFile);
+        if(image) {
+            formData.append('avatar', image);
+        }
+        if(profileValues.dateOfBirth) {
+            formData.append("date_of_birth", new Date(profileValues.dateOfBirth?.$d).toISOString().split("T")[0]);
         }
         formData.append("name", profileValues.name);
         formData.append("relationship", profileValues.relationship);
         formData.append("phone", profileValues.phone);
-        formData.append("date_of_birth", new Date(profileValues.dateOfBirth?.$d).toISOString().split("T")[0]);
         formData.append('gender', profileValues.gender);
         formData.append("email", profileValues.email);
         formData.append("height", profileValues.height);
@@ -166,58 +145,16 @@ const HealthProfileEdit = () => {
             </Breadcrumbs>
             <div className="profile-edit-card">
                 <div style={{ width: "100%", height: "80px", background: "linear-gradient(135deg, #007bff, #00c6ff)" , borderTopLeftRadius: "10px", borderTopRightRadius: "10px" }}></div>
-                <Box
-                    sx={{
-                        position: "relative",
-                        width: 120,
-                        height: 120,
-                        marginTop: '-60px',
+                <AvatarEditor 
+                    image={image} 
+                    setImage={setImage}
+                    defaultImg={croppedPreviewURL}
+                    sx = {{
                         marginLeft: 'auto',
                         marginRight: 'auto',
-                        display: "block",
-                        borderRadius: "50%",
-                        border: "2px solid white",
-                        "&:hover .avatar-overlay": {
-                        opacity: 1,
-                        },
+                        marginTop: '-60px',
                     }}
-                    onClick={handleAvatarClick}
-                >
-                        <Avatar
-                            src={croppedPreviewURL}
-                            alt="avatar"
-                            sx={{ width: "100%", height: "100%" }}
-                        />
-
-                        <Box
-                            className="avatar-overlay"
-                            sx={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            width: "100%",
-                            height: "100%",
-                            backgroundColor: "rgba(0, 0, 0, 0.5)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            borderRadius: "50%",
-                            opacity: 0,
-                            transition: "opacity 0.3s ease-in-out",
-                            }}
-                        >
-                            <IconButton sx={{ color: "white" }}>
-                                <EditIcon />
-                            </IconButton>
-                        </Box>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            ref={fileInputRef}
-                            style={{ display: "none" }}
-                            onChange={handleFileChange}
-                        />
-                </Box>
+                />
                 <div className="profile-edit-form">
                     <TextField
                         label="Name"
@@ -434,9 +371,9 @@ const HealthProfileEdit = () => {
                         backgroundColor: "#007bff",
                     }}
                     onClick={() => handleSubmit()}
+                    loading={loading}
                 >Lưu thông tin</Button>
             </div>
-            <EditAvatarBox image={image} open={toggleCropDialog} onClose={() => setToggleCropDialog(false)}  onCropComplete={handleCropComplete}/>
         </div>
     );
 };

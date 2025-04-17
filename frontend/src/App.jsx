@@ -26,6 +26,7 @@ import {
   MedicalRecord,
   BillPage,
   PaymentResult,
+  SettingPage,
   FacilityBooking,
   FacilityLandingPage,
   FacilityDashboard,
@@ -40,6 +41,8 @@ import {
   StaffDetail,
   ServiceAssignmentPage,
   ReservationList,
+  PatientList,
+  PatientDetail,
   Login,
   Register,
   NotFound
@@ -67,7 +70,8 @@ const router = createBrowserRouter([
       { path: "health-profile/:id/record/:recordId", element: <MedicalRecord /> },
       { path: "appointments/:id/bill", element: <BillPage />},
       { path: "appointments/:id/bill/payment-result", element: <PaymentResult />},
-      { path: "/conversation", element: <ConversationList onSelectConversation={null}/> }
+      { path: "/conversation", element: <ConversationList onSelectConversation={null}/> },
+      { path: "settings", element: <SettingPage /> },
     ],
   },
   {
@@ -95,6 +99,8 @@ const router = createBrowserRouter([
       { path: "", element: <WorkingSchedule /> },
       { path: "service-assignment", element: <ServiceAssignmentPage /> },
       { path: "reservations", element: <ReservationList /> },
+      { path: "patients", element: <PatientList /> },
+      { path: "patients/:id", element: <PatientDetail /> },
     ]
   },
   {

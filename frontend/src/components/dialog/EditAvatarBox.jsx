@@ -54,7 +54,7 @@ const EditAvatarBox = ({ open, onClose, image, onCropComplete }) => {
         });
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
         try {
             const croppedData = await getCroppedFile();
             if (croppedData) {
