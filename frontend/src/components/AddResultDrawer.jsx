@@ -1,13 +1,14 @@
-import { Drawer, TextField, Button, IconButton, Select, MenuItem, FormControl, InputLabel, Divider, Slide } from "@mui/material";
+import { Drawer, TextField, Button, IconButton, Select, MenuItem, FormControl, InputLabel, Divider, Slide, Autocomplete, Typography, Box } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import FileUploader from "./FileUploader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-
+import { getIndicatorTypes, getMedicines } from "../hooks/useCachedData";
+import appointmentApi from "../service/appointmentApi";
 const sliderSettings = {
   dots: true,        
   infinite: true,    
@@ -18,7 +19,7 @@ const sliderSettings = {
   arrows: false  
 };
 
-const AddResultDrawer = ({ open, onClose }) => {
+const AddResultDrawer = ({ open, onClose, appointmentId }) => {
   // State management
   const [toggleNumerialResult, setToggleNumerialResult] = useState(false);
   const [numerialResults, setNumerialResults] = useState([]);
@@ -32,12 +33,17 @@ const AddResultDrawer = ({ open, onClose }) => {
   const [postedFiles, setPostedFiles] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
   const [treatmentPlan, setTreatmentPlan] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState("");
+  const [indicatorTestSummary, setIndicatorTestSummary] = useState("");
+  const [imageTestSummary, setImageTestSummary] = useState("");
+  const { data: indicatorTypes = [] } = getIndicatorTypes();
+  const { data: medicinesData = [] } = getMedicines();
 
   // Event handlers
   const handleAddNumerialResult = () => {
     setToggleNumerialResult(true);
-    setNumerialResults([{ name: "", value: "", evaluation: "" }]);
+    setNumerialResults([{ id: "", value: "", evaluation: "" }]);
   };
 
   const handleAddImage = (e) => {
@@ -59,7 +65,7 @@ const AddResultDrawer = ({ open, onClose }) => {
   };
 
   const handleAddMedicine = () => {
-    setMedicines([...medicines, { name: "", usage: "", amount: "" }]);
+    setMedicines([...medicines, { id: "", usage: "", amount: "" }]);
   };
 
   const handleRemoveMedicine = (index) => {
@@ -69,7 +75,7 @@ const AddResultDrawer = ({ open, onClose }) => {
   const handleTogglePrescription = () => {
     setTogglePrescription(!togglePrescription);
     if (!togglePrescription) {
-      setMedicines([{ name: "", usage: "", amount: "" }]);
+      setMedicines([{ id: "", usage: "", amount: "" }]);
     }
   };
 
@@ -82,6 +88,46 @@ const AddResultDrawer = ({ open, onClose }) => {
     }
   };
 
+  const handleSubmit = () => {
+    if(!result.trim()) {
+      alert("Vui lòng nhập kết quả khám bệnh.");
+      return;
+    }
+
+    console.log(appointmentId);
+
+    setIsSubmitting(true);
+    const formData = new FormData();
+    formData.append("result", result);
+    formData.append("medicines", JSON.stringify(medicines));
+
+    if(toggleNumerialResult) {
+      formData.append("indicatorTestSummary", indicatorTestSummary);
+      formData.append("indicators", JSON.stringify(numerialResults));
+    }
+
+    if(toggleImageResult && postedFiles.length > 0) {
+      postedFiles.forEach((file, index) => {
+        formData.append(`images[${index}]`, file);
+      });
+      formData.append("imageTestSummary", imageTestSummary);
+    }
+    
+    appointmentApi.addResult(appointmentId, formData)
+      .then((res) => {
+        alert("Thêm kết quả thành công!");
+        console.log(res.data);
+        onClose();
+      })
+      .catch((error) => {
+        console.error("Error adding result:", error);
+        alert("Có lỗi xảy ra khi thêm kết quả.");
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  }
+
   // Handlers for numerical results
   const handleNumerialResultChange = (index, field, value) => {
     const updatedResults = [...numerialResults];
@@ -90,7 +136,7 @@ const AddResultDrawer = ({ open, onClose }) => {
   };
 
   const handleAddNumerialResultItem = () => {
-    setNumerialResults([...numerialResults, { name: "", value: "", evaluation: "" }]);
+    setNumerialResults([...numerialResults, { id: "", value: "", evaluation: "" }]);
   };
 
   // Get current date in YYYY-MM-DD format for default date input value
@@ -127,16 +173,36 @@ const AddResultDrawer = ({ open, onClose }) => {
           
           {medicines.map((medicine, index) => (
             <div key={index} className="flex gap-5 justify-between items-center mb-1">
-              <div>
-                <TextField
-                  id={`medicine-${index}`}
-                  label="Tên thuốc"
-                  variant="standard"
-                  fullWidth
-                  required
-                  value={medicine.name}
-                  onChange={(e) => handleMedicineChange(index, "name", e.target.value)}
-                />
+              <div style={{ width: '60%' }}>
+              <Autocomplete
+                options={medicinesData}
+                getOptionLabel={(option) => option.name || ''}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                getOptionKey={(option) => `medicine-${option.id}`} // Add this line
+                renderInput={(params) => (
+                  <TextField {...params} label="Tên thuốc" variant="standard" required />
+                )}
+                renderOption={(props, option) => (
+                  <Box component="li" {...props} display="flex" width="100%" gap={1}>
+                    <Typography sx={{ fontSize: 14 }}>
+                      {option.name}
+                    </Typography>
+                    <Typography sx={{ fontSize: 10, color: "gray" }}>
+                      {option.description}
+                    </Typography>
+                  </Box>
+                )}
+                fullWidth
+                value={medicinesData?.find(option => option.id === medicine.id) || null}
+                onChange={(e, newValue) => handleMedicineChange(index, "id", newValue?.id || "")}
+                slotProps={{
+                  popper: {
+                    sx: {
+                      zIndex: 99999,
+                    }
+                  }
+                }}
+              />
                 <TextField
                   id={`usage-${index}`}
                   label="Chỉ định"
@@ -272,13 +338,37 @@ const AddResultDrawer = ({ open, onClose }) => {
               <div className="flex flex-col gap-3 bg-slate-50 border-gray-400 rounded border-[1px] p-3">
                 {numerialResults.map((item, index) => (
                   <div key={index} className="flex gap-5 justify-between items-center">
-                    <TextField
-                      id={`numerial-name-${index}`}
-                      label="Chỉ số"
-                      variant="standard"
-                      required
-                      value={item.name}
-                      onChange={(e) => handleNumerialResultChange(index, "name", e.target.value)}
+                    <Autocomplete
+                      options={indicatorTypes}
+                      getOptionLabel={(option) => option.name}
+                      isOptionEqualToValue={(option, value) => option.id === value.id}
+                      getOptionKey={(option) => `indicator-${option.id}`} // Add this line
+                      renderInput={(params) => (
+                        <TextField {...params} label="Tên chỉ số" variant="standard" required />
+                      )}
+                      renderOption={(props, option) => {
+                        const { key, ...otherProps } = props;
+                        return (
+                          <Box component="li" key={`indicator-${option.id}`} {...otherProps} display="flex" width="100%">
+                            <Typography sx={{ fontSize: 14 }}>
+                              {option.name}
+                            </Typography>
+                            <Typography sx={{ fontSize: 10, color: "gray" }}>
+                              {option.unit}
+                            </Typography>
+                          </Box>
+                        );
+                      }}
+                      fullWidth
+                      value={indicatorTypes?.find(option => option.id === item.id) || null}
+                      onChange={(e, newValue) => handleNumerialResultChange(index, "id", newValue?.id || "")}
+                      slotProps={{
+                        popper: {
+                          sx: {
+                            zIndex: 99999,
+                          }
+                        }
+                      }}
                     />
                     <TextField
                       id={`numerial-value-${index}`}
@@ -420,7 +510,7 @@ const AddResultDrawer = ({ open, onClose }) => {
         <Button 
           variant="contained" 
           color="primary" 
-          onClick={onClose}
+          onClick={handleSubmit}
         >
           Thêm kết quả
         </Button>

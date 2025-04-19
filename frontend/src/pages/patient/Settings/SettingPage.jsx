@@ -1,11 +1,14 @@
 import { Divider, TextField, InputAdornment, Button } from "@mui/material";
 import AvatarEditor from "../../../components/AvatarEditor";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { getUser } from "../../../utlis/auth";
 import EmailIcon from '@mui/icons-material/Email';
 import PersonIcon from '@mui/icons-material/Person';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import { getUserRequest, updateUserRequest } from "../../../service/authApi";
+import useCustomSnackbar from "../../../hooks/useCustomSnackbar";
+import { PatientLayoutContext } from "../../../context/PateintLayoutProvider";
+import Cookies from "js-cookie";
 
 const SettingPage = () => {
     const [image, setImage] = useState(null);
@@ -18,7 +21,8 @@ const SettingPage = () => {
         confirm_password: ""
     });
     const [error, setError] = useState(null);
-
+    const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
+    const { setUser: setUserContext } = useContext(PatientLayoutContext);
 
     useEffect(() => {
         getUserRequest().then((res) => {
@@ -26,6 +30,7 @@ const SettingPage = () => {
             setName(res.user.name);
         }
         ).catch((err) => {
+            showErrorSnackbar(err.response.data.message);
             console.log(err);
         });
     }
@@ -66,6 +71,7 @@ const SettingPage = () => {
 
         setLoading(true);
         updateUserRequest(image, name, changePasswordData.current_password, changePasswordData.new_password).then((res) => {
+            console.log(res);
             setUser(res.user);
             setChangePasswordData({
                 current_password: "",
@@ -74,6 +80,11 @@ const SettingPage = () => {
             });
             setLoading(false);
             setError(null);
+            showSuccessSnackbar("Profile updated successfully");
+            setImage(null);
+            setUserContext(res.user);
+            Cookies.set("name", res.user.name, { expires: 7 });
+            Cookies.set("avatar", res.user.avatar, { expires: 7 });
         }).catch((err) => {
             console.log(err);
         });

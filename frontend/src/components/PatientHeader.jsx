@@ -20,11 +20,10 @@ import PersonIcon from '@mui/icons-material/Person'
 const PatientHeader = () => {
     const { showSuccessSnackbar } = useCustomSnackbar();
     const navigate = useNavigate();
-    const user = getUser();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const header = useRef(null);
-    const { sidebarCollapse, setSidebarCollapse } = useContext(PatientLayoutContext);
+    const { sidebarCollapse, setSidebarCollapse, user } = useContext(PatientLayoutContext);
 
     const userMenuClick = (event) => {
         setAnchorEl(event.currentTarget);

@@ -1,9 +1,11 @@
 import { useState, createContext, useEffect } from 'react';
-
+import { getUser } from "../utlis/auth";
 export const PatientLayoutContext = createContext();
 
 export const PateintLayoutProvider = ({ children }) => {
     const [sidebarCollapse, setSidebarCollapse] = useState(true);
+    const [user, setUser] = useState(getUser());
+
     useEffect(() => {
         const content = document.getElementById("content")
         content.style.marginLeft = sidebarCollapse ? "220px" : "120px";
@@ -25,7 +27,7 @@ export const PateintLayoutProvider = ({ children }) => {
       }, []);
 
     return (
-        <PatientLayoutContext.Provider value={{ sidebarCollapse, setSidebarCollapse }}>
+        <PatientLayoutContext.Provider value={{ sidebarCollapse, setSidebarCollapse, user, setUser }}>
             {children}
         </PatientLayoutContext.Provider>
     );

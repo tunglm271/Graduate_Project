@@ -11,7 +11,7 @@ const PatientFooter = () => {
     return (
         <div id="footer">
             <div id="footer-header">
-                <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                <div className="flex items-center gap-2">
                     <img src={logo} alt="" />
                     <Typography variant='h6' color='white'>Docify</Typography>
                 </div>
@@ -24,7 +24,7 @@ const PatientFooter = () => {
             </div>
 
             <div id='footer-body'>
-                <div style={{display: 'flex', justifyContent: 'space-between', gap: '20px', padding: '10px', marginBottom: '20px'}}>
+                <div className='flex justify-between gap-4 mb-5 mx-3 max-md:flex-col'>
                     <div style={{flex: 1, display: 'flex', flexDirection: 'column', gap: '10px'}}>
                         <Typography variant='body1' sx={{
                             marginBottom: '10px',

@@ -42,6 +42,14 @@ const appointmentApi = {
     assignDoctor(appointmentId, doctorId) {
         return api.post(`appointment/assign-doctor`, { appointment_id: appointmentId, doctor_id: doctorId });
     },
+
+    addResult(appointmentId, formData) {
+        return api.post(`${resource}/${appointmentId}/add-result`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+    },
 };
 
 export default appointmentApi;
