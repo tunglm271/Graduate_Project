@@ -42,6 +42,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('vnpay_payment', [TransactionController::class, 'vnpay_payment']);
     Route::post('appointments/{appointmentId}/vnpay_verify_payment', [TransactionController::class, 'verifyPayment']);
     Route::get('appointments/{appointmentId}/bill', [TransactionController::class, 'showBill']);
+    Route::post('appointments/{appointmentId}/add-result', [AppointmentController::class, 'addResult']);
 });
 
 Route::post('/register', [AuthController::class, 'register']);

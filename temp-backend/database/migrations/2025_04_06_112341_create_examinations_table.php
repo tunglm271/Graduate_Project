@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lab_test_results', function (Blueprint $table) {
+        Schema::create('examinations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('medical_record_id')->constrained()->onDelete('cascade');
+            $table->enum('examination_type',['metrics','images']);
             $table->text('test_name');
+            $table->text('conclusion');
             $table->timestamps();
         });
     }

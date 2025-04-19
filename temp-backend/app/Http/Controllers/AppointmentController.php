@@ -109,6 +109,18 @@ class AppointmentController extends Controller
         ], 200);
     }
 
+    public function addResult(Request $request, Appointment $appointment)
+    {
+        $medicines = json_decode($request->input('medicines'));
+        $indicators = json_decode($request->input('indicators'));
+
+        return response()->json([
+            'message' => 'Result added successfully',
+            'medicines' => $medicines,
+            'indicators' => $indicators,
+        ], 200);
+    }
+
     public function cancel(Request $request, Appointment $appointment)
     {
         $fields = $request->validate([
