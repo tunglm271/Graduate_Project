@@ -33,10 +33,10 @@ export const formatDate = (date, locale = "default") => {
     return `${month} ${day}${relevantSuffix}`;
 };
 
-export const formatDateTime = (date, locale = "default") => {
+export const formatDateTime = (date, locale = "default", monthFormat = "short") => {
     return new Date(date).toLocaleDateString(locale, {
         day: "2-digit",
-        month: "short",
+        month: monthFormat,
         year: "numeric"
       });
 }
@@ -66,4 +66,5 @@ export const timeAgo = (updatedAt) => {
         return `${diffWeeks} tuần trước`;
     }
 }
+
 

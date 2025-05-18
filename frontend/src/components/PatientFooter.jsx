@@ -7,11 +7,15 @@ import LinkedIcon from '../assets/icon/LinkedIcon';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import EmailIcon from '@mui/icons-material/Email';
+import { useTranslation } from 'react-i18next';
+
 const PatientFooter = () => {
+    const { t } = useTranslation();
+
     return (
         <div id="footer">
             <div id="footer-header">
-                <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                <div className="flex items-center gap-2">
                     <img src={logo} alt="" />
                     <Typography variant='h6' color='white'>Docify</Typography>
                 </div>
@@ -24,55 +28,71 @@ const PatientFooter = () => {
             </div>
 
             <div id='footer-body'>
-                <div style={{display: 'flex', justifyContent: 'space-between', gap: '20px', padding: '10px', marginBottom: '20px'}}>
+                <div className='flex justify-between gap-4 mb-5 mx-3 max-md:flex-col'>
                     <div style={{flex: 1, display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                        <Typography variant='body1' sx={{
-                            marginBottom: '10px',
-                        }}>Docify - Bạn dồng hành tin cậy với sức khỏe của bạn</Typography>
+                        <Typography variant='body1' sx={{ marginBottom: '10px' }}>
+                            {t('footer.slogan')}
+                        </Typography>
                         <Typography variant='body1' color='#7a809b' fontSize={'14px'} sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '3px'
-                        }}><LocationOnIcon /> 315 Trường Chinh, Khương Mai, Thanh Xuân, Hà Nội</Typography>
+                            display: 'flex', alignItems: 'center', gap: '3px'
+                        }}>
+                            <LocationOnIcon /> {t('footer.address')}
+                        </Typography>
                         <Typography variant='body1' color='#7a809b' fontSize={'14px'} sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '3px'
-                        }}><LocalPhoneIcon /> +880 123 456 789</Typography>
+                            display: 'flex', alignItems: 'center', gap: '3px'
+                        }}>
+                            <LocalPhoneIcon /> {t('footer.phone')}
+                        </Typography>
                         <Typography variant='body1' color='#7a809b' fontSize={'14px'} sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '3px'
-                        }}><EmailIcon /> tung.nx215162@sis.hust.edu.vn</Typography>
+                            display: 'flex', alignItems: 'center', gap: '3px'
+                        }}>
+                            <EmailIcon /> {t('footer.email')}
+                        </Typography>
                     </div>
+
                     <div style={{flex: 1}}>
-                        <Typography variant='h6' sx={{fontWeight: 600, marginBottom: '10px' }}>Quy chế hoạt động</Typography>
+                        <Typography variant='h6' sx={{fontWeight: 600, marginBottom: '10px' }}>
+                            {t('footer.rules.title')}
+                        </Typography>
                         <ul style={{marginBottom: '20px'}}>
-                            <li>Quy chế hoạt động</li>
-                            <li>Chính sách bảo vệ thông tin</li>
-                            <li>Trách nghiệm và cam kết</li>
+                            <li>{t('footer.rules.operating')}</li>
+                            <li>{t('footer.rules.policy')}</li>
+                            <li>{t('footer.rules.responsibility')}</li>
                         </ul>
 
-                        <Typography variant='h6' sx={{fontWeight: 600, marginBottom: '10px' }}>Dịch vụ</Typography>
+                        <Typography variant='h6' sx={{fontWeight: 600, marginBottom: '10px' }}>
+                            {t('footer.services.title')}
+                        </Typography>
                         <ul>
-                            <li>Đặt lịch khám bệnh</li>
-                            <li>Đăng ký phòng khám</li>
-                            <li>Hỗ trợ quản lý phòng khám</li>
+                            <li>{t('footer.services.booking')}</li>
+                            <li>{t('footer.services.registration')}</li>
+                            <li>{t('footer.services.management')}</li>
                         </ul>
                     </div>
+
                     <div style={{flex: 1}}>
-                        <Typography variant='h6' sx={{fontWeight: 600, lineHeight: 1}}>Theo dõi tin tức và dịch vụ mới nhất của chúng tôi</Typography>
+                        <Typography variant='h6' sx={{fontWeight: 600, lineHeight: 1}}>
+                            {t('footer.subscribe.title')}
+                        </Typography>
                         <div id='footer-subscribe'>
-                            <input type="text" placeholder='Nhập email của bạn' />
-                            <button>Đăng ký</button>
+                            <input type="text" placeholder={t('footer.subscribe.placeholder')} />
+                            <button>{t('footer.subscribe.button')}</button>
                         </div>
-                        <p style={{marginTop: '20px', fontSize: '12px'}}>Bằng cách nhấn nút “<span style={{ fontWeight: 600}}>Đăng ký</span>”, tôi xác nhận đã đọc và đồng ý với các <span style={{ fontWeight: 600}}>Chính sách bảo vệ thông tin</span> của Docify</p>
+                        <p style={{marginTop: '20px', fontSize: '12px'}}>
+                            {t('footer.subscribe.notice.part1')}
+                            <span className='font-semibold'> {t('footer.subscribe.button')} </span>
+                            {t('footer.subscribe.notice.part2')}
+                            <span style={{ fontWeight: 600 }}> {t('footer.rules.policy')} </span>
+                            {t('footer.subscribe.notice.part3')}
+                        </p>
                     </div>
                 </div>
 
                 <Divider />
                 <div id='footer-footer'>
-                    <Typography variant='body1' textAlign={'center'} marginTop={'15px'}>© 2025 Docify. All rights reserved</Typography>
+                    <Typography variant='body1' textAlign={'center'} marginTop={'15px'}>
+                        {t('footer.copyright')}
+                    </Typography>
                 </div>
             </div>
         </div>

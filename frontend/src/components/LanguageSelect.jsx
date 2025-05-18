@@ -5,25 +5,13 @@ import VietnamFlag from "../assets/vietnam.svg";
 import PublicIcon from "@mui/icons-material/Public";
 
 const LanguageSelect = ({ color = "white" }) => {
-  
   const { i18n } = useTranslation();
-  console.log(useTranslation());
+
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 0, // Space between the icon and Select
-        color: color, // Ensure the icon matches the text color
-        width: "auto",
-        marginLeft: 1,
-      }}
-    >
-      <PublicIcon sx={{ fontSize: 24 }} />
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
@@ -33,9 +21,11 @@ const LanguageSelect = ({ color = "white" }) => {
         renderValue={(selected) => {
           switch (selected) {
             case "en":
-              return "EN";
+              return <img src={EnglandFlag} alt="English" />;
             case "vi":
-              return "VI";
+              return <img src={VietnamFlag} alt="Vietnamese"  />;
+            default:
+              return <img src={EnglandFlag} alt="English" />;
           }
         }}
         MenuProps={{
@@ -54,16 +44,18 @@ const LanguageSelect = ({ color = "white" }) => {
             color: color,
           },
           "& .MuiSelect-select": {
-            paddingLeft: 1, // Remove left padding
+            paddingLeft: 1,
+            display: "flex",
+            alignItems: "center",
           },
           "& .MuiOutlinedInput-notchedOutline": {
-            border: "none", // Remove the border
+            border: "none",
           },
           "&:hover .MuiOutlinedInput-notchedOutline": {
-            border: "none", // Remove hover border
+            border: "none",
           },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            border: "none", // Remove focus border
+            border: "none",
           },
           display: {
             xs: "none",
@@ -76,17 +68,16 @@ const LanguageSelect = ({ color = "white" }) => {
           value="en"
           sx={{ display: "flex", alignItems: "center", gap: 1 }}
         >
-          <img src={EnglandFlag} /> English
+          <img src={EnglandFlag} alt="English" /> English
         </MenuItem>
         <MenuItem
           value="vi"
           sx={{ display: "flex", alignItems: "center", gap: 1 }}
         >
-          <img src={VietnamFlag} />
+          <img src={VietnamFlag} alt="Vietnamese" />
           Tiếng Việt
         </MenuItem>
       </Select>
-    </Box>
   );
 };
 

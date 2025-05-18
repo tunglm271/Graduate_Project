@@ -1,40 +1,413 @@
 {
-    "facility-header": " Docify - Quản lí cơ sở y tế",
-    "service-management": "Quản lí dịch vụ",
-    "dashboard": "Bảng điều khiển",
-    "facility": "Cơ sở y tế",
-    "homepage": "Trang chủ",
-    "booking": "Đặt lịch hẹn",
-    "service-search": "Tìm kiếm dịch vụ",
-    "health-profile": "Hồ sơ sức khỏe",
-    "medicine-management": "Quản lí thuốc",
-    "hello": "Xin chào",
-    "welcome-heading": "Cập nhật liên tục tiến trình lịch khám của bạn",
-    "gender": "Giới tính",
-    "male": "Nam",
-    "female": "Nữ",
-    "name": "Tên",
-    "date-of-birth": "Ngày sinh",
-    "address": "Địa chỉ",
-    "phone": "Điện thoại",
-    "relationship": "Mối quan hệ",
-    "avatar": "Hình đại diện",
-    "father": "Bố",
-    "mother": "Mẹ",
-    "son": "Con trai",
-    "daughter": "Con gái",
-    "brother": "Anh trai",
-    "sister": "Chị gái",
-    "husband": "Chồng",
-    "wife": "Vợ",
-    "grandfather": "Ông",
-    "grandmother": "Bà",
-    "grandson": "Cháu trai",
-    "granddaughter": "Cháu gái",
-    "uncle": "Chú",
-    "aunt": "Dì",
-    "nephew": "Cháu trai",
-    "niece": "Cháu gái",
-    "cousin": "Anh chị em họ",
-    "self": "Tôi"
+  "facility-header": " Docify - Quản lí cơ sở y tế",
+  "service-management": "Quản lí dịch vụ",
+  "dashboard": "Bảng điều khiển",
+  "facility": "Cơ sở y tế",
+  "homepage": "Trang chủ",
+  "booking": "Đặt lịch hẹn",
+  "service-search": "Tìm kiếm dịch vụ",
+  "health-profile": "Hồ sơ sức khỏe",
+  "medicine-management": "Quản lí tủ thuốc",
+  "hello": "Xin chào",
+  "welcome-heading": "Cập nhật liên tục tiến trình lịch khám của bạn",
+  "gender": "Giới tính",
+  "male": "Nam",
+  "female": "Nữ",
+  "name": "Tên",
+  "date-of-birth": "Ngày sinh",
+  "address": "Địa chỉ",
+  "phone": "Điện thoại",
+  "relationship": "Mối quan hệ",
+  "avatar": "Hình đại diện",
+  "father": "Bố",
+  "mother": "Mẹ",
+  "son": "Con trai",
+  "daughter": "Con gái",
+  "brother": "Anh trai",
+  "sister": "Chị gái",
+  "husband": "Chồng",
+  "wife": "Vợ",
+  "grandfather": "Ông",
+  "grandmother": "Bà",
+  "grandson": "Cháu trai",
+  "granddaughter": "Cháu gái",
+  "uncle": "Chú",
+  "aunt": "Dì",
+  "nephew": "Cháu trai",
+  "niece": "Cháu gái",
+  "cousin": "Anh chị em họ",
+  "self": "Bản thân",
+  "Self": "Bản thân",
+  "Normal": "Bình thường",
+  "Abnormal": "Bất thường",
+  "Needs monitoring": "Cần theo dõi",
+  "health-profiles-list": "Danh sách hồ sơ sức khỏe",
+  "ai-diagnosis": "Chẩn đoán với AI",
+  "add-profile": "Thêm hồ sơ",
+  "profile": {
+    "none": "Không có",
+    "age": "tuổi",
+    "genderLabel": "Giới tính",
+    "height": "Chiều cao",
+    "weight": "Cân nặng",
+    "allergies": "Dị ứng",
+    "diseases": "Bệnh mãn tính",
+    "insurance": "BHYT",
+    "delete": "Xóa",
+    "detail": {
+      "basic-info": "Thông tin cơ bản",
+      "relationship": "Mối quan hệ",
+      "date-of-birth": "Ngày sinh",
+      "no-phone": "Không có SĐT",
+      "insurance-code": "Mã BHYT",
+      "allergies-list": "Danh sách dị ứng",
+      "chronic-diseases-list": "Danh sách bệnh mãn tính",
+      "name": "Họ và tên",
+      "phone": "Số điện thoại",
+      "gender": "Giới tính"
+    },
+    "relationship": {
+      "Self": "Tôi",
+      "father": "Bố",
+      "mother": "Mẹ",
+      "child": "Con",
+      "sibling": "Anh/Chị/Em",
+      "other": "Khác"
+    },
+    "gender": {
+      "male": "Nam",
+      "female": "Nữ",
+      "other": "Khác"
+    },
+    "tabs": {
+      "history": "Lịch sử bệnh án",
+      "indicators": "Theo dõi chỉ số"
+    },
+    "common": {
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "create": "Tạo hồ sơ mới",
+      "none": "Không có",
+      "save": "Lưu thông tin",
+      "loading": "Đang tải..."
+    }
+  },
+  "header": {
+    "patient": {
+      "patient-account": "Tài khoản bệnh nhân",
+      "booking": "Đặt lịch",
+      "setting": "Cài đặt",
+      "log-out": "Đăng xuất",
+      "profile": "Hồ sơ"
+    }
+  },
+  "msg": {
+    "log-out-success": "Đăng xuất thành công"
+  },
+  "footer": {
+    "slogan": "Docify - Bạn đồng hành tin cậy với sức khỏe của bạn",
+    "address": "315 Trường Chinh, Khương Mai, Thanh Xuân, Hà Nội",
+    "phone": "+880 123 456 789",
+    "email": "tung.nx215162@sis.hust.edu.vn",
+
+    "rules": {
+      "title": "Quy chế hoạt động",
+      "operating": "Quy chế hoạt động",
+      "policy": "Chính sách bảo vệ thông tin",
+      "responsibility": "Trách nhiệm và cam kết"
+    },
+    "services": {
+      "title": "Dịch vụ",
+      "booking": "Đặt lịch khám bệnh",
+      "registration": "Đăng ký phòng khám",
+      "management": "Hỗ trợ quản lý phòng khám"
+    },
+    "subscribe": {
+      "title": "Theo dõi tin tức và dịch vụ mới nhất của chúng tôi",
+      "placeholder": "Nhập email của bạn",
+      "button": "Đăng ký",
+      "notice": {
+        "part1": "Bằng cách nhấn nút",
+        "part2": ", tôi xác nhận đã đọc và đồng ý với các",
+        "part3": " của Docify"
+      }
+    },
+    "copyright": "© 2025 Docify. All rights reserved"
+  },
+  "setting": {
+    "patient": {
+      "title": "Cài đặt của tôi",
+      "account": {
+        "title": "Tài khoản",
+        "description": "Thông tin tài khoản của bạn",
+        "avatar": "Ảnh đại diện",
+        "fullName": "Họ và tên",
+        "email": "Email",
+        "phone": "Số điện thoại"
+      },
+      "password": {
+        "title": "Đổi mật khẩu",
+        "description": "Thay đổi mật khẩu tài khoản của bạn",
+        "currentPassword": "Nhập mật khẩu",
+        "currentPasswordPlaceholder": "Nhập mật khẩu hiện tại của bạn",
+        "newPassword": "Mật khẩu mới",
+        "newPasswordPlaceholder": "Nhập mật khẩu mới của bạn",
+        "confirmPassword": "Xác nhận mật khẩu mới",
+        "confirmPasswordPlaceholder": "Xác nhận mật khẩu mới của bạn"
+      },
+      "button": {
+        "saveChanges": "Lưu thay đổi"
+      },
+      "errors": {
+        "fillAllFields": "Vui lòng điền đầy đủ thông tin",
+        "passwordMismatch": "Mật khẩu mới và xác nhận mật khẩu không khớp",
+        "passwordLength": "Mật khẩu mới phải có ít nhất 6 ký tự"
+      },
+      "messages": {
+        "updateSuccess": "Cập nhật hồ sơ thành công"
+      }
+    }
+  },
+  "appointment": {
+    "noAppointment": "Không có lịch hẹn",
+    "filter": {
+      "all": "Tất cả",
+      "assigned": "Đã chỉ định bác sĩ",
+      "canceled": "Đã hủy"
+    },
+    "card": {
+      "appointmentCode": "Mã đơn khám: APPOINTMENT001",
+      "viewDetails": "Xem chi tiết",
+      "contactClinic": "Liên hệ phòng khám",
+      "doctorInformation": "Thông tin bác sĩ chỉ định",
+      "notAssigned": "Chưa có bác sĩ được chỉ định",
+      "doctor": {
+        "fullName": "Họ tên: BS. {{name}}",
+        "specialty": "Chuyên khoa: Nội tiết",
+        "experience": "Kinh nghiệm: 5 năm",
+        "phone": "SĐT: 034124578"
+      },
+      "appointmentDate": "Ngày khám: {{date}}",
+      "appointmentTime": "Giờ khám: {{startTime}} - {{endTime}}",
+      "steps": {
+        "booked": "Đã đặt lịch",
+        "waitingAssignment": "Chờ chỉnh định bác sĩ",
+        "waitingPayment": "Chờ thanh toán",
+        "waitingExecution": "Chờ thực hiện",
+        "completed": "Đã hoàn thành"
+      },
+      "payment": {
+        "pay": "Thanh toán",
+        "paid": "Đã thanh toán"
+      }
+    }
+  },
+  "admin": {
+    "sidebar": {
+      "title": "Bảng Quản Trị",
+      "dashboard": "Trang chủ",
+      "facilities": "Cơ sở y tế",
+      "patient_accounts": "Tài khoản bệnh nhân",
+      "blog": "Bài viết",
+      "analytics": "Phân tích",
+      "settings": "Cài đặt",
+      "help": "Trợ giúp",
+      "profile": "Hồ sơ",
+      "myAccount": "Tài khoản của tôi",
+      "logout": "Đăng xuất"
+    },
+    "dashboard": {
+      "title": "Thống kê"
+    },
+    "medical_articles": {
+      "title": "Bài viết y tế",
+      "views": "Lượt xem",
+      "create": "Tạo bài viết mới",
+      "cover_image": "Ảnh bìa",
+      "enter_image_url": "Nhập URL ảnh",
+      "upload": "Tải lên",
+      "enter_title": "Nhập tiêu đề bài viết",
+      "tags": "Thẻ",
+      "add_tag": "Thêm thẻ và nhấn Enter",
+      "content": "Nội dung",
+      "save_draft": "Lưu nháp",
+      "publish": "Xuất bản",
+      "saving": "Đang lưu...",
+      "publishing": "Đang xuất bản...",
+      "draft_saved": "Đã lưu bài viết dưới dạng nháp",
+      "published": "Đã xuất bản bài viết thành công",
+      "error_saving": "Lỗi khi lưu bài viết",
+      "error_publishing": "Lỗi khi xuất bản bài viết",
+      "table": {
+        "number": "#",
+        "article_name": "Tên bài viết",
+        "status": "Trạng thái",
+        "created": "Ngày tạo",
+        "updated": "Ngày cập nhật",
+        "actions": "Thao tác"
+      },
+      "status": {
+        "published": "Đã xuất bản",
+        "draft": "Bản nháp"
+      },
+      "delete": {
+        "title": "Xác nhận xóa",
+        "message": "Bạn có chắc chắn muốn xóa bài viết \"{{name}}\"? Hành động này không thể hoàn tác.",
+        "cancel": "Hủy",
+        "confirm": "Xóa"
+      },
+      "status_change": {
+        "title": "Thay đổi trạng thái bài viết",
+        "publish_message": "Bạn có chắc chắn muốn xuất bản bài viết \"{{name}\"?",
+        "unpublish_message": "Bạn có chắc chắn muốn hủy xuất bản bài viết \"{{name}}\"?",
+        "cancel": "Hủy",
+        "confirm": "Xác nhận"
+      },
+      "detail": "Chi tiết bài viết",
+      "back": "Quay lại danh sách",
+      "edit": "Chỉnh sửa bài viết",
+      "error_fetching": "Lỗi khi tải thông tin bài viết",
+      "draft_updated": "Đã cập nhật bản nháp bài viết",
+      "article_updated": "Đã cập nhật bài viết thành công",
+      "cancel": "Hủy"
+    },
+    "patient_account_list": {
+      "title": "Danh sách tài khoản bệnh nhân",
+      "search_placeholder": "Tìm kiếm theo tên, email, số điện thoại",
+      "patient_name": "Tên bệnh nhân",
+      "email": "Email",
+      "phone": "Số điện thoại",
+      "deactivate_success": "Đã hủy kích hoạt tài khoản bệnh nhân thành công",
+      "activate_success": "Đã kích hoạt tài khoản bệnh nhân thành công",
+      "deactivate": "Hủy kích hoạt",
+      "activate": "Kích hoạt",
+      "active": "Đang hoạt động",
+      "inactive": "Ngừng hoạt động",
+      "status": "Trạng thái",
+      "health_profiles": "Hồ sơ sức khỏe",
+      "view_detail": "Xem chi tiết",
+      "last_activity": "Hoạt động gần nhất"
+    },
+    "facility_list": {
+      "title": "Danh sách cơ sở y tế",
+      "facility_name": "Tên cơ sở y tế",
+      "doctors": "Bác sĩ",
+      "services": "Dịch vụ",
+      "last_activity": "Hoạt động gần nhất",
+      "actions": "Trạng thái",
+      "status": {
+        "status": "Trạng thái",
+        "active": "Đang hoạt động",
+        "inactive": "Ngừng hoạt động"
+      },
+      "view_detail": "Xem chi tiết",
+      "pagination": {
+        "rows_per_page": "Số hàng mỗi trang:",
+        "of": "trên tổng số",
+        "confirm_dialog": {
+          "title": "Xác nhận hành động",
+          "message": "Bạn có chắc chắn muốn {{action}} cơ sở \"{{name}}\"?",
+          "deactivate": "ngừng hoạt động",
+          "activate": "kích hoạt",
+          "cancel": "Hủy",
+          "confirm": "Xác nhận"
+        }
+      }
+    },
+    "patientDetail": {
+      "breadcrumbs": {
+        "patientAccounts": "Tài khoản bệnh nhân",
+        "patientDetail": "Chi tiết bệnh nhân"
+      },
+      "accountInfo": {
+        "title": "Thông tin tài khoản",
+        "username": "Tên đăng nhập",
+        "email": "Email",
+        "phone": "Số điện thoại"
+      },
+      "healthProfiles": {
+        "title": "Hồ sơ sức khỏe gia đình"
+      },
+      "profileDrawer": {
+        "tabs": {
+          "profileInfo": "Thông tin hồ sơ",
+          "medicalHistory": "Lịch sử khám bệnh"
+        },
+        "profileInfo": {
+          "title": "Thông tin hồ sơ",
+          "relationship": "Mối quan hệ",
+          "dateOfBirth": "Ngày sinh",
+          "gender": "Giới tính",
+          "height": "Chiều cao",
+          "weight": "Cân nặng",
+          "allergies": {
+            "title": "Dị ứng",
+            "none": "Không có dị ứng."
+          },
+          "diseases": {
+            "title": "Bệnh",
+            "none": "Không có bệnh."
+          }
+        },
+        "medicalHistory": {
+          "table": {
+            "date": "Ngày",
+            "doctor": "Bác sĩ",
+            "facility": "Cơ sở y tế",
+            "service": "Dịch vụ",
+            "status": "Trạng thái",
+            "noAppointments": "Không tìm thấy lịch hẹn."
+          }
+        }
+      },
+      "status": {
+        "confirmed": "Đã xác nhận",
+        "pending": "Đang chờ",
+        "scheduled": "Đã lên lịch",
+        "rescheduled": "Đã lên lịch lại"
+      }
+    }
+  },
+  "medicine": {
+    "my-medicines": "Thuốc của tôi",
+    "no-medicine-schedule": "Không có lịch thuốc",
+    "active": "Hoạt động",
+    "history": "Lịch sử",
+    "add-medicine": "Thêm thuốc",
+    "medicine-name": "Tên thuốc",
+    "medicine-quantity": "Số lượng",
+    "medicine-expiry": "Hạn sử dụng",
+    "cabinet": {
+      "title": "Kho thuốc",
+      "tabs": {
+        "active": "Hoạt động",
+        "history": "Lịch sử"
+      }
+    }
+  },
+  "news": {
+    "news": "Tin tức",
+    "share": "Chia sẻ",
+    "top_famous": "Tin tức nổi bật",
+    "save": "Lưu",
+    "see-more": "Xem thêm",
+    "recentNews": "Tin tức gần đây",
+    "new-from-external-sources": "Tin tức từ nguồn bên ngoài",
+    "recommendedServices": "Dịch vụ đề xuất",
+    "advertisement": "Quảng cáo",
+    "readMore": "Đọc thêm",
+    "latestNews": {
+      "title": "Tin tức gần đây"
+    },
+    "hotline": {
+      "title": "Đường dây nóng",
+      "description": "Liên hệ với chúng tôi qua đường dây nóng để được hỗ trợ nhanh chóng và hiệu quả.",
+      "contactButton": "Liên hệ ngay"
+    },
+    "error_fetching": "Lỗi khi tải bài viết",
+    "no_articles": "Không tìm thấy bài viết nào",
+    "views": "lượt xem",
+    "all_news": "Tất cả tin tức",
+    "latest_updates": "Cập nhật mới nhất"
+  }
 }

@@ -1,5 +1,6 @@
 import { useCalendarApp, ScheduleXCalendar } from '@schedule-x/react';
 import { createEventRecurrencePlugin, createEventsServicePlugin  } from "@schedule-x/event-recurrence";
+import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { createCalendarControlsPlugin } from '@schedule-x/calendar-controls'
 import {
   createViewDay,
@@ -9,7 +10,6 @@ import {
 } from '@schedule-x/calendar';
 import '@schedule-x/theme-default/dist/index.css';
 import { useState, useEffect } from 'react';
-import { Menu, MenuItem } from '@mui/material';
 import "./schedule.css";
 import doctorApi from '../../service/Doctorapi';
 
@@ -31,7 +31,7 @@ function createSchedule(data) {
 
     return {
       id: item.id,
-      title: 'Working Schedule',
+      title: 'Lịch làm việc',
       start: `2025-01-01 ${startTime}`,
       end: `2025-01-01 ${endTime}`,
       location: "Phòng khám",
@@ -40,90 +40,71 @@ function createSchedule(data) {
   });
 }
 
+function createAppointment(data) {
+  return data.map((item) => {
+    const date = new Date(item.date);
+    const startTime = item.start_time.slice(0, 5);
+    const endTime = item.end_time.slice(0, 5);
+
+    return {
+      id: item.id,
+      title: item.medical_service.name,
+      start: date.toISOString().split('T')[0] + ' ' + startTime,
+      end: date.toISOString().split('T')[0] + ' ' + endTime,
+      location: "Phòng khám",
+      people: [item.health_profile?.name],
+      calendarId: 'appointment'
+    };
+  });
+}
+
 const WorkingSchedule = () => {
   const eventsService = useState(() => createEventsServicePlugin())[0];
-
-  const [menuPosition, setMenuPosition] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [schedules, setSchedules] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     doctorApi.getDoctorSchedule()
       .then((response) => {
-        const convertedSchedules = createSchedule(response.data);
-        setSchedules(convertedSchedules);
-        eventsService.set(convertedSchedules);
-        setLoading(false);
+        console.log(response);
+        const convertedSchedules = createSchedule(response.data.schedules);
+        const convertedAppointments = createAppointment(response.data.appointments);
+        eventsService.set([...convertedSchedules,...convertedAppointments]);
       })
       .catch((error) => {
         console.error("Error fetching schedules:", error);
-        setLoading(false);
       });
   }, []);
 
-  const handleClickDateTime = (dateTime) => {
-    const [date, time] = dateTime.split(' ');
-    const [hour, minute] = time.split(':').map(Number);
-    setSelectedDate(date);
-    const dayColumn = document.querySelector(`[data-time-grid-date="${date}"]`);
-    if (dayColumn) {
-      const rect = dayColumn.getBoundingClientRect();
-      const positionY = ((hour - 6) * 60 + minute) / (14 * 60) * rect.height;
-      setMenuPosition({ top: rect.top + positionY, left: rect.left + 100 });
-    } else {
-      setMenuPosition({ top: window.innerHeight / 2, left: window.innerWidth / 2 });
-    }
-  };
-
-  const handleClose = () => {
-    setMenuPosition(null);
-  };
 
   const calendarControls = useState(() => createCalendarControlsPlugin())[0];
   const calendar = useCalendarApp({
     dayBoundaries: { start: '06:00', end: '20:00' },
     weekOptions: { gridHeight: 1000 },
-    callbacks: { onClickDateTime: handleClickDateTime },
+    calendars: {
+      appointment: {
+        colorName: 'appointment',
+        lightColors: {
+          main: '#9b59b6',        
+          container: '#f3e5f5',    
+          onContainer: '#4a148c',
+        },
+        darkColors: {
+          main: '#e1bee7',      
+          onContainer: '#f3e5f5', 
+          container: '#6a1b9a', 
+        }
+      },
+    },
     views: [createViewDay(), createViewWeek(), createViewMonthGrid(), createViewMonthAgenda()],
-    plugins: [eventsService, createEventRecurrencePlugin(), calendarControls],
+    plugins: [eventsService, createEventRecurrencePlugin(), calendarControls, createEventModalPlugin()],
   });
 
   useEffect(() => {
     eventsService.getAll();
   }, []);
 
-  const handleDateChange = (e) => {
-    const newDate = e.target.value;
-    setSelectedDate(newDate);
-    calendarControls.setDate(newDate);
-    const dayColumn = document.querySelector(`[data-time-grid-date="${newDate}"]`);
-    const rect = dayColumn.getBoundingClientRect();
-    setMenuPosition({ top: menuPosition.top, left: rect.left + 100 });
-  };
-
   return (
     <div>
       <ScheduleXCalendar calendarApp={calendar} />
-      <Menu
-        open={Boolean(menuPosition)}
-        onClose={handleClose}
-        anchorReference="anchorPosition"
-        anchorPosition={menuPosition}
-      >
-        <div style={{ padding: '8px' }}>
-          <p>Tạo lịch tái khám</p>
-          <input 
-            type="date" 
-            className="w-full border-[1px] rounded-sm border-gray-400"
-            value={selectedDate}
-            onChange={handleDateChange} 
-          />
-        </div>
-        <MenuItem disabled>Thời gian: {selectedDate?.toDateString()}</MenuItem>
-        <MenuItem onClick={() => alert(`Thêm sự kiện vào ${selectedDate}`)}>Thêm sự kiện</MenuItem>
-        <MenuItem onClick={handleClose}>Đóng</MenuItem>
-      </Menu>
     </div>
   );
 };

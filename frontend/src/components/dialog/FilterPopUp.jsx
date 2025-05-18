@@ -1,7 +1,8 @@
 import { Dialog, DialogActions, DialogTitle, Button, Select, MenuItem, FormControl, Slider, Radio,RadioGroup, FormControlLabel, FormLabel } from '@mui/material';
-
-const FilterPopUp = ({open, onClose}) => {
-
+import { useState } from 'react';
+const FilterPopUp = ({open, onClose, handleFilter}) => {
+    const [maxPrice, setMaxPrice] = useState(100);
+    const [gender, setGender] = useState("other");
     const marks = [
         {
             value: 0,
@@ -25,6 +26,13 @@ const FilterPopUp = ({open, onClose}) => {
         },
     ]
 
+    const handleSubmit = () => {
+        handleFilter({
+            maxPrice: maxPrice * 40000,
+            gender: gender
+        });
+        onClose();
+    }
 
 
     return (
@@ -54,11 +62,12 @@ const FilterPopUp = ({open, onClose}) => {
             </FormControl>
             <h4>Giá gói khám</h4>
             <Slider
-                defaultValue={100}
+                value={maxPrice}
                 aria-labelledby="discrete-slider-always"
                 step={25}
                 marks={marks}
                 sx={{width: '90%', ml: '4%', mb: 5}}
+                onChange={(event, newValue) => setMaxPrice(newValue)}
             />
 
             <FormControl>
@@ -66,8 +75,10 @@ const FilterPopUp = ({open, onClose}) => {
                 <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"
-                    value={"female"}
+                    value={gender}
+                    onChange={(event) => setGender(event.target.value)}
                 >
+                    <FormControlLabel value="other" control={<Radio />} label="Tất cả" />
                     <FormControlLabel value="female" control={<Radio />} label="Nam" />
                     <FormControlLabel value="male" control={<Radio />} label="Nữ" />
                 </RadioGroup>
@@ -75,7 +86,7 @@ const FilterPopUp = ({open, onClose}) => {
         </div>
         <DialogActions>
             <Button onClick={onClose} color="secondary">Cancel</Button>
-            <Button onClick={onClose} color="primary">Áp dụng</Button>
+            <Button onClick={handleSubmit} color="primary">Áp dụng</Button>
         </DialogActions>
     </Dialog>
     );

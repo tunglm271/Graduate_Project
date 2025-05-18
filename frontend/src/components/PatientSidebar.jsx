@@ -4,24 +4,32 @@ import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import LogoutIcon from "@mui/icons-material/Logout";
 import NavLink from "./NavLink";
 import logo from "../assets/logo.png";
-import { Button } from "@mui/material";
+import {
+  Button,
+  Drawer,
+  IconButton,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import CalendarIcon from "@icon/CalendarIcon";
 import MedicalService from "@icon/MedicalService";
 import PillIcon from "@icon/PillIcon";
 import { useTranslation } from "react-i18next";
 import { useContext } from "react";
+import { Newspaper } from "lucide-react";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import MenuIcon from "@mui/icons-material/Menu";
 import { PatientLayoutContext } from "../context/PateintLayoutProvider";
+
 const PatientSidebar = () => {
   const { t } = useTranslation();
-  const { sidebarCollapse } = useContext(PatientLayoutContext);
+  const { sidebarCollapse, setSidebarCollapse } =
+    useContext(PatientLayoutContext);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  return (
-    <div
-      id="sidebar"
-      style={{
-        width: sidebarCollapse ? "220px" : "120px",
-      }}
-    >
+  const sidebarContent = (
+    <>
       <Link
         to="/home"
         style={{
@@ -31,6 +39,7 @@ const PatientSidebar = () => {
           alignItems: "center",
           justifyContent: "center",
           gap: "10px",
+          padding: "1rem",
         }}
       >
         <img src={logo} alt="logo" className="logo" />
@@ -68,6 +77,18 @@ const PatientSidebar = () => {
           text={t("medicine-management")}
           collapse={sidebarCollapse}
         />
+        <NavLink
+          to="/news"
+          icon={<Newspaper size={20} />}
+          text={t("news.news")}
+          collapse={sidebarCollapse}
+        />
+        <NavLink
+          to="/ai-diagnosis"
+          icon={<AutoAwesomeIcon size={20} />}
+          text={t("ai-diagnosis")}
+          collapse={sidebarCollapse}
+        />
       </div>
 
       <Button
@@ -80,6 +101,54 @@ const PatientSidebar = () => {
       >
         <LogoutIcon />
       </Button>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        <IconButton
+          onClick={() => setSidebarCollapse(!sidebarCollapse)}
+          sx={{
+            position: "fixed",
+            left: 16,
+            top: 16,
+            zIndex: 1200,
+            color: "primary.main",
+            backgroundColor: "white",
+            "&:hover": {
+              backgroundColor: "grey.100",
+            },
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Drawer
+          variant="temporary"
+          open={sidebarCollapse}
+          onClose={() => setSidebarCollapse(false)}
+          sx={{
+            "& .MuiDrawer-paper": {
+              width: 220,
+              backgroundColor: "#007bff",
+              color: "white",
+            },
+          }}
+        >
+          {sidebarContent}
+        </Drawer>
+      </>
+    );
+  }
+
+  return (
+    <div
+      id="sidebar"
+      style={{
+        width: sidebarCollapse ? "220px" : "90px",
+      }}
+    >
+      {sidebarContent}
     </div>
   );
 };

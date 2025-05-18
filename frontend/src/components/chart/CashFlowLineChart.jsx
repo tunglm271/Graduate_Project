@@ -1,4 +1,4 @@
-import { FormControl, Select, MenuItem } from "@mui/material";
+import { FormControl, Select, MenuItem, Paper } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 import { getLast12Months, formatDate } from "../../utlis/DateFun";
 import { Line } from "react-chartjs-2";
@@ -121,9 +121,9 @@ const CashFlowLineChart = () => {
   
 
   return (
-    <div className="cash-flow-line-chart">
+    <Paper sx={{ p: 3, borderRadius: 1, bgcolor: "white", border: "1px solid #e0e0e0" }}>
       <div className="flex justify-between items-center" style={{ marginBottom: "1rem" }}>
-        <h4 className="text-lg font-semibold">Biểu đồ dòng tiền</h4>
+        <h4 className="text-lg">Biểu đồ dòng tiền</h4>
         <FormControl variant="standard" fullWidth sx={{ maxWidth: 150 }}>
           <Select
             labelId="demo-simple-select-label"
@@ -147,7 +147,7 @@ const CashFlowLineChart = () => {
         </p>
       </div>
       <Line key={filter} data={data} options={options} />
-    </div>
+    </Paper>
   );
 };
 

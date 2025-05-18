@@ -1,24 +1,39 @@
-import { Drawer, TextField, Button, IconButton, Select, MenuItem, FormControl, InputLabel, Divider, Slide } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
+import {
+  Drawer,
+  TextField,
+  Button,
+  IconButton,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Divider,
+  Slide,
+  Autocomplete,
+  Typography,
+  Box,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import FileUploader from "./FileUploader";
-import { useState } from "react";
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-
+import { useEffect, useState } from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { getIndicatorTypes, getMedicines } from "../hooks/useCachedData";
+import appointmentApi from "../service/appointmentApi";
 const sliderSettings = {
-  dots: true,        
-  infinite: true,    
-  speed: 500,        
-  autoplay: true,    
-  slidesToShow: 1,   
-  slidesToScroll: 1, 
-  arrows: false  
+  dots: true,
+  infinite: true,
+  speed: 500,
+  autoplay: true,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  arrows: false,
 };
 
-const AddResultDrawer = ({ open, onClose }) => {
+const AddResultDrawer = ({ open, onClose, appointmentId }) => {
   // State management
   const [toggleNumerialResult, setToggleNumerialResult] = useState(false);
   const [numerialResults, setNumerialResults] = useState([]);
@@ -32,25 +47,30 @@ const AddResultDrawer = ({ open, onClose }) => {
   const [postedFiles, setPostedFiles] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
   const [treatmentPlan, setTreatmentPlan] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState("");
+  const [indicatorTestSummary, setIndicatorTestSummary] = useState("");
+  const [imageTestSummary, setImageTestSummary] = useState("");
+  const { data: indicatorTypes = [] } = getIndicatorTypes();
+  const { data: medicinesData = [] } = getMedicines();
 
   // Event handlers
   const handleAddNumerialResult = () => {
     setToggleNumerialResult(true);
-    setNumerialResults([{ name: "", value: "", evaluation: "" }]);
+    setNumerialResults([{ indicator_type_id: "", value: "", evaluation: "" }]);
   };
 
   const handleAddImage = (e) => {
     const files = Array.from(e.target.files);
-    setPostedFiles(prev => [...prev, ...files]);
-    
-    const previews = files.map(file => ({
+    setPostedFiles((prev) => [...prev, ...files]);
+
+    const previews = files.map((file) => ({
       file,
-      url: URL.createObjectURL(file)
+      url: URL.createObjectURL(file),
     }));
-    setPreviewImages(prev => [...prev, ...previews]);
+    setPreviewImages((prev) => [...prev, ...previews]);
   };
-  
+
   // Handlers for medicine state changes
   const handleMedicineChange = (index, field, value) => {
     const updatedMedicines = [...medicines];
@@ -59,7 +79,7 @@ const AddResultDrawer = ({ open, onClose }) => {
   };
 
   const handleAddMedicine = () => {
-    setMedicines([...medicines, { name: "", usage: "", amount: "" }]);
+    setMedicines([...medicines, { id: "", usage: "", amount: "" }]);
   };
 
   const handleRemoveMedicine = (index) => {
@@ -69,7 +89,7 @@ const AddResultDrawer = ({ open, onClose }) => {
   const handleTogglePrescription = () => {
     setTogglePrescription(!togglePrescription);
     if (!togglePrescription) {
-      setMedicines([{ name: "", usage: "", amount: "" }]);
+      setMedicines([{ id: "", usage: "", amount: "" }]);
     }
   };
 
@@ -82,6 +102,47 @@ const AddResultDrawer = ({ open, onClose }) => {
     }
   };
 
+  const handleSubmit = () => {
+    if (!result.trim()) {
+      alert("Vui lòng nhập kết quả khám bệnh.");
+      return;
+    }
+
+    console.log(JSON.stringify(numerialResults));
+    console.log(JSON.stringify(medicines));
+    setIsSubmitting(true);
+    const formData = new FormData();
+    formData.append("diagnosis", result);
+    formData.append("medicines", JSON.stringify(medicines));
+
+    if (toggleNumerialResult) {
+      formData.append("indicatorTestSummary", indicatorTestSummary);
+      formData.append("indicators", JSON.stringify(numerialResults));
+    }
+
+    if (toggleImageResult && postedFiles.length > 0) {
+      postedFiles.forEach((file, index) => {
+        formData.append(`images[${index}]`, file);
+      });
+      formData.append("imageTestSummary", imageTestSummary);
+    }
+
+    appointmentApi
+      .addResult(appointmentId, formData)
+      .then((res) => {
+        alert("Thêm kết quả thành công!");
+        console.log(res.data);
+        onClose();
+      })
+      .catch((error) => {
+        console.error("Error adding result:", error);
+        alert("Có lỗi xảy ra khi thêm kết quả.");
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  };
+
   // Handlers for numerical results
   const handleNumerialResultChange = (index, field, value) => {
     const updatedResults = [...numerialResults];
@@ -90,15 +151,18 @@ const AddResultDrawer = ({ open, onClose }) => {
   };
 
   const handleAddNumerialResultItem = () => {
-    setNumerialResults([...numerialResults, { name: "", value: "", evaluation: "" }]);
+    setNumerialResults([
+      ...numerialResults,
+      { indicator_type_id: "", value: "", evaluation: "" },
+    ]);
   };
 
   // Get current date in YYYY-MM-DD format for default date input value
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
@@ -116,26 +180,68 @@ const AddResultDrawer = ({ open, onClose }) => {
         <div className="flex flex-col gap-2 mb-2">
           <div className="flex justify-between items-center">
             <p className="font-bold">Đơn thuốc</p>
-            <Button 
-              variant="outlined" 
-              color="error" 
+            <Button
+              variant="outlined"
+              color="error"
               onClick={handleTogglePrescription}
             >
               Xóa
             </Button>
           </div>
-          
+
           {medicines.map((medicine, index) => (
-            <div key={index} className="flex gap-5 justify-between items-center mb-1">
-              <div>
-                <TextField
-                  id={`medicine-${index}`}
-                  label="Tên thuốc"
-                  variant="standard"
+            <div
+              key={index}
+              className="flex gap-5 justify-between items-center mb-1"
+            >
+              <div style={{ width: "60%" }}>
+                <Autocomplete
+                  options={medicinesData}
+                  getOptionLabel={(option) => option.name || ""}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
+                  getOptionKey={(option) => `medicine-${option.id}`} // Add this line
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Tên thuốc"
+                      variant="standard"
+                      required
+                    />
+                  )}
+                  renderOption={(props, option) => (
+                    <Box
+                      component="li"
+                      {...props}
+                      display="flex"
+                      width="100%"
+                      gap={1}
+                    >
+                      <Typography sx={{ fontSize: 14 }}>
+                        {option.name}
+                      </Typography>
+                      <Typography sx={{ fontSize: 10, color: "gray" }}>
+                        {option.description}
+                      </Typography>
+                    </Box>
+                  )}
                   fullWidth
-                  required
-                  value={medicine.name}
-                  onChange={(e) => handleMedicineChange(index, "name", e.target.value)}
+                  value={
+                    medicinesData?.find(
+                      (option) => option.id === medicine.id
+                    ) || null
+                  }
+                  onChange={(e, newValue) =>
+                    handleMedicineChange(index, "id", newValue?.id || "")
+                  }
+                  slotProps={{
+                    popper: {
+                      sx: {
+                        zIndex: 99999,
+                      },
+                    },
+                  }}
                 />
                 <TextField
                   id={`usage-${index}`}
@@ -145,7 +251,9 @@ const AddResultDrawer = ({ open, onClose }) => {
                   rows={2}
                   required
                   value={medicine.usage}
-                  onChange={(e) => handleMedicineChange(index, "usage", e.target.value)}
+                  onChange={(e) =>
+                    handleMedicineChange(index, "usage", e.target.value)
+                  }
                 />
               </div>
               <TextField
@@ -155,50 +263,52 @@ const AddResultDrawer = ({ open, onClose }) => {
                 type="number"
                 required
                 value={medicine.amount}
-                onChange={(e) => handleMedicineChange(index, "amount", e.target.value)}
+                onChange={(e) =>
+                  handleMedicineChange(index, "amount", e.target.value)
+                }
               />
-              <IconButton 
-                sx={{ p: 1, mt: 2 }} 
-                color="error" 
+              <IconButton
+                sx={{ p: 1, mt: 2 }}
+                color="error"
                 onClick={() => handleRemoveMedicine(index)}
               >
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </div>
           ))}
-          
-          <Button 
-            color="primary" 
-            onClick={handleAddMedicine} 
+
+          <Button
+            color="primary"
+            onClick={handleAddMedicine}
             startIcon={<AddIcon />}
           >
             Thêm thuốc
           </Button>
         </div>
       ) : (
-        <Button 
-          variant="outlined" 
-          fullWidth 
-          sx={{ mb: 2, p: 2 }} 
+        <Button
+          variant="outlined"
+          fullWidth
+          sx={{ mb: 2, p: 2 }}
           onClick={handleTogglePrescription}
         >
           Tạo Đơn thuốc
         </Button>
       )}
-      
+
       {toggleSchedule ? (
         <div className="flex flex-col gap-2 mb-2">
           <div className="flex justify-between items-center">
             <p className="font-bold">Lịch tái khám</p>
-            <Button 
-              variant="outlined" 
-              color="error" 
+            <Button
+              variant="outlined"
+              color="error"
               onClick={handleToggleSchedule}
             >
               Xóa
             </Button>
           </div>
-          
+
           <div className="flex flex-col gap-3 bg-slate-50 border-gray-400 rounded border-[1px] p-3 mt-2">
             <div className="flex gap-4 mb-2">
               <TextField
@@ -222,7 +332,7 @@ const AddResultDrawer = ({ open, onClose }) => {
                 required
               />
             </div>
-            
+
             <TextField
               id="schedule-reason"
               label="Lý do tái khám"
@@ -238,9 +348,9 @@ const AddResultDrawer = ({ open, onClose }) => {
           </div>
         </div>
       ) : (
-        <Button 
-          variant="outlined" 
-          fullWidth 
+        <Button
+          variant="outlined"
+          fullWidth
           sx={{ mb: 2, p: 2 }}
           onClick={handleToggleSchedule}
         >
@@ -260,25 +370,75 @@ const AddResultDrawer = ({ open, onClose }) => {
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center">
                 <p className="font-bold">Xét nghiệm chỉ số</p>
-                <Button 
-                  variant="outlined" 
-                  color="error" 
+                <Button
+                  variant="outlined"
+                  color="error"
                   onClick={() => setToggleNumerialResult(false)}
                 >
                   Xóa
                 </Button>
               </div>
-              
+
               <div className="flex flex-col gap-3 bg-slate-50 border-gray-400 rounded border-[1px] p-3">
                 {numerialResults.map((item, index) => (
-                  <div key={index} className="flex gap-5 justify-between items-center">
-                    <TextField
-                      id={`numerial-name-${index}`}
-                      label="Chỉ số"
-                      variant="standard"
-                      required
-                      value={item.name}
-                      onChange={(e) => handleNumerialResultChange(index, "name", e.target.value)}
+                  <div
+                    key={index}
+                    className="flex gap-5 justify-between items-center"
+                  >
+                    <Autocomplete
+                      options={indicatorTypes}
+                      getOptionLabel={(option) => option.name || ""}
+                      isOptionEqualToValue={(option, value) =>
+                        option.id === value.id
+                      }
+                      getOptionKey={(option) => `indicator-${option.id}`}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Tên chỉ số"
+                          variant="standard"
+                          required
+                        />
+                      )}
+                      renderOption={(props, option) => {
+                        const { key, ...otherProps } = props;
+                        return (
+                          <Box
+                            component="li"
+                            key={`indicator-${option.id}`}
+                            {...otherProps}
+                            display="flex"
+                            width="100%"
+                          >
+                            <Typography sx={{ fontSize: 14 }}>
+                              {option.name}
+                            </Typography>
+                            <Typography sx={{ fontSize: 10, color: "gray" }}>
+                              {option.unit}
+                            </Typography>
+                          </Box>
+                        );
+                      }}
+                      fullWidth
+                      value={
+                        indicatorTypes?.find(
+                          (option) => option.id === item.indicator_type_id
+                        ) || null
+                      }
+                      onChange={(e, newValue) =>
+                        handleNumerialResultChange(
+                          index,
+                          "indicator_type_id",
+                          newValue?.id || ""
+                        )
+                      }
+                      slotProps={{
+                        popper: {
+                          sx: {
+                            zIndex: 99999,
+                          },
+                        },
+                      }}
                     />
                     <TextField
                       id={`numerial-value-${index}`}
@@ -286,42 +446,68 @@ const AddResultDrawer = ({ open, onClose }) => {
                       variant="standard"
                       required
                       value={item.value}
-                      onChange={(e) => handleNumerialResultChange(index, "value", e.target.value)}
+                      onChange={(e) =>
+                        handleNumerialResultChange(
+                          index,
+                          "value",
+                          e.target.value
+                        )
+                      }
                     />
-                    <FormControl variant="standard" sx={{ m: 1, minWidth: 120, fontSize: 12 }}>
+                    <FormControl
+                      variant="standard"
+                      sx={{ m: 1, minWidth: 120, fontSize: 12 }}
+                    >
                       <InputLabel>Đánh giá</InputLabel>
                       <Select
                         value={item.evaluation}
-                        onChange={(e) => handleNumerialResultChange(index, "evaluation", e.target.value)}
+                        onChange={(e) =>
+                          handleNumerialResultChange(
+                            index,
+                            "evaluation",
+                            e.target.value
+                          )
+                        }
                         label="Đánh giá"
                         MenuProps={{
-                          style: { zIndex: 35001 }
+                          style: { zIndex: 35001 },
                         }}
                       >
                         <MenuItem value="normal">Bình thường</MenuItem>
-                        <MenuItem value="watch" sx={{ color: "orange" }}>Cần theo dõi</MenuItem>
-                        <MenuItem value="abnormal" sx={{ color: "red" }}>Bất bình thường</MenuItem>
+                        <MenuItem
+                          value="Needs monitoring"
+                          sx={{ color: "orange" }}
+                        >
+                          Cần theo dõi
+                        </MenuItem>
+                        <MenuItem value="abnormal" sx={{ color: "red" }}>
+                          Bất bình thường
+                        </MenuItem>
                       </Select>
                     </FormControl>
-                    <IconButton 
-                      sx={{ p: 1, mt: 2 }} 
-                      color="error" 
-                      onClick={() => setNumerialResults(numerialResults.filter((_, i) => i !== index))}
+                    <IconButton
+                      sx={{ p: 1, mt: 2 }}
+                      color="error"
+                      onClick={() =>
+                        setNumerialResults(
+                          numerialResults.filter((_, i) => i !== index)
+                        )
+                      }
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>
                   </div>
                 ))}
-                
-                <Button 
-                  color="primary" 
-                  onClick={handleAddNumerialResultItem} 
+
+                <Button
+                  color="primary"
+                  onClick={handleAddNumerialResultItem}
                   startIcon={<AddIcon />}
                 >
                   Thêm chỉ số
                 </Button>
               </div>
-              
+
               <div>
                 <TextField
                   id="numerial-result-evaluation"
@@ -337,39 +523,43 @@ const AddResultDrawer = ({ open, onClose }) => {
               <Divider />
             </div>
           ) : (
-            <Button 
-              variant="outlined" 
-              onClick={handleAddNumerialResult}
-            >
+            <Button variant="outlined" onClick={handleAddNumerialResult}>
               Thêm xét nghiệm chỉ số
             </Button>
           )}
-          
+
           {toggleImageResult ? (
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center">
                 <p className="font-bold">Xét nghiệm hình ảnh</p>
-                <Button 
-                  variant="outlined" 
-                  color="error" 
+                <Button
+                  variant="outlined"
+                  color="error"
                   onClick={() => setToggleImageResult(false)}
                 >
                   Xóa
                 </Button>
               </div>
-              
+
               <FileUploader text="Tải lên hình ảnh" onChange={handleAddImage} />
-              
+
               {previewImages.length > 0 && (
                 <Slider {...sliderSettings}>
                   {previewImages.map((image, index) => (
-                    <div key={index} className="flex justify-center items-center h-80">
-                      <img src={image.url} alt="preview" className="w-full object-contain" />
+                    <div
+                      key={index}
+                      className="flex justify-center items-center h-80"
+                    >
+                      <img
+                        src={image.url}
+                        alt="preview"
+                        className="w-full object-contain"
+                      />
                     </div>
                   ))}
                 </Slider>
               )}
-              
+
               <TextField
                 id="image-result-evaluation"
                 label="Đánh giá hình ảnh"
@@ -384,14 +574,14 @@ const AddResultDrawer = ({ open, onClose }) => {
               <Divider />
             </div>
           ) : (
-            <Button 
-              variant="outlined" 
+            <Button
+              variant="outlined"
               onClick={() => setToggleImageResult(true)}
             >
               Thêm xét nghiệm hình ảnh
             </Button>
           )}
-          
+
           <p className="font-bold">Chuẩn đoán</p>
           <TextField
             id="result"
@@ -406,22 +596,18 @@ const AddResultDrawer = ({ open, onClose }) => {
             onChange={(e) => setResult(e.target.value)}
           />
         </div>
-        
-        <Button 
-          variant="outlined" 
-          color="success" 
+
+        <Button
+          variant="outlined"
+          color="success"
           sx={{ borderStyle: "dashed", mt: "auto" }}
           startIcon={<AddIcon />}
           onClick={() => setTreatmentPlan(true)}
         >
           Kế hoạch điều trị
         </Button>
-        
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={onClose}
-        >
+
+        <Button variant="contained" color="primary" onClick={handleSubmit}>
           Thêm kết quả
         </Button>
       </div>

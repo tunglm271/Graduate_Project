@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Medicine;
+use Illuminate\Http\Request;
 
 class MedicineController extends Controller
 {
     public function index()
     {
-        return response()->json(Medicine::all());
+        return Medicine::all();
     }
+
 }

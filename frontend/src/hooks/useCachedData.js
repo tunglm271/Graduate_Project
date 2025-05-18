@@ -38,7 +38,7 @@ export const getIndicatorTypes = () => {
     return useQuery({
         queryKey: ['indicatorTypes'],
         queryFn: async () => {
-            const res = await api.get('indicatorTypes');
+            const res = await api.get('indicator-types');
             return res.data;
         },
         staleTime: 8 * 1000 * 60 * 60

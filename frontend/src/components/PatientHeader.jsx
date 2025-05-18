@@ -15,16 +15,17 @@ import { useNavigate } from "react-router-dom";
 import useCustomSnackbar from "../hooks/useCustomSnackbar";
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
-import PersonIcon from '@mui/icons-material/Person'
+import PersonIcon from '@mui/icons-material/Person';
+import { useTranslation } from "react-i18next";
 
 const PatientHeader = () => {
+    const { t } = useTranslation();
     const { showSuccessSnackbar } = useCustomSnackbar();
     const navigate = useNavigate();
-    const user = getUser();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const header = useRef(null);
-    const { sidebarCollapse, setSidebarCollapse } = useContext(PatientLayoutContext);
+    const { sidebarCollapse, setSidebarCollapse, user } = useContext(PatientLayoutContext);
 
     const userMenuClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -39,7 +40,7 @@ const PatientHeader = () => {
             .then((res) => {
                 console.log(res);
                 navigate("/auth/login");
-                showSuccessSnackbar("Đăng xuất thành công");
+                showSuccessSnackbar(t("msg.log-out-success"));
             })
     }
 
@@ -98,7 +99,7 @@ const PatientHeader = () => {
                         lg: "flex",
                     }
                 }}>
-                    Đặt lịch
+                    {t("header.patient.booking")}
                 </Button>
 
                 <LanguageSelect color="black"/>
@@ -175,7 +176,7 @@ const PatientHeader = () => {
                         <AvatarWithStatus avatar={user.avatar} />
                         <Stack>
                             <Typography fontWeight="bold">{user.name}</Typography>
-                            <Typography color="gray" variant="caption">Tài khoản bệnh nhân</Typography>
+                            <Typography color="gray" variant="caption">{t("header.patient.patient-account")}</Typography>
                         </Stack>
                     </Stack>
 
@@ -186,7 +187,7 @@ const PatientHeader = () => {
                             <ListItemIcon>
                                 <PersonIcon fontSize="small" />
                             </ListItemIcon>
-                            <ListItemText>Profile</ListItemText>
+                            <ListItemText>{t("header.patient.profile")}</ListItemText>
                         </MenuItem>
                         <MenuItem onClick={() => {
                             handleClose();
@@ -195,13 +196,13 @@ const PatientHeader = () => {
                             <ListItemIcon>
                                 <SettingsIcon fontSize="small" />
                             </ListItemIcon>
-                            <ListItemText>Settings</ListItemText>
+                            <ListItemText>{t("header.patient.setting")}</ListItemText>
                         </MenuItem>
                         <MenuItem onClick={handleLogout}>
                             <ListItemIcon>
                                 <LogoutIcon fontSize="small" />
                             </ListItemIcon>
-                            <ListItemText>Logout</ListItemText>
+                            <ListItemText>{t("header.patient.log-out")}</ListItemText>
                         </MenuItem>
                     </MenuList>
                 </Menu>

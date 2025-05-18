@@ -3,12 +3,16 @@ import api from "./api";
 const resource = "/medical-services";
 
 const medicalServiceApi = {
-  getAll() {
-    return api.get(resource);
+  getAll(data) {
+    return api.get(resource, { params: data });
   },
 
   getByFacility() {
     return api.get(`my-medical-services`);
+  },
+
+  getByDoctor() {
+    return api.get(`doctor-medical-services`);
   },
 
   getById(id) {
@@ -37,6 +41,10 @@ const medicalServiceApi = {
 
   getValiableSlots(serviceId, date) {
     return api.get(`service/valiable-slots?id=${serviceId}&date=${date}`);
+  },
+
+  getDoctorSlots(date) {
+    return api.get(`service/doctor-slots?date=${date}`);
   },
 
   getDoctor(serviceId,appointmentId) {

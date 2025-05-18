@@ -10,15 +10,18 @@ import RecentActorsIcon from '@mui/icons-material/RecentActors';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HiddenText from './HiddenText';
 import healthProfileApi from "../service/healthProfileApi";
+import { useTranslation } from 'react-i18next';
 
 const NewProfileCard = ({ profile, onDelete }) => {
+    const { t } = useTranslation();
+
     const getDiseasesText = () => {
-        if (profile.diseases.length === 0) return "Không có";
+        if (profile.diseases.length === 0) return t("profile.none");
         return profile.diseases.map(disease => disease.name).join(", ");
     }
 
     const getAllergiesText = () => {
-        if (profile.allergies.length === 0) return "Không có";
+        if (profile.allergies.length === 0) return t("profile.none");
         return profile.allergies.map(allergy => allergy.name).join(", ");
     }
 
@@ -45,7 +48,7 @@ const NewProfileCard = ({ profile, onDelete }) => {
                     }}
                 />
                 <p className='text-xl font-semibold'>{profile.name}</p>
-                <p className='text-sm'>#{profile.relationship}</p>
+                <p className='text-sm'>#{t(`profile.relationship.${profile.relationship}`)}</p>
                 <IconButton 
                     component={Link} 
                     to={`/health-profile/${profile.id}`} 
@@ -60,15 +63,15 @@ const NewProfileCard = ({ profile, onDelete }) => {
                 </IconButton>
             </div>
             <div className='grid grid-cols-2 gap-2' style={{ padding: '10px' }}>
-                <ProfileDetail icon={<CakeIcon />} primaryText={calculateAge(profile.date_of_birth)} secondaryText="tuổi" />
-                <ProfileDetail icon={<WcIcon />} primaryText={profile.gender} secondaryText="Giới tính" />
-                <ProfileDetail icon={<AccessibilityIcon />} primaryText={`${profile.height} cm`} secondaryText="Chiều cao" />
-                <ProfileDetail icon={<ScaleIcon />} primaryText={`${profile.weight} kg`} secondaryText="Cân nặng" />
-                <ProfileInfo label="Dị ứng" info={getAllergiesText()} />
-                <ProfileInfo label="Bệnh mãn tính" info={getDiseasesText()} />
+                <ProfileDetail icon={<CakeIcon />} primaryText={calculateAge(profile.date_of_birth)} secondaryText={t("profile.age")} />
+                <ProfileDetail icon={<WcIcon />} primaryText={t(`profile.gender.${profile.gender}`)} secondaryText={t("profile.genderLabel")} />
+                <ProfileDetail icon={<AccessibilityIcon />} primaryText={`${profile.height} cm`} secondaryText={t("profile.height")} />
+                <ProfileDetail icon={<ScaleIcon />} primaryText={`${profile.weight} kg`} secondaryText={t("profile.weight")} />
+                <ProfileInfo label={t("profile.allergies")} info={getAllergiesText()} />
+                <ProfileInfo label={t("profile.diseases")} info={getDiseasesText()} />
                 <div className='flex text-xs items-center gap-1 col-span-2 font-semibold' style={{ marginTop: '15px' }}>
                     <RecentActorsIcon sx={{ minWidth: 30, color: 'gray' }} />
-                    BHYT
+                    {t("profile.insurance")}
                     <HiddenText />
                 </div>
                 <div className='col-span-2' style={{ marginTop: '10px' }}>
@@ -84,7 +87,7 @@ const NewProfileCard = ({ profile, onDelete }) => {
                         }}
                         onClick={handleDelete}  
                     >
-                        Xóa
+                        {t("profile.delete")}
                     </Button>
                 </div>
             </div>

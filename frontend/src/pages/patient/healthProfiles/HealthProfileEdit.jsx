@@ -15,7 +15,8 @@ import {
     ListItemIcon, 
     ListItemText,
     Autocomplete, 
-    Button
+    Button,
+    Input
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import RelationshipIcon from '@icon/RelationshipIcon';
@@ -35,10 +36,12 @@ import ScaleIcon from '@mui/icons-material/Scale';
 import EmailIcon from '@mui/icons-material/Email';
 import useCustomSnackbar from '../../../hooks/useCustomSnackbar.jsx';
 import healthProfileApi from '../../../service/healthProfileApi';
+import SaveIcon from '@mui/icons-material/Save';
 import { useNavigate } from 'react-router-dom';
 import { getDiseases, getAllergies } from '../../../hooks/useCachedData.js';
 import dayjs from 'dayjs';
 import AvatarEditor from '../../../components/AvatarEditor.jsx';
+import { Link } from 'react-router-dom';
 
 const HealthProfileEdit = () => {
     const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
@@ -136,12 +139,17 @@ const HealthProfileEdit = () => {
     return (
         <div id='profile-edit-section'>
             <Breadcrumbs aria-label="breadcrumb" sx={{ marginBottom: 2 }}>
-                <Typography color="text.primary">Home</Typography>
-                <Typography color="text.primary">Profile</Typography>
+                <Link to={"/health-profile"} className="hover:underline">
+                    {t("health-profiles-list")}
+                </Link>
                 {
-                    isEditing && <Typography color="text.primary">Nguyen Van A</Typography>
+                    isEditing && <Typography color="text.primary">
+                        {profileValues.name}
+                    </Typography>
                 }
-                <Typography color="text.primary">{isEditing ? 'Edit' : 'New'}</Typography>
+                <Typography color="text.primary">
+                    {isEditing ? t("profile.common.edit") : t("profile.common.create")}
+                </Typography>
             </Breadcrumbs>
             <div className="profile-edit-card">
                 <div style={{ width: "100%", height: "80px", background: "linear-gradient(135deg, #007bff, #00c6ff)" , borderTopLeftRadius: "10px", borderTopRightRadius: "10px" }}></div>
@@ -157,7 +165,7 @@ const HealthProfileEdit = () => {
                 />
                 <div className="profile-edit-form">
                     <TextField
-                        label="Name"
+                        label={t("profile.detail.name")}
                         value={profileValues.name || ''}
                         onChange={(e) => setProfileValues({ ...profileValues, name: e.target.value })}
                         fullWidth
@@ -184,7 +192,7 @@ const HealthProfileEdit = () => {
                         renderInput={(params) => (
                             <TextField
                             {...params}
-                            label={t("relationship")}
+                            label={t("profile.detail.relationship")}
                             InputProps={{
                                 ...params.InputProps, // Ensures Autocomplete functionalities work
                                 startAdornment: (
@@ -197,7 +205,7 @@ const HealthProfileEdit = () => {
                         )}
                     />
                     <TextField
-                        label="Phone"
+                        label={t("profile.detail.phone")}
                         value={profileValues.phone}
                         onChange={(e) => setProfileValues({ ...profileValues, phone: e.target.value })}
                         fullWidth
@@ -219,12 +227,12 @@ const HealthProfileEdit = () => {
                             id="gender-simple-select"
                             value={profileValues.gender}
                             onChange={(e) => setProfileValues({ ...profileValues, gender: e.target.value })}
-                            label={t("gender")}
+                            label={t("profile.detail.gender")}
                             renderValue={(
                                 (selected) => (
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                         {selected === 'male' ? <MaleIcon sx={{ marginRight: 1 }} /> : <FemaleIcon sx={{ marginRight: 1 }} />}
-                                        {selected === 'male' ? 'Nam' : 'Nữ'}
+                                        {selected === 'male' ? t("profile.gender.male") : t("profile.gender.female")}
                                     </Box>
                                 )
                             )}
@@ -233,13 +241,13 @@ const HealthProfileEdit = () => {
                                 <ListItemIcon>
                                     <MaleIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="Nam" />
+                                <ListItemText primary={t("profile.gender.male")} />
                             </MenuItem>
                             <MenuItem value="female">
                                 <ListItemIcon>
                                     <FemaleIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="Nữ" />
+                                <ListItemText primary={t("profile.gender.female")} />
                             </MenuItem>
                         </Select>
                     </FormControl>
@@ -247,7 +255,7 @@ const HealthProfileEdit = () => {
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={['DatePicker']} sx={{ m: "auto 0"}}>
                             <DatePicker 
-                                label="Ngày sinh"  
+                                label={t("profile.detail.date-of-birth")}
                                 sx={{width: "100%"}}
                                 value={profileValues.dateOfBirth}
                                 onChange={(date) => setProfileValues({ ...profileValues, dateOfBirth: date })}
@@ -272,7 +280,7 @@ const HealthProfileEdit = () => {
                         }}
                     />
                     <TextField
-                        label="Chiều cao (cm)"
+                        label={`${t("profile.height")} (cm)`}
                         type="number"
                         value={profileValues.height}
                         onChange={(e) => setProfileValues({ ...profileValues, height: e.target.value })}
@@ -287,7 +295,7 @@ const HealthProfileEdit = () => {
                         }}
                     />
                     <TextField
-                        label="Cân nặng (kg)"
+                        label={`${t("profile.weight")} (kg)`}
                         type='number'
                         value={profileValues.weight}
                         onChange={(e) => setProfileValues({ ...profileValues, weight: e.target.value })}
@@ -305,9 +313,9 @@ const HealthProfileEdit = () => {
                 </div>
                 <div>
                     <Box display={{ xs: "block", md: "flex", padding: "20px" }}>
-                        <h4 style={{ width: "20%"}}>Địa chỉ</h4>
+                        <h4 style={{ width: "20%"}}>{t("address")}</h4>
                         <TextField
-                            label="Địa chỉ"
+                            label={t("address")}
                             fullWidth
                             sx={{ width: "80%" }}
                             value={profileValues.address}
@@ -317,9 +325,9 @@ const HealthProfileEdit = () => {
 
 
                     <Box display={{ xs: "block", md: "flex", padding: "20px" }}>
-                        <h4 style={{ width: "20%"}}>Mã số Bảo hiểm y tế</h4>
+                        <h4 style={{ width: "20%"}}>{t("profile.detail.insurance-code")}</h4>
                         <TextField
-                            label="Mã số BHYT"
+                            label={t("profile.detail.insurance-code")}
                             fullWidth
                             sx={{ width: "80%" }}
                             value={profileValues.healthInsuranceNumber}
@@ -328,10 +336,10 @@ const HealthProfileEdit = () => {
                     </Box>
 
                     <Box display={{ xs: "block", md: "flex", padding: "20px", gap: "10px" }}>
-                        <h4 style={{width: "20%"}}>Danh sách các bệnh di ứng</h4>
+                        <h4 style={{width: "20%"}}>{t("profile.detail.allergies-list")}</h4>
                         <MultiSelectAutocomplete
                             options={allergies}
-                            label="Allergies"
+                            label={t("profile.detail.allergies-list")}
                             sx={{ width: "80%" }}
                             getOptionLabel={(option) => option.name}
                             value={allergies.filter(a => profileValues.allergies.includes(a.id))}
@@ -345,10 +353,10 @@ const HealthProfileEdit = () => {
                         />
                     </Box>
                     <Box display={{ xs: "block", md: "flex", padding: "20px", gap: "10px" }}>
-                        <h4 style={{ maxWidth: "20%"}}>Danh sách các bệnh mãn tính</h4>
+                        <h4 style={{width: "20%"}}>{t("profile.detail.chronic-diseases-list")}</h4>
                         <MultiSelectAutocomplete
                             options={diseases}
-                            label="Chronic diseases"
+                            label={t("profile.detail.chronic-diseases-list")}
                             sx={{ width: "80%" }}
                             getOptionLabel={(option) => option.name}
                             value={diseases.filter(a => profileValues.diseases.includes(a.id))}
@@ -365,14 +373,17 @@ const HealthProfileEdit = () => {
                 <Button 
                     variant="contained" 
                     sx={{
-                        display: "block",
+                        display: "flex",
                         margin: "auto",
                         mt: 1,
                         backgroundColor: "#007bff",
                     }}
+                    startIcon={<SaveIcon />}
                     onClick={() => handleSubmit()}
                     loading={loading}
-                >Lưu thông tin</Button>
+                >
+                    {t("profile.common.save")}
+                </Button>
             </div>
         </div>
     );

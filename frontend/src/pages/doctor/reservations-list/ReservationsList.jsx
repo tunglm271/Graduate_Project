@@ -48,7 +48,7 @@ const ReservationsList = () => {
             </div>
             <ReservationTable appointments={appointments} setReservationId={setReservationId}/>
             {Boolean(reservationId) && <ReservationPopUp open={Boolean(reservationId)} reservation={reservation} onClose={() => setReservationId(null)} openResult={addResult} handleOpenResult={setAddResult}/>}
-            {addResult && <AddResultDrawer open={addResult} onClose={() => setAddResult(false)}/>}
+            {addResult && <AddResultDrawer open={addResult} onClose={() => setAddResult(false)} appointmentId={reservationId}/>}
         </div>
     );
 }

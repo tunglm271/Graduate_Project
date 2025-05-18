@@ -1,127 +1,335 @@
-import React, { useState, useEffect } from 'react';
-import { Tab, Tabs, Box, Avatar, ListItem, ListItemAvatar, Typography, ListItemText, List, Stack, Skeleton } from '@mui/material';
-import "./appointment.css"
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import AppointmentCard from '../../../components/card/AppointmentCard';
-import appointmentApi from '../../../service/appointmentApi';
+import React, { useState, useEffect } from "react";
+import {
+  Tab,
+  Tabs,
+  Box,
+  Avatar,
+  ListItem,
+  ListItemAvatar,
+  Typography,
+  ListItemText,
+  List,
+  Stack,
+  Skeleton,
+  useMediaQuery,
+  useTheme,
+  Drawer,
+  IconButton,
+} from "@mui/material";
+import "./appointment.css";
+import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
+import AppointmentCard from "../../../components/card/AppointmentCard";
+import appointmentApi from "../../../service/appointmentApi";
+import noResult from "../../../assets/noResult.svg";
+import PeopleIcon from "@mui/icons-material/People";
 
 function a11yProps(index) {
-    return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
-    };
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
 }
 
 const AppointmentPage = () => {
-    const navigate = useNavigate();
-    const [ searchParams, setSearchParams ] = useSearchParams();
-    const profileId = searchParams.get('profileId');
-    const [value, setValue] = useState(0);
-    const [healthProfiles, setHealthProfiles] = useState([]);
-    const [appointments, setAppointments] = useState([]);
-    const { t } = useTranslation();
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [loading, setLoading] = useState(true);
+  const profileId = searchParams.get("profileId");
+  const [value, setValue] = useState(0);
+  const [healthProfiles, setHealthProfiles] = useState([]);
+  const [allAppointments, setAllAppointments] = useState([]);
+  const [filteredAppointments, setFilteredAppointments] = useState([]);
+  const [completedAppointmentsCount, setCompletedAppointmentsCount] =
+    useState(0);
+  const [pendingAppointmentsCount, setPendingAppointmentsCount] = useState(0);
+  const [assignedAppointmentsCount, setAssignedAppointmentsCount] = useState(0);
+  const [cancelledAppointmentsCount, setCancelledAppointmentsCount] =
+    useState(0);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-    useEffect(() => {
-        appointmentApi.getAll()
-            .then((response) => {
-                setAppointments(response.data);
-                console.log(response.data);
-            })
-            .catch((error) => {
-                console.error("Error fetching health profiles:", error);
-            });
-    },[])
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
-    return (
-        <div style={{display: 'flex', justifyContent: 'space-between', padding: '30px', gap: "20px"}}>
-            <div id='profile-list'>
-                <h4>Hồ sơ sức khỏe</h4>
-                <List>
-                    {healthProfiles.map((profile, index) => {
-                        return (
-                            <ListItem 
-                                key={index} 
-                                sx={{ 
-                                    p: 1, 
-                                    borderRadius: 2,
-                                }}
-                                button
-                                onClick={() => {
-                                    setSearchParams({profileId: profile.id});
-                                    console.log(profile.id, profileId);
-                                }}
-                            >
-                                <ListItemAvatar>
-                                    <Avatar sx={{ boxSizing: "content-box" ,border: profileId == profile.id ? "2px solid #007bff": "none" }} alt='Remy Sharp' src={profile.avatar} />
-                                </ListItemAvatar>
-                            <ListItemText 
-                                primary={
-                                    <Typography sx={{ fontWeight: 'bold', fontSize: '14px' }}>
-                                        {profile.name}
-                                    </Typography>
-                                } 
-                                secondary={
-                                    <Typography sx={{ fontSize: '10px' }}>
-                                    #{t(profile.relationship)}
-                                    </Typography>
-                                } 
-                            />
-                            </ListItem>
-                        )
-                    })}
-                </List>
-            </div>
+  useEffect(() => {
+    appointmentApi
+      .getAll()
+      .then((response) => {
+        const appointments = response.data;
+        setAllAppointments(appointments);
+        setFilteredAppointments(appointments);
 
-            <div id='appointment-tab'>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider', background: 'white' }}>
-                    <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" centered>
-                    <Tab label={
-                        <React.Fragment>
-                            <p>Tất cả <span style={{ color: '#1976d2' }}>(0)</span></p>
-                        </React.Fragment>}
-                        {...a11yProps(0)} 
-                    />
-                    <Tab label={
-                        <React.Fragment>
-                            <p>Đã đặt lịch <span style={{ color: '#1976d2' }}>(0)</span></p>
-                        </React.Fragment>}
-                        {...a11yProps(0)} 
-                    />    
-                     <Tab label={
-                        <React.Fragment>
-                            <p>Đã chỉ định bác sĩ<span style={{ color: '#1976d2' }}>(0)</span></p>
-                        </React.Fragment>}
-                        {...a11yProps(0)} 
-                    />    
-                    <Tab label="Đã hoàn thành" {...a11yProps(4)} />
-                    <Tab label="Đã hủy" {...a11yProps(5)} />
-                    </Tabs>
-                </Box>
-                <Stack direction="column" spacing={2} style={{marginTop: '20px'}}>
-                    {
-                        appointments.length === 0 ? (
-                            <>
-                                <Skeleton variant="rectangular" width={"100%"} height={150} />
-                                <Skeleton variant="rectangular" width={"100%"} height={150} />
-                            </>
-                        ) :
-                        appointments.map((appointment, index) => {
-                            return (
-                                <AppointmentCard 
-                                    key={index} 
-                                    appointment={appointment} 
-                                />
-                            )
-                        })
-                    }
-                </Stack>
-            </div>
-        </div>
-    );
-}
+        setCompletedAppointmentsCount(
+          appointments.filter(
+            (appointment) => appointment.status === "completed"
+          ).length
+        );
+        setPendingAppointmentsCount(
+          appointments.filter((appointment) => appointment.status === "pending")
+            .length
+        );
+        setAssignedAppointmentsCount(
+          appointments.filter(
+            (appointment) => appointment.status === "assigned"
+          ).length
+        );
+        setCancelledAppointmentsCount(
+          appointments.filter(
+            (appointment) => appointment.status === "cancelled"
+          ).length
+        );
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching appointments:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    switch (value) {
+      case 0:
+        setFilteredAppointments(allAppointments);
+        break;
+      case 1:
+        setFilteredAppointments(
+          allAppointments.filter(
+            (appointment) => appointment.status === "pending"
+          )
+        );
+        break;
+      case 2:
+        setFilteredAppointments(
+          allAppointments.filter(
+            (appointment) => appointment.status === "assigned"
+          )
+        );
+        break;
+      case 3:
+        setFilteredAppointments(
+          allAppointments.filter(
+            (appointment) => appointment.status === "completed"
+          )
+        );
+        break;
+      case 4:
+        setFilteredAppointments(
+          allAppointments.filter(
+            (appointment) => appointment.status === "cancelled"
+          )
+        );
+        break;
+      default:
+        setFilteredAppointments(allAppointments);
+    }
+  }, [value, allAppointments]);
+
+  const ProfileList = () => (
+    <div id="profile-list">
+      <h4>{t("health-profile")}</h4>
+      <List>
+        {healthProfiles.map((profile, index) => {
+          return (
+            <ListItem
+              key={index}
+              sx={{
+                p: 1,
+                borderRadius: 2,
+              }}
+              button
+              onClick={() => {
+                setSearchParams({ profileId: profile.id });
+                if (isMobile) setMobileDrawerOpen(false);
+              }}
+            >
+              <ListItemAvatar>
+                <Avatar
+                  sx={{
+                    boxSizing: "content-box",
+                    border:
+                      profileId == profile.id ? "2px solid #007bff" : "none",
+                  }}
+                  alt="Remy Sharp"
+                  src={profile.avatar}
+                />
+              </ListItemAvatar>
+              <ListItemText
+                primary={
+                  <Typography sx={{ fontWeight: "bold", fontSize: "14px" }}>
+                    {profile.name}
+                  </Typography>
+                }
+                secondary={
+                  <Typography sx={{ fontSize: "10px" }}>
+                    #{t(profile.relationship)}
+                  </Typography>
+                }
+              />
+            </ListItem>
+          );
+        })}
+      </List>
+    </div>
+  );
+
+  return (
+    <div
+      className={`flex justify-between gap-5 ${
+        isMobile ? "flex-col p-4" : "p-5"
+      }`}
+    >
+      {isMobile ? (
+        <>
+          <IconButton
+            onClick={() => setMobileDrawerOpen(true)}
+            sx={{
+              position: "fixed",
+              left: 16,
+              top: 16,
+              zIndex: 1200,
+              color: "primary.main",
+              backgroundColor: "white",
+              "&:hover": {
+                backgroundColor: "grey.100",
+              },
+            }}
+          >
+            <PeopleIcon />
+          </IconButton>
+          <Drawer
+            anchor="left"
+            open={mobileDrawerOpen}
+            onClose={() => setMobileDrawerOpen(false)}
+            sx={{
+              "& .MuiDrawer-paper": {
+                width: 280,
+                padding: "20px",
+                backgroundColor: "white",
+              },
+            }}
+          >
+            <ProfileList />
+          </Drawer>
+        </>
+      ) : (
+        <ProfileList />
+      )}
+
+      <div
+        id="appointment-tab"
+        className={isMobile ? "w-full" : "w-[calc(100%-200px)]"}
+      >
+        <Box
+          sx={{
+            borderBottom: 1,
+            borderColor: "divider",
+            background: "white",
+            overflowX: "auto",
+          }}
+        >
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+            variant={isMobile ? "scrollable" : "standard"}
+            scrollButtons={isMobile ? "auto" : false}
+            allowScrollButtonsMobile
+          >
+            <Tab
+              label={
+                <React.Fragment>
+                  <p>
+                    {t("appointment.filter.all")}{" "}
+                    <span className="text-blue-600">
+                      ({allAppointments.length})
+                    </span>
+                  </p>
+                </React.Fragment>
+              }
+              {...a11yProps(0)}
+            />
+            <Tab
+              label={
+                <React.Fragment>
+                  <p>
+                    {t("appointment.card.steps.booked")}{" "}
+                    <span className="text-blue-600">
+                      ({pendingAppointmentsCount})
+                    </span>
+                  </p>
+                </React.Fragment>
+              }
+              {...a11yProps(1)}
+            />
+            <Tab
+              label={
+                <React.Fragment>
+                  <p>
+                    {t("appointment.filter.assigned")}{" "}
+                    <span className="text-blue-600">
+                      ({assignedAppointmentsCount})
+                    </span>
+                  </p>
+                </React.Fragment>
+              }
+              {...a11yProps(2)}
+            />
+            <Tab
+              label={
+                <React.Fragment>
+                  <p>
+                    {t("appointment.card.steps.completed")}{" "}
+                    <span className="text-blue-600">
+                      ({completedAppointmentsCount})
+                    </span>
+                  </p>
+                </React.Fragment>
+              }
+              {...a11yProps(3)}
+            />
+            <Tab
+              label={
+                <React.Fragment>
+                  <p>
+                    {t("appointment.filter.canceled")}{" "}
+                    <span className="text-blue-600">
+                      ({cancelledAppointmentsCount})
+                    </span>
+                  </p>
+                </React.Fragment>
+              }
+              {...a11yProps(4)}
+            />
+          </Tabs>
+        </Box>
+        <Stack direction="column" spacing={2} sx={{ mt: 2.5 }}>
+          {loading ? (
+            <>
+              <Skeleton variant="rectangular" width={"100%"} height={150} />
+              <Skeleton variant="rectangular" width={"100%"} height={150} />
+            </>
+          ) : (
+            <>
+              {filteredAppointments.length === 0 ? (
+                <div className="flex flex-col justify-center items-center text-center w-full h-44 italic">
+                  <img src={noResult} alt="No result" />
+                  <p>{t("appointment.noAppointment")}</p>
+                </div>
+              ) : (
+                filteredAppointments.map((appointment, index) => {
+                  return (
+                    <AppointmentCard key={index} appointment={appointment} />
+                  );
+                })
+              )}
+            </>
+          )}
+        </Stack>
+      </div>
+    </div>
+  );
+};
 
 export default AppointmentPage;

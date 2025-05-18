@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    private $defaultAvatar = "https://res.cloudinary.com/dftiye2et/image/upload/v1740473611/samples/man-portrait";
     /**
      * Run the migrations.
      */
@@ -17,10 +18,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('phone')->nullable();
+            $table->string('avatar')->default($this->defaultAvatar);
+            $table->integer('role_id')->default(0);
+            $table->boolean('active')->default(true);
+            $table->timestamp('last_activity')->nullable();
             $table->rememberToken();
             $table->timestamps();
-            // $table->enum('role', ['patient', 'doctor','facility', 'admin']);
+
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

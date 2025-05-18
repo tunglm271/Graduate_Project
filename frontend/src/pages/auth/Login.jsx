@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import colorImage from "@images/color-logo.png";
 import loginImage from "@images/login-image.jpg";
 import {
@@ -20,8 +20,10 @@ import EmailIcon from "@mui/icons-material/Email";
 import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 import Cookies from "js-cookie";
 import { loginRequest } from "../../service/authApi";
-import { use } from "react";
+import { useSearchParams } from "react-router-dom";
 const Login = () => {
+  const [searchParams] = useSearchParams();
+  const auth = searchParams.get('auth');
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState({
     value: "",
@@ -40,6 +42,13 @@ const Login = () => {
   const loginImageRef = useRef(null);
   const collaboratorFormRef = useRef(null);
   const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
+
+  useEffect(() => {
+    if (auth == "unauthenticated") {
+      console.log("test");
+      showErrorSnackbar("Vui lòng đăng nhập để tiếp tục!");
+    }
+  },[auth]);
 
   const handleShowPassword = () => setShowPassword(!showPassword);
 
@@ -111,16 +120,17 @@ const Login = () => {
       const intendedRoute = Cookies.get("intendedRoute");
       Cookies.remove("intendedRoute");
       if(intendedRoute) {
+        console.log("test");
         navigate(intendedRoute);
       } else {
         const userRole = Cookies.get("role");
         if(userRole == 1) {
+          navigate("/admin");
+        } else if(userRole == 2) {
           navigate("/home");
-        }
-        else if(userRole == 3) {
+        } else if(userRole == 3) {
           navigate("/doctor");
-        }
-        else if(userRole == 4) {
+        } else if(userRole == 4) {
           navigate("/facility/dashboard");
         }
       }

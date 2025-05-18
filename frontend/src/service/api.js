@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from 'js-cookie';
+
 const api = axios.create({
   baseURL: "http://localhost:8000/api",
   withCredentials: true,
@@ -15,5 +16,15 @@ api.interceptors.request.use((config) => {
     }
     return config;
 });
+
+api.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response && error.response.status === 401 && error.response.data.message === "Unauthenticated.") {
+      window.location.href = '/auth/login?auth=unauthenticated';
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;

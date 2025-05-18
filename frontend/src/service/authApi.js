@@ -64,7 +64,7 @@ export const getUserRequest = async () => {
   }
 }
 
-export const updateUserRequest = async (avatar,name, current_password, new_password) => {
+export const updateUserRequest = async (avatar, name, current_password, new_password) => {
   try {
     const formData = new FormData();
     if(avatar) {

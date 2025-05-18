@@ -1,32 +1,51 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import serviceImg from '@images/service.png';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import MaleIcon from '@mui/icons-material/Male';
+import TransgenderIcon from '@mui/icons-material/Transgender';
+import FemaleIcon from '@mui/icons-material/Female';
+import { formatCurrency } from '../../utlis/caculateFun';
 
-const ServiceCard = () => {
-    const navigate = useNavigate();
+const ServiceCard = ({ service }) => {
+    const genderIcon = () => {
+        switch (service?.service_audience_gender) {
+            case 'male':
+                return <p className="flex items-center text-sm"><MaleIcon fontSize="small" color="primary" /> Nam</p>;
+            case 'female':
+                return <p className="flex items-center text-sm"><FemaleIcon fontSize="small" color="error" /> Nữ</p>;
+            case 'both':
+                return <p className="flex items-center text-sm"><TransgenderIcon fontSize="small" /> Cả hai</p>;
+            default:
+                return null;
+        }
+    };
+
     return (
-        <div className="service-card" onClick={() => navigate('/services/1')}>
-            <div style={{position: 'relative'}}>
-                <img src={serviceImg} alt="" />
+        <Link to={`/services/${service?.id || 1}`} className="service-card">
+            <div style={{ position: 'relative' }}>
+                <img src={serviceImg} alt={service?.name || 'Service'} />
                 <span>90%</span>
             </div>
-            
-            <div style={{padding: '5px', flexGrow: 1}}>
-                <h4 style={{marginBottom: '10px'}}>Gói tầm soát ưng thư nâng cao cho bệnh nhân dưới 40</h4>
-                <div className='row'>
-                    <div>
-                        <p style={{fontWeight: 700}}>1,355,000đ</p>
-                        <p style={{textDecoration: 'line-through'}}>1,485,000đ</p>
-                    </div>
 
-                    <div style={{textAlign: 'right'}}>
-                        <p style={{display: 'flex', alignItems: 'center', fontSize: '12px'}}><LocationOnIcon fontSize='18' color='primary'/> Hà Nội</p>
-                        <p>Đã đánh giá: 5</p>
+            <div className="p-2 flex-grow flex flex-col">
+                <h4 className="mb-auto">{service?.name || "Không có dữ liệu"}</h4>
+                <div className="flex justify-between mt-auto items-center">
+                    <div>
+                        <p className="font-bold">{formatCurrency(service?.price)}</p>
+                        <p style={{ textDecoration: 'line-through' }}>
+                            {formatCurrency(service?.price * 0.9)}
+                        </p>
+                    </div>
+                    <div className="text-right">
+                        <p className="flex items-center text-sm">
+                            <LocationOnIcon fontSize="small" color="primary" /> Hà Nội
+                        </p>
+                        {genderIcon()}
                     </div>
                 </div>
             </div>
-        </div>
+        </Link>
     );
-}
+};
 
 export default ServiceCard;

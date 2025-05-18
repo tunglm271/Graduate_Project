@@ -7,29 +7,36 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Role\Patient;
+use App\Models\Role\Doctor;
+use App\Models\Role\MedicalFacility;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends \TCG\Voyager\Models\User
+class User extends Model
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasApiTokens, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'name',
         'email',
+        'name',
         'password',
-        'phone',
-        'role'
+        'role_id',
+        'avatar',
+        'last_activity',
+        'active'
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'password',
@@ -49,10 +56,30 @@ class User extends \TCG\Voyager\Models\User
         ];
     }
 
-    public function healthProfiles()
+    public function getRole()
+{
+    $roles = [
+        1 => 'admin',
+        2 => 'patient',
+        3 => 'doctor',
+        4 => 'facility',
+    ];
+
+    return $roles[$this->role_id] ?? 'Unknown';
+}
+
+    public function patient()
     {
-        return $this->hasMany(HealthProfile::class);
+        return $this->hasOne(Patient::class);
     }
 
+    public function doctor()
+    {
+        return $this->hasOne(Doctor::class);
+    }
 
+    public function medicalFacility()
+    {
+        return $this->hasOne(MedicalFacility::class);
+    }
 }

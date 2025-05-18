@@ -18,6 +18,14 @@ const appointmentApi = {
         },
         });
     },
+
+    createByDoctor(formData) {
+        return api.post(`appointment/doctor-create`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+        });
+    },
     
     update(id, formData) {
         return api.post(`${resource}/${id}?_method=PUT`, formData, {
@@ -41,6 +49,14 @@ const appointmentApi = {
 
     assignDoctor(appointmentId, doctorId) {
         return api.post(`appointment/assign-doctor`, { appointment_id: appointmentId, doctor_id: doctorId });
+    },
+
+    addResult(appointmentId, formData) {
+        return api.post(`${resource}/${appointmentId}/add-result`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
     },
 };
 

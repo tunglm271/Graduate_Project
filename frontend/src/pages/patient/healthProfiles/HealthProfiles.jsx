@@ -6,7 +6,10 @@ import { Link } from 'react-router-dom';
 import healthProfileApi from '../../../service/healthProfileApi';
 import NewProfileCard from '../../../components/NewProfileCard';
 import useCustomSnackbar from '../../../hooks/useCustomSnackbar';
+import { useTranslation } from 'react-i18next';
+
 const HealthProfiles = () => {
+    const { t } = useTranslation();
     const [healthProfiles, setHealthProfiles] = useState([]);
     const { showInfoSnackbar } = useCustomSnackbar();
     const [loading, setLoading] = useState(true);
@@ -26,15 +29,11 @@ const HealthProfiles = () => {
 
     return (
         <div id="health-profiles-section">
-            <Breadcrumbs aria-label="breadcrumb" sx={{ marginBottom: 2 }}>
-                <Typography color="text.primary">Home</Typography>
-                <Typography color="text.primary">Profile</Typography>
-            </Breadcrumbs>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                <h1>Danh sách hồ sơ sức khỏe</h1>
+                <h1>{ t("health-profiles-list") }</h1>
                 <Link to="/health-profile/new">
                     <Button variant="outlined" color="primary" startIcon={<AddIcon />}>
-                        Thêm hồ sơ
+                        { t("add-profile") }
                     </Button>
                 </Link>
             </div>

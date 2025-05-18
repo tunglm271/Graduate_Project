@@ -1,10 +1,10 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { SnackbarProvider } from 'notistack';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SnackbarProvider } from "notistack";
 import { useState } from "react";
 import "./App.css";
-import './i18n';
+import "./i18n";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import ConversationList from "./components/ConversationList";
@@ -13,7 +13,13 @@ import WorkingSchedule from "./components/doctor/WorkingSchedule";
 
 import AppContext from "./context/AppContext";
 
-import { PatientMainLayout, AuthLayout, FacilityLayout, DoctorLayout } from "./layouts";
+import {
+  PatientMainLayout,
+  AuthLayout,
+  FacilityLayout,
+  DoctorLayout,
+  AdminLayout,
+} from "./layouts";
 import {
   PatientHomePage,
   AppointmentPage,
@@ -27,6 +33,11 @@ import {
   BillPage,
   PaymentResult,
   SettingPage,
+  NewsList,
+  NewDetail,
+  AllNews,
+  AllExternalNews,
+  DiagnosisPage,
   FacilityBooking,
   FacilityLandingPage,
   FacilityDashboard,
@@ -43,12 +54,21 @@ import {
   ReservationList,
   PatientList,
   PatientDetail,
+  DashboardPage,
+  FacilityList,
+  FacilityDetail as AdminFacilityDetail,
+  PatientAccountList,
+  PatientDetailAdmin,
+  BlogsList,
+  EditBlog,
   Login,
   Register,
-  NotFound
+  NotFound,
+  BlogDetail,
 } from "./pages";
 
-const googleClientId = "91407289131-f8lts1h15ppivupjb5e027806kk88s5o.apps.googleusercontent.com";
+const googleClientId =
+  "91407289131-f8lts1h15ppivupjb5e027806kk88s5o.apps.googleusercontent.com";
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -67,11 +87,25 @@ const router = createBrowserRouter([
       { path: "health-profile/:id", element: <HealthProfileDetail /> },
       { path: "health-profile/:id/edit", element: <HealthProfileEdit /> },
       { path: "health-profile/new", element: <HealthProfileEdit /> },
-      { path: "health-profile/:id/record/:recordId", element: <MedicalRecord /> },
-      { path: "appointments/:id/bill", element: <BillPage />},
-      { path: "appointments/:id/bill/payment-result", element: <PaymentResult />},
-      { path: "/conversation", element: <ConversationList onSelectConversation={null}/> },
+      {
+        path: "health-profile/:id/record/:recordId",
+        element: <MedicalRecord />,
+      },
+      { path: "appointments/:id/bill", element: <BillPage /> },
+      {
+        path: "appointments/:id/bill/payment-result",
+        element: <PaymentResult />,
+      },
+      {
+        path: "/conversation",
+        element: <ConversationList onSelectConversation={null} />,
+      },
       { path: "settings", element: <SettingPage /> },
+      { path: "news", element: <NewsList /> },
+      { path: "news/:id", element: <NewDetail /> },
+      { path: "news-all", element: <AllNews /> },
+      { path: "news-external", element: <AllExternalNews /> },
+      { path: "ai-diagnosis", element: <DiagnosisPage /> },
     ],
   },
   {
@@ -101,7 +135,7 @@ const router = createBrowserRouter([
       { path: "reservations", element: <ReservationList /> },
       { path: "patients", element: <PatientList /> },
       { path: "patients/:id", element: <PatientDetail /> },
-    ]
+    ],
   },
   {
     path: "/auth",
@@ -112,9 +146,24 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "/admin",
+    element: <ProtectedRoute role={1} element={<AdminLayout />} />,
+    children: [
+      { path: "", element: <DashboardPage /> },
+      { path: "facilities", element: <FacilityList /> },
+      { path: "facilities/:id", element: <AdminFacilityDetail /> },
+      { path: "blogs", element: <BlogsList /> },
+      { path: "blogs/new", element: <EditBlog /> },
+      { path: "blogs/edit/:id", element: <EditBlog /> },
+      { path: "blogs/:id", element: <BlogDetail /> },
+      { path: "patient-accounts", element: <PatientAccountList /> },
+      { path: "patient-accounts/:id", element: <PatientDetailAdmin /> },
+    ],
+  },
+  {
     path: "*",
     element: <NotFound />,
-  }
+  },
 ]);
 
 function App() {
@@ -123,7 +172,10 @@ function App() {
   return (
     <AppContext.Provider value={{ chatbox, setChatbox }}>
       <QueryClientProvider client={queryClient}>
-        <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+        <SnackbarProvider
+          maxSnack={3}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        >
           <GoogleOAuthProvider clientId={googleClientId}>
             <RouterProvider router={router} />
             <NewChat />

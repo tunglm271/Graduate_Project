@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { format, addDays, isToday, isSameDay } from "date-fns";
+import PropTypes from "prop-types";
 
-const DateSlider = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
+const DateSlider = ({ selectedDate, setSelectedDate }) => {
   const swiperRef = useRef(null);
 
   // Tạo danh sách 21 ngày (10 ngày trước, ngày hiện tại, 10 ngày sau)
@@ -28,7 +28,7 @@ const DateSlider = () => {
   };
 
   return (
-    <div className="w-full max-w-lg min-w-[500px] mx-auto" style={{ margin: "0 auto" }}>
+    <div className="w-full mx-auto mb-5">
       <Swiper
         slidesPerView={7}
         spaceBetween={30}
@@ -39,7 +39,7 @@ const DateSlider = () => {
         {days.map((date, index) => (
           <SwiperSlide key={date.toISOString()}>
             <button
-              className={`w-16 h-16 flex flex-col items-center justify-center rounded-2xl border-none
+              className={`w-20 h-20 flex flex-col items-center justify-center rounded-2xl border-none cursor-pointer hover:bg-gray-300
                 ${
                   isSameDay(selectedDate, date)
                     ? "bg-gray-200 text-black"
@@ -51,9 +51,19 @@ const DateSlider = () => {
                 if (swiperRef.current) swiperRef.current.slideTo(index - 3); // Cuộn về ngày được chọn
               }}
             >
-              <p className={`text-xs mb-2 ${isSameDay(selectedDate, date) ? "" : (isToday(date)? "text-blue-500":"")}`}>{format(date, "EEE")}</p>
               <p
-                className={`font-bold rounded-full p-[2px] w-8 h-8 flex items-center justify-center 
+                className={`text-xs mb-2 ${
+                  isSameDay(selectedDate, date)
+                    ? ""
+                    : isToday(date)
+                    ? "text-blue-500"
+                    : ""
+                }`}
+              >
+                {format(date, "EEE")}
+              </p>
+              <p
+                className={`font-bold rounded-full p-[2px] w-8 h-8 flex items-center justify-center
                   ${
                     isSameDay(selectedDate, date)
                       ? "bg-black text-white"
@@ -71,8 +81,8 @@ const DateSlider = () => {
       </Swiper>
 
       {/* Nút Quay lại Hôm nay */}
-      <div className="mt-4 flex justify-between px-4">
-        <p className="mt-4 text-center text-gray-700 font-medium">
+      <div className="flex justify-between px-4 items-center">
+        <p className="text-center text-gray-700 font-medium">
           {format(selectedDate, "d 'tháng' M")}
         </p>
 
@@ -82,7 +92,7 @@ const DateSlider = () => {
             ${
               isSameDay(selectedDate, today)
                 ? "text-gray-400 cursor-default" // Xám nếu đang ở hôm nay
-                : "text-blue-500 hover:text-blue-700" // Xanh nếu chọn ngày khác
+                : "cursor-pointer text-blue-500 hover:text-blue-700" // Xanh nếu chọn ngày khác
             }
           `}
           disabled={isSameDay(selectedDate, today)}
@@ -92,6 +102,11 @@ const DateSlider = () => {
       </div>
     </div>
   );
+};
+
+DateSlider.propTypes = {
+  selectedDate: PropTypes.instanceOf(Date).isRequired,
+  setSelectedDate: PropTypes.func.isRequired,
 };
 
 export default DateSlider;

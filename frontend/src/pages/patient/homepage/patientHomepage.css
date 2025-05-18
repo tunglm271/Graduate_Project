@@ -97,6 +97,7 @@
 
 .service-card {
   width: 100%;
+  min-width: 360px;
   background-color: white;
   box-shadow: 0 2px 4px rgba(173, 216, 230, 0.3);
   padding: 5px;
@@ -154,11 +155,6 @@
   object-fit: cover;
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
-}
-
-#news {
-  margin-top: 40px;
-  width: 65%;
 }
 
 #highlight-news {
@@ -240,7 +236,8 @@
 .facility-card {
   background-color: white;
   border-radius: 5px;
-  height: 120px;
+  height: auto;
+
   box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
   display: flex;
   justify-content: space-between;
@@ -265,7 +262,7 @@
   background-color: white;
   padding: 10px;
   border-radius: 10px;
-  width: 250px;
+  width: 100%;
   box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
 }
 
@@ -278,7 +275,6 @@
 }
 
 .facility-vertical-card h3 {
-  width: 80%;
   margin: 1rem 0;
 }
 

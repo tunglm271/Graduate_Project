@@ -1,39 +1,404 @@
 {
-    "facility-header": "Docify - Health Facility Management",
-    "service-management": "Service Management",
-    "dashboard": "Dashboard",
-    "homepage": "Home",
-    "booking": "Booking",
-    "service-search": "Service Search",
-    "health-profile": "Health Profile",
-    "medicine-management": "Medicine Manage",
-    "hello": "Hello",
-    "welcome-heading": "Keep track of your appointment process",
-    "gender": "Gender",
-    "male": "Male",
-    "female": "Female",
-    "date-of-birth": "Date of Birth",
-    "address": "Address",
-    "name": "Name",
-    "phone": "Phone",
-    "relationship": "Relationship",
-    "avatar": "Avatar",
-    "father": "Father",
-    "mother": "Mother",
-    "son": "Son",
-    "daughter": "Daughter",
-    "brother": "Brother",
-    "sister": "Sister",
-    "husband": "Husband",
-    "wife": "Wife",
-    "grandfather": "Grandfather",
-    "grandmother": "Grandmother",
-    "grandson": "Grandson",
-    "granddaughter": "Granddaughter",
-    "uncle": "Uncle",
-    "aunt": "Aunt",
-    "nephew": "Nephew",
-    "niece": "Niece",
-    "cousin": "Cousin",
-    "self": "Self"
+  "facility-header": "Docify - Health Facility Management",
+  "service-management": "Service Management",
+  "dashboard": "Dashboard",
+  "homepage": "Home",
+  "booking": "Booking",
+  "service-search": "Service Search",
+  "health-profile": "Health Profile",
+  "medicine-management": "Medicine Manage",
+  "hello": "Hello",
+  "welcome-heading": "Keep track of your appointment process",
+  "gender": "Gender",
+  "male": "Male",
+  "female": "Female",
+  "date-of-birth": "Date of Birth",
+  "address": "Address",
+  "name": "Name",
+  "phone": "Phone",
+  "relationship": "Relationship",
+  "avatar": "Avatar",
+  "father": "Father",
+  "mother": "Mother",
+  "son": "Son",
+  "daughter": "Daughter",
+  "brother": "Brother",
+  "sister": "Sister",
+  "husband": "Husband",
+  "wife": "Wife",
+  "grandfather": "Grandfather",
+  "grandmother": "Grandmother",
+  "grandson": "Grandson",
+  "granddaughter": "Granddaughter",
+  "uncle": "Uncle",
+  "aunt": "Aunt",
+  "nephew": "Nephew",
+  "niece": "Niece",
+  "cousin": "Cousin",
+  "self": "Self",
+  "Normal": "Normal",
+  "Abnormal": "Abnormal",
+  "Needs monitoring": "Needs monitoring",
+  "health-profiles-list": "Health Profiles List",
+  "ai-diagnosis": "AI Diagnosis",
+  "add-profile": "Add Profile",
+  "profile": {
+    "none": "None",
+    "age": "years old",
+    "genderLabel": "Gender",
+    "height": "Height",
+    "weight": "Weight",
+    "allergies": "Allergies",
+    "diseases": "Chronic Diseases",
+    "insurance": "Health Insurance",
+    "delete": "Delete",
+    "detail": {
+      "basic-info": "Basic Information",
+      "relationship": "Relationship",
+      "date-of-birth": "Date of Birth",
+      "insurance-code": "Health Insurance Code",
+      "no-phone": "No phone number",
+      "allergies-list": "Allergies List",
+      "chronic-diseases-list": "Chronic Diseases List",
+      "name": "Full Name",
+      "phone": "Phone Number",
+      "gender": "Gender"
+    },
+    "relationship": {
+      "Self": "Self",
+      "father": "Father",
+      "mother": "Mother",
+      "child": "Child",
+      "sibling": "Sibling",
+      "other": "Other"
+    },
+    "gender": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other"
+    },
+    "tabs": {
+      "history": "Medical History",
+      "indicators": "Health Indicators"
+    },
+    "common": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "create": "Create New Profile",
+      "none": "None",
+      "save": "Save Information",
+      "loading": "Loading..."
+    }
+  },
+  "header": {
+    "patient": {
+      "patient-account": "Patient account",
+      "booking": "Booking",
+      "setting": "Settings",
+      "profile": "Profile",
+      "log-out": "Log out"
+    }
+  },
+  "msg": {
+    "log-out-success": "Log out successfully"
+  },
+  "footer": {
+    "slogan": "Docify - Your trusted companion for your health",
+    "address": "315 Truong Chinh, Khuong Mai, Thanh Xuan, Hanoi",
+    "phone": "+880 123 456 789",
+    "email": "tung.nx215162@sis.hust.edu.vn",
+
+    "rules": {
+      "title": "Operating Regulations",
+      "operating": "Operating Regulations",
+      "policy": "Privacy Policy",
+      "responsibility": "Responsibilities and Commitments"
+    },
+    "services": {
+      "title": "Services",
+      "booking": "Book Medical Appointments",
+      "registration": "Clinic Registration",
+      "management": "Clinic Management Support"
+    },
+    "subscribe": {
+      "title": "Follow our latest news and services",
+      "placeholder": "Enter your email",
+      "button": "Subscribe",
+      "notice": {
+        "part1": "By clicking the",
+        "part2": " button, I confirm that I have read and agree to Docify's",
+        "part3": " Privacy Policy"
+      }
+    },
+    "copyright": "© 2025 Docify. All rights reserved"
+  },
+  "setting": {
+    "patient": {
+      "title": "My Settings",
+      "account": {
+        "title": "Account",
+        "description": "Your account information",
+        "avatar": "Avatar",
+        "fullName": "Full name",
+        "email": "Email",
+        "phone": "Phone"
+      },
+      "password": {
+        "title": "Reset password",
+        "description": "Change your account password",
+        "currentPassword": "Enter Password",
+        "currentPasswordPlaceholder": "Enter your current password",
+        "newPassword": "New Password",
+        "newPasswordPlaceholder": "Enter your new password",
+        "confirmPassword": "Confirm New Password",
+        "confirmPasswordPlaceholder": "Confirm your new password"
+      },
+      "button": {
+        "saveChanges": "Save Changes"
+      },
+      "errors": {
+        "fillAllFields": "Please fill in all fields",
+        "passwordMismatch": "New password and confirm password do not match",
+        "passwordLength": "New password must be at least 6 characters long"
+      },
+      "messages": {
+        "updateSuccess": "Profile updated successfully"
+      }
+    }
+  },
+  "appointment": {
+    "noAppointment": "No appointments here",
+    "filter": {
+      "all": "All",
+      "assigned": "Doctor Assigned",
+      "canceled": "Canceled"
+    },
+    "card": {
+      "appointmentCode": "Appointment Code: APPOINTMENT001",
+      "viewDetails": "View Details",
+      "contactClinic": "Contact Clinic",
+      "doctorInformation": "Doctor Information",
+      "notAssigned": "No doctor assigned yet",
+      "doctor": {
+        "fullName": "Full name: Dr. {{name}}",
+        "specialty": "Specialty: Endocrinology",
+        "experience": "Experience: 5 years",
+        "phone": "Phone: 034124578"
+      },
+      "appointmentDate": "Appointment Date: {{date}}",
+      "appointmentTime": "Appointment Time: {{startTime}} - {{endTime}}",
+      "steps": {
+        "booked": "Booked",
+        "waitingAssignment": "Waiting for doctor assignment",
+        "waitingPayment": "Waiting for payment",
+        "waitingExecution": "Waiting for execution",
+        "completed": "Completed"
+      },
+      "payment": {
+        "pay": "Pay",
+        "paid": "Paid"
+      }
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Dashboard"
+    },
+    "sidebar": {
+      "title": "Admin Panel",
+      "dashboard": "Dashboard",
+      "facilities": "Facilities",
+      "patient_accounts": "Patient Accounts",
+      "blog": "Blog",
+      "analytics": "Analytics",
+      "settings": "Settings",
+      "help": "Help",
+      "profile": "Profile",
+      "myAccount": "My account",
+      "logout": "Logout"
+    },
+    "medical_articles": {
+      "title": "Medical Articles",
+      "create": "Create New Article",
+      "table": {
+        "number": "#",
+        "article_name": "Article Name",
+        "status": "Status",
+        "created": "Created",
+        "updated": "Updated",
+        "actions": "Actions"
+      },
+      "status": {
+        "published": "Published",
+        "draft": "Draft"
+      },
+      "delete": {
+        "title": "Confirm Delete",
+        "message": "Are you sure you want to delete the article \"{{name}}\" ? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      },
+      "status_change": {
+        "title": "Change Article Status",
+        "publish_message": "Are you sure you want to publish the article \"{{name}\"?",
+        "unpublish_message": "Are you sure you want to unpublish the article \"{{name}}\"?",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      },
+      "cover_image": "Cover Image",
+      "views": "Views",
+      "enter_image_url": "Enter image URL",
+      "upload": "Upload",
+      "enter_title": "Enter article title",
+      "tags": "Tags",
+      "add_tag": "Add tag and press Enter",
+      "content": "Content",
+      "save_draft": "Save as Draft",
+      "publish": "Publish",
+      "saving": "Saving...",
+      "publishing": "Publishing...",
+      "draft_saved": "Article saved as draft successfully",
+      "published": "Article published successfully",
+      "error_saving": "Error saving article",
+      "error_publishing": "Error publishing article",
+      "detail": "Article Detail",
+      "back": "Back to List",
+      "edit": "Edit Article",
+      "error_fetching": "Error fetching article details",
+      "draft_updated": "Article draft updated successfully",
+      "article_updated": "Article updated successfully",
+      "cancel": "Cancel"
+    },
+    "patient_account_list": {
+      "title": "Patient Account List",
+      "search_placeholder": "Search by name, email, phone number",
+      "full_name": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "deactivate_success": "Patient account deactivated successfully",
+      "activate_success": "Patient account activated successfully",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "view_detail": "View Detail",
+      "health_profiles": "Health Profiles",
+      "last_activity": "Last Activity"
+    },
+    "facility_list": {
+      "title": "Facility List",
+      "facility_name": "Facility Name",
+      "doctors": "Doctors",
+      "services": "Services",
+      "actions": "Actions",
+      "status": {
+        "status": "Status",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "view_detail": "View Detail",
+      "pagination": {
+        "rows_per_page": "Rows per page:",
+        "of": "of",
+        "confirm_dialog": {
+          "title": "Confirm Action",
+          "message": "Are you sure you want to {{action}} the facility \"{{name}}\"?",
+          "deactivate": "deactivate",
+          "activate": "activate",
+          "cancel": "Cancel",
+          "confirm": "Confirm"
+        }
+      }
+    },
+    "patientDetail": {
+      "breadcrumbs": {
+        "patientAccounts": "Patient Accounts",
+        "patientDetail": "Patient Detail"
+      },
+      "accountInfo": {
+        "title": "Account Information",
+        "username": "Username",
+        "email": "Email",
+        "phone": "Phone"
+      },
+      "healthProfiles": {
+        "title": "Family Health Profiles"
+      },
+      "profileDrawer": {
+        "tabs": {
+          "profileInfo": "Profile's Information",
+          "medicalHistory": "Medical History"
+        },
+        "profileInfo": {
+          "title": "Profile Information",
+          "relationship": "Relationship",
+          "dateOfBirth": "Date of birth",
+          "gender": "Gender",
+          "height": "Height",
+          "weight": "Weight",
+          "allergies": {
+            "title": "Allergies",
+            "none": "No allergies listed."
+          },
+          "diseases": {
+            "title": "Diseases",
+            "none": "No diseases listed."
+          }
+        },
+        "medicalHistory": {
+          "table": {
+            "date": "Date",
+            "doctor": "Doctor",
+            "facility": "Facility",
+            "service": "Service",
+            "status": "Status",
+            "noAppointments": "No appointments found."
+          }
+        }
+      },
+      "status": {
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "scheduled": "Scheduled",
+        "rescheduled": "Rescheduled"
+      }
+    }
+  },
+  "medicine": {
+    "my-medicines": "My Medicines",
+    "no-medicine-schedule": "No medicine schedule",
+    "cabinet": {
+      "title": "Medicine Cabinet",
+      "tabs": {
+        "active": "Active",
+        "history": "History"
+      }
+    },
+    "add-medicine": "Add Medicine",
+    "medicine-name": "Medicine Name"
+  },
+  "news": {
+    "news": "News",
+    "share": "Share",
+    "top_famous": "Top Famous",
+    "save": "Save",
+    "see-more": "See more",
+    "recentNews": "Recent News",
+    "new-from-external-sources": "News from External Sources",
+    "recommendedServices": "Recommended Services",
+    "advertisement": "Advertisement Space",
+    "readMore": "Read More",
+    "latestNews": {
+      "title": "Recent News"
+    },
+    "hotline": {
+      "title": "Hotline",
+      "description": "If you have any questions, please contact us via the hotline below",
+      "contactButton": "Contact Now"
+    },
+    "error_fetching": "Error fetching news articles",
+    "no_articles": "No articles found",
+    "views": "views",
+    "all_news": "All News",
+    "latest_updates": "Latest Updates"
+  }
 }

@@ -5,8 +5,8 @@ const FacilityCard = () => {
   return (
     <div className="facility-card">
       <img src={facilityImg} alt="" />
-      <div>
-        <h4 style={{ marginBottom: "0px", fontSize: '16px', fontWeight: '500' }}>
+      <div className="my-2">
+        <h4 className="text-lg font-semibold">
           Bệnh viện Đa khoa Quốc tế Vinmec
         </h4>
         <div className="row" style={{ padding: 0 }}>

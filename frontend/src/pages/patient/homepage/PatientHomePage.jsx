@@ -11,11 +11,14 @@ import CircularProgress from "@mui/material/CircularProgress";
 import FacilityCard from "../../../components/card/FacilityCard";
 import { getNews } from "../../../service/newsApi";
 import NewCard from "../../../components/card/NewCard";
-import HiddenText from "../../../components/HiddenText";
+import { PatientLayoutContext } from "../../../context/PateintLayoutProvider";
+import { useContext } from "react";
+import api from "../../../service/api";
 
 const PatientHomePage = () => {
   const { t } = useTranslation();
   const [news, setNews] = useState([]);
+  const { user } = useContext(PatientLayoutContext);
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -31,23 +34,23 @@ const PatientHomePage = () => {
     };
 
     fetchNews();
+    api.get('homepage').then((res) => {
+      console.log(res.data);
+    }).catch((err) => {
+      console.log(err);
+    }).finally(() => {
+      console.log("done");
+    });
   }, []);
 
   return (
     <div id="home-page">
-      <h1 style={{marginBottom: '20px'}}>
+      <h1 className="mb-4">
         {t("hello")},{" "}
-        <span style={{ color: "#212529" }}>Remy Sharp !</span>
+        <span style={{ color: "#212529" }}>{user.name}!</span>
       </h1>
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          gap: "20px",
-        }}
-        id="home-content"
-      >
+      <div className="flex justify-between gap-5" id="home-content">
         <div className="col-6">
           <div id="welcome">
             <div id="welcome-booking">
@@ -97,8 +100,8 @@ const PatientHomePage = () => {
 
       <MySlider />
 
-      <div className="row" style={{ alignItems: "start" }}>
-        <div id="news">
+      <div className="row items-start max-md:flex-col">
+        <div className="mt-10 w-[65%] max-md:w-full">
           <h2 style={{ marginBottom: "20px" }}>Tin tức y tế</h2>
           <div>
             {news.length ? (
@@ -139,11 +142,9 @@ const PatientHomePage = () => {
           </div>
         </div>
 
-        <div id="facility-list" style={{ alignItems: "start" }}>
+        <div className="mt-10 w-[32%] items-start max-md:w-full">
           <h2 style={{ marginBottom: "20px" }}>Các cơ sở nổi bật</h2>
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "30px" }}
-          >
+          <div className="flex flex-col gap-5">
             <FacilityCard />
             <FacilityCard />
             <FacilityCard />

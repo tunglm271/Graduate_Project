@@ -1,5 +1,5 @@
 import "./service.css"
-import { Breadcrumbs, Divider, List, ListItem, ListItemText } from "@mui/material";
+import { Breadcrumbs, Divider, List, ListItem, ListItemText, Skeleton } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import Typography from '@mui/material/Typography';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
@@ -10,13 +10,14 @@ import { useEffect, useState } from "react";
 import medicalServiceApi from "../../../service/medicalServiceAPi";
 const ServicePage = () => {
     const { id } = useParams();
+    const [loading, setLoading] = useState(true);
     const [service, setService] = useState({});
     const [toogleBookingPopUp, setToogleBookingPopUp] = useState(false);
 
     useEffect(() => {
         medicalServiceApi.getById(id).then((res) => {
             setService(res.data);
-            console.log(res.data);
+            setLoading(false);
         }).catch((err) => {
             console.log(err);
         })
@@ -26,17 +27,36 @@ const ServicePage = () => {
         <div id='service-page'>
             <Breadcrumbs aria-label="breadcrumb">
                 <Link to="/services" style={{ color: '#007bff' }}>Dịch vụ</Link>
-                <Typography sx={{ color: 'text.primary', fontStyle: 'italic' }}>{service?.name}</Typography>
+                {
+                    loading
+                    ? 
+                    <Skeleton variant="text" width={200} height={40} />
+                    :
+                    <Typography sx={{ color: 'text.primary', fontStyle: 'italic' }}>{service?.name}</Typography>
+                }
             </Breadcrumbs>
 
 
             <div id='service-content'>
-                <img src={service?.thumbnail} alt="" />
-                <div className="service-title">
-                    <h3>{service?.name}</h3>
-                    <h2 style={{display: 'flex', alignItems: 'center', gap: '20px', marginTop: '10px'}}>{service?.price} đ <span style={{background: 'red', color:'white', fontSize: '14px', padding: '3px', borderRadius: '15px'}}>-9%</span></h2>
-                    <h4>{service?.price} đ</h4>
-                </div>
+                {
+                    loading 
+                    ?
+                    <>
+                        <Skeleton variant="rectangular" width={"100%"} height={300} sx={{ borderRadius: "10px", marginBottom: "20px" }} />
+                        <Skeleton variant="text" width={"100%"} height={40} sx={{ marginBottom: "10px" }} />
+                        <Skeleton variant="text" width={"100%"} height={40} sx={{ marginBottom: "10px" }} />
+                        <Skeleton variant="text" width={"100%"} height={40} sx={{ marginBottom: "10px" }} />
+                    </>
+                    :
+                    <>
+                        <img src={service?.thumbnail} alt="" />
+                        <div className="service-title">
+                            <h3>{service?.name}</h3>
+                            <h2 style={{display: 'flex', alignItems: 'center', gap: '20px', marginTop: '10px'}}>{service?.price} đ <span style={{background: 'red', color:'white', fontSize: '14px', padding: '3px', borderRadius: '15px'}}>-9%</span></h2>
+                            <h4>{service?.price} đ</h4>
+                        </div>
+                    </>
+                }
 
                 <div className='service-infor'>
                         <h4 style={{marginBottom: '5px', display: 'flex', alignItems: 'center', gap: '5px'}}>
