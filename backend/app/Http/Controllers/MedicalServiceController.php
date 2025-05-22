@@ -60,6 +60,19 @@ class MedicalServiceController extends Controller
         return $medicalService->load(['medicalFacility','doctors','appointments']);
     }
 
+    public function showByPatient(MedicalService $medicalService)
+    {
+        $service = $medicalService->load(['medicalFacility','doctors','appointments']);
+        $recommmend_services = MedicalService::where('id', '!=', $medicalService->id)
+            ->inRandomOrder()
+            ->limit(4)
+            ->get();
+        return response()->json([
+            'service' => $service,
+            'recommmend_services' => $recommmend_services
+        ]);
+    }
+
     public function update(UpdateMedicalServiceRequest $request, MedicalService $medicalService)
     {   
         Gate::authorize('modify', $medicalService);

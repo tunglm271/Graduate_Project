@@ -13,7 +13,7 @@ const articleApi = {
     },
 
     getArticleById(id) {
-        return api.get(`${resource}/${id}`);
+        return api.get(`${resource}/${id}/show-by-patient`);
     },
 }
 

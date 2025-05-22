@@ -20,7 +20,7 @@ const AvatarWithStatus = ({avatar, size = 35}) => {
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             variant="dot"
         >
-            <Avatar alt="Remy Sharp" src={avatar} sx={{ width: size, height: size }}/>
+            <Avatar src={avatar} sx={{ width: size, height: size }}/>
       </StyledBadge>
     );
 }

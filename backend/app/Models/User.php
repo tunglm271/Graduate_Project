@@ -30,7 +30,8 @@ class User extends Model
         'role_id',
         'avatar',
         'last_activity',
-        'active'
+        'active',
+        'google_id',
     ];
 
     /**

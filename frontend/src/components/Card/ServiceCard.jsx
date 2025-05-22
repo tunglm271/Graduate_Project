@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import serviceImg from '@images/service.png';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import MaleIcon from '@mui/icons-material/Male';
 import TransgenderIcon from '@mui/icons-material/Transgender';
@@ -23,7 +22,7 @@ const ServiceCard = ({ service }) => {
     return (
         <Link to={`/services/${service?.id || 1}`} className="service-card">
             <div style={{ position: 'relative' }}>
-                <img src={serviceImg} alt={service?.name || 'Service'} />
+                <img src={service.thumbnail} alt={service?.name || 'Service'} />
                 <span>90%</span>
             </div>
 

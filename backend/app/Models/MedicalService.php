@@ -43,6 +43,11 @@ class MedicalService extends Model
         return $this->hasMany(Appointment::class);
     }
 
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
+
     public function scopeSearch($query, $term)
     {
         $term = '%' . $term . '%';

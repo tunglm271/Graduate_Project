@@ -28,6 +28,8 @@ export { default as StaffCreate } from './facility/StaffCreate.jsx';
 export { default as StaffDetail } from './facility/StaffDetail.jsx';
 export { default as FacilityProfile } from './facility/FacilityProfile.jsx';
 export { default as DiagnosisPage } from './patient/diagnosis/DiagnosisPage.jsx';
+export { default as Facilities } from './patient/facility/Facilities.jsx';
+export { default as SalesManage } from './facility/sales/SalesManage.jsx';
 
 export { default as ServiceAssignmentPage } from './doctor/service-assignment/ServiceAssignmentPage.jsx';
 export { default as ReservationList } from './doctor/reservations-list/ReservationsList.jsx';
@@ -45,5 +47,6 @@ export { default as PatientDetailAdmin } from './admin/PatientDetail.jsx';
 
 export { default as Login } from './auth/Login.jsx';
 export { default as Register } from './auth/Register.jsx';
+export { default as FacilityRegister } from './auth/FaciltyRegister.jsx';
 
 export { default as NotFound } from './NotFound.jsx';

@@ -18,8 +18,8 @@ const Register = () => {
         phoneNumber: '',
         password: '',
         confirmPassword: '',
-        role: ''
     });
+    const [submitting, setSubmitting] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -35,8 +35,10 @@ const Register = () => {
             alert('Mật khẩu không khớp');
             return;
         }
-        registerRequest(form.username, form.email, form.phoneNumber, form.password, form.confirmPassword, form.role)
+        setSubmitting(true);
+        registerRequest(form.username, form.email, form.phoneNumber, form.password, form.confirmPassword)
             .then((res) => {
+                setSubmitting(false);
                 Cookies.set('authToken', res.token);
                 navigate('/home');
             })
@@ -47,26 +49,14 @@ const Register = () => {
     };
 
     return (
-        <div className="auth-card" style={{ flexDirection: 'column' }}>
+        <div className="auth-card flex-col">
             <h3>Đăng ký tài khoản người dùng</h3>
             <p style={{ fontSize: '14px', marginTop: '10px' }}>
                 Bạn đã có tài khoản? &nbsp;
                 <Link to={'/auth/login'} style={{color: '#1976d2'}}>Đăng nhập</Link>
             </p>
+            <Link to={'/auth/facility-register'} className='mt-2 text-sm text-[#1976d2] hover:underline'>Đăng ký cơ sở y tế</Link>
             <form className='patient-register-form' onSubmit={handleSubmit}>
-                <FormControl fullWidth margin="normal">
-                    <InputLabel id="role">Vai trò</InputLabel>
-                    <Select
-                        label="Vai trò"
-                        name="role"
-                        value={form.role}
-                        onChange={handleChange}
-                    >
-                        <MenuItem value="patient">Bệnh nhân</MenuItem>
-                        <MenuItem value="doctor">Bác sĩ</MenuItem>
-                        <MenuItem value="health-faicility">Cơ sở y tế</MenuItem>
-                    </Select>
-                </FormControl>
                 <TextField
                     label="Tên đăng nhập"
                     name="username"
@@ -154,8 +144,8 @@ const Register = () => {
                         style: { padding: '0 9px' }
                     }}
                 />
-                <Button type="submit" variant="contained" color="primary" fullWidth>
-                    Đăng ký
+                <Button disabled={submitting} type="submit" variant="contained" color="primary" fullWidth>
+                    {submitting ? 'Đang đăng ký...' : 'Đăng ký'}
                 </Button>
                 <p style={{ fontSize: '12px'}}>Bằng việc nhấn nút Đăng ký bạn đã đồng ý với <span style={{color: '#1976d2', fontWeight: 600}}>Quy chế hoạt động</span> và <span style={{color: '#1976d2', fontWeight: 600}}>Chính sách bảo vệ thông tin</span> của MEDLATEC</p>
             </form>

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Article;
+use App\Models\Role\MedicalFacility;
+use App\Models\MedicalService;
 
 class ArticleController extends Controller
 {
@@ -28,8 +30,20 @@ class ArticleController extends Controller
 
     public function show(Article $article)
     {
-        $article->update(['views' => $article->views + 1]);
         return $article;
+    }
+
+    public function showByPatient(Article $article)
+    {
+        $article->update(['views' => $article->views + 1]);
+        $recommend_article = Article::inRandomOrder()->limit(5)->get();
+        $services = MedicalService::inRandomOrder()->limit(3)->get();
+        return response()->json([
+            'article' => $article,
+            'recommend_article' => $recommend_article,
+            'services' => $services,
+            'message' => 'Article retrieved successfully',
+        ]);
     }
 
     public function store(Request $request)

@@ -6,23 +6,23 @@ const FilterPopUp = ({open, onClose, handleFilter}) => {
     const marks = [
         {
             value: 0,
-            label: '0 VND',
+            label: '0',
         },
         {
             value: 25,
-            label: '1 triệu VND',
+            label: '1 triệu',
         },
         {
             value: 50,
-            label: '2 triệu VND',
+            label: '2 triệu',
         },
         {
             value: 75,
-            label: '3 triệu VND',
+            label: '3 triệu',
         },
         {
             value: 100,
-            label: '4 triệu VND',
+            label: '4 triệu',
         },
     ]
 

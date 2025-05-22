@@ -110,7 +110,7 @@ const MedicineCabinet = ({ medicines, healthProfileId }) => {
   const [expandedMedicine, setExpandedMedicine] = useState(null);
 
   return (
-    <div className="w-1/3 max-w-lg bg-white rounded-lg p-2.5 shadow-[0px_4px_8px_rgba(173,216,230,0.7)]">
+    <div className="w-full bg-white rounded-lg p-2.5 shadow-[0px_4px_8px_rgba(173,216,230,0.7)]">
       <div className="flex justify-between items-center mb-4">
         <p className="text-xl font-semibold">{t("medicine.cabinet.title")}</p>
         <button

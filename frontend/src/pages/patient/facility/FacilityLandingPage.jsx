@@ -126,7 +126,10 @@ const FacilityLandingPage = () => {
               >
                 Liên hệ
               </Button>
-              <Link className="text-center text-blue-600 hover:text-blue-800">
+              <Link
+                className="text-center text-blue-600 hover:text-blue-800"
+                to={`/booking/${facilityId}`}
+              >
                 Đặt khám ngay
               </Link>
             </div>

@@ -17,7 +17,8 @@ import {
   MenuItem,
 } from "@mui/material";
 import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import AppContext from "../../context/AppContext";
 import { useTranslation } from "react-i18next";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -32,6 +33,7 @@ const AgentHeader = () => {
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const { showSuccessSnackbar } = useCustomSnackbar();
+  const { user } = useContext(AppContext);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -100,12 +102,12 @@ const AgentHeader = () => {
         aria-expanded={open ? "true" : undefined}
       >
         <ListItemAvatar>
-          <Avatar />
+          <Avatar src={user.avatar} />
         </ListItemAvatar>
         <ListItemText
           primary={
             <Typography variant="body1" fontWeight="bold">
-              Admin PK
+              {user?.name || "John Doe"}
             </Typography>
           }
           secondary={
@@ -114,7 +116,7 @@ const AgentHeader = () => {
               color="text.secondary"
               fontSize={"10px"}
             >
-              Clinic Admin
+              {user?.role_id === 3 ? t("header.doctor") : t("header.facility")}
             </Typography>
           }
         />

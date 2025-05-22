@@ -116,10 +116,12 @@ body {
     border: none;
     background-color: transparent;
     cursor: pointer;
+    border-radius: 50%;
   }
 
   #sidebar-btn:hover {
     color: black;
+    background-color: rgba(255, 255, 255, 0.4);
   }
 
   #footer {

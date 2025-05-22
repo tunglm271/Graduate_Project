@@ -99,7 +99,9 @@
       "setting": "Cài đặt",
       "log-out": "Đăng xuất",
       "profile": "Hồ sơ"
-    }
+    },
+    "doctor":"Bác sĩ",
+    "facility":"Cơ sở y tế"
   },
   "msg": {
     "log-out-success": "Đăng xuất thành công"

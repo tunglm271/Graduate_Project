@@ -10,6 +10,7 @@
         "barryvdh/laravel-dompdf": "^3.1",
         "buihuycuong/vnfaker": "dev-master",
         "cloudinary-labs/cloudinary-laravel": "^2.2",
+        "google/apiclient": "^2.18",
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",

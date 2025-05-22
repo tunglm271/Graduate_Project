@@ -1,67 +1,126 @@
 .booking-option {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
-    width: 100%;
-    padding: 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    border: 1.5px solid transparent;
-    transition: border-color, transform 0.3s ease-in-out;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
+  width: 100%;
+  padding: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.3s ease-in-out;
 }
 
 .booking-option:hover {
-    border-color: #1e90ff;
-    transform: translateY(-2px);
+  border-color: #1e90ff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(173, 216, 230, 0.6);
 }
 
 .fade-in {
-    animation: fadeIn 0.5s;
+  animation: fadeIn 0.5s;
+  opacity: 1;
+  visibility: visible;
 }
 
 .fade-out {
-    animation: fadeOut 0.5s;
-    display: none;
-    pointer-events: none;
+  animation: fadeOut 0.5s;
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
 }
 
 .option-list {
-    background-color: white;
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
-    padding-bottom: 40px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
+  padding-bottom: 40px;
+  width: 100%;
 }
 
 .register-btn {
-    background: linear-gradient(36deg, #00b5f1, #00e0ff);
-    padding: 8px;
-    font-weight: 600;
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
+  background: linear-gradient(36deg, #00b5f1, #00e0ff);
+  padding: 8px 16px;
+  font-weight: 600;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  min-width: 120px;
 }
 
 .register-btn:hover {
-    background: linear-gradient(36deg, #00e0ff, #00b5f1);
+  background: linear-gradient(36deg, #00e0ff, #00b5f1);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 181, 241, 0.3);
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .booking-option {
+    padding: 15px;
+  }
+
+  .option-list {
+    padding: 5px;
+  }
+
+  .register-btn {
+    padding: 6px 12px;
+    min-width: 100px;
+  }
+
+  table {
+    font-size: 14px;
+  }
+
+  td,
+  th {
+    padding: 15px 8px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-option {
+    padding: 12px;
+    gap: 0.5rem;
+  }
+
+  .option-list {
+    padding: 5px;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  td,
+  th {
+    padding: 10px 5px !important;
+  }
 }

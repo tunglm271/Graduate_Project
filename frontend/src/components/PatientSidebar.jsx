@@ -16,7 +16,7 @@ import MedicalService from "@icon/MedicalService";
 import PillIcon from "@icon/PillIcon";
 import { useTranslation } from "react-i18next";
 import { useContext } from "react";
-import { Newspaper } from "lucide-react";
+import { Newspaper, Hospital } from "lucide-react";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import MenuIcon from "@mui/icons-material/Menu";
 import { PatientLayoutContext } from "../context/PateintLayoutProvider";
@@ -43,7 +43,7 @@ const PatientSidebar = () => {
         }}
       >
         <img src={logo} alt="logo" className="logo" />
-        <h2 style={{ color: "white", textDecoration: "none" }}>Docify</h2>
+        <p className="text-white font-bold text-2xl">Docify</p>
       </Link>
 
       <div id="nav-bar">
@@ -63,6 +63,12 @@ const PatientSidebar = () => {
           to="/services"
           icon={<MedicalService size={24} />}
           text={t("service-search")}
+          collapse={sidebarCollapse}
+        />
+        <NavLink
+          to="/clinics"
+          icon={<Hospital size={20} />}
+          text={t("facility")}
           collapse={sidebarCollapse}
         />
         <NavLink
@@ -145,7 +151,7 @@ const PatientSidebar = () => {
     <div
       id="sidebar"
       style={{
-        width: sidebarCollapse ? "220px" : "90px",
+        width: sidebarCollapse ? "220px" : "100px",
       }}
     >
       {sidebarContent}

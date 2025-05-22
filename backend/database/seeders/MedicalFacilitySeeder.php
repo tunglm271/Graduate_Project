@@ -125,6 +125,7 @@ class MedicalFacilitySeeder extends Seeder
                     'issuance_date' => $now,
                     'issuance_place' => 'Cơ quan cấp ' . ($index + 1),
                     'facility_type_id' => vnfaker()->numberBetween(1, 5),
+                    'city_id' => vnfaker()->numberBetween(1, 5),
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];

@@ -15,6 +15,9 @@ export default defineConfig({
       '@images': path.resolve(__dirname, 'src/assets/images'),
     },
   },
+  server: {
+    host: true, // or specify a string like '0.0.0.0'
+    // To allow specific hosts, use the 'allowedHosts' option (Vite 5+)
+    allowedHosts: ['0062-2001-ee0-4141-316b-d57-43ef-6e8c-676.ngrok-free.app', 'localhost'],
+  },
 })
-
-

@@ -9,6 +9,10 @@ const patientApi = {
 
     getByDoctor: () => {
         return api.get(`patient/doctor`);
+    },
+
+    homePage: () => {
+        return api.get('homepage');
     }
 }
 

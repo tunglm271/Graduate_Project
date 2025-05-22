@@ -7,7 +7,9 @@ use App\Models\MedicalService;
 
 class MedicalServiceSeeder extends Seeder
 {
-    private $defaultImgUrl = "https://res.cloudinary.com/dftiye2et/image/upload/v1740473611/service_tcrgo5";
+    private function getImgUrl($i) {
+        return "https://res.cloudinary.com/dftiye2et/image/upload/v1740473611/medical-service-{$i}";
+    }
 
     public function run(): void
     {
@@ -78,7 +80,7 @@ class MedicalServiceSeeder extends Seeder
                 $medicalService = MedicalService::create([
                     'name' => $service['name'],
                     'description' => $service['description'],
-                    'thumbnail' => $this->defaultImgUrl,
+                    'thumbnail' => $this->getImgUrl(rand(1,5)),
                     'category' => $service['category'],
                     'price' => rand(300, 1000) * 1000,
                     'duration' => $service['duration'],
@@ -87,7 +89,7 @@ class MedicalServiceSeeder extends Seeder
                     'is_public' => $index >= 5,
                     'min_age_requirement' => rand(0, 18),
                     'max_age_requirement' => rand(50, 80),
-                    'medical_facility_id' => $i,
+                    'medical_facility_id' => $i + 1,
                 ]);
     
                 $medicalService->doctors()->attach([1, 2]);

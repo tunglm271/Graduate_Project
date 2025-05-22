@@ -52,4 +52,19 @@ class MedicalFacilityController extends Controller
         $medicalFacility->delete();
         return response()->json(['message' => 'Medical Facility deleted successfully']);
     }
+
+    public function dashboard()
+    {
+        $medicalFacility = auth()->user()->medicalFacility;
+        $totalPatients = $medicalFacility->patients()->count();
+        $totalDoctors = $medicalFacility->doctors()->count();
+        $totalServices = $medicalFacility->services()->count();
+        $appointments = $medicalFacility->appointments()->select('status')->get();
+        return response()->json([
+            'total_patients' => $totalPatients,
+            'total_doctors' => $totalDoctors,
+            'total_services' => $totalServices,
+            'appointments' => $appointments
+        ]);
+    }
 }

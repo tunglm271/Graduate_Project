@@ -19,7 +19,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import EmailIcon from "@mui/icons-material/Email";
 import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 import Cookies from "js-cookie";
-import { loginRequest } from "../../service/authApi";
+import { loginRequest, googleLoginRequest } from "../../service/authApi";
 import { useSearchParams } from "react-router-dom";
 const Login = () => {
   const [searchParams] = useSearchParams();
@@ -142,6 +142,27 @@ const Login = () => {
     }
   };
 
+  const handleGoogleLogin = async (credentialResponse) => {
+    setLoading(true);
+    setError("");
+    try {
+      await googleLoginRequest(credentialResponse);
+      showSuccessSnackbar("Đăng nhập thành công!");
+      const intendedRoute = Cookies.get("intendedRoute");
+      Cookies.remove("intendedRoute");
+      if(intendedRoute) {
+        navigate(intendedRoute);
+      } else {
+        navigate("/home");
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="auth-card">
       <div className="form-section" ref={loginFormRef}>
@@ -150,7 +171,7 @@ const Login = () => {
             <img src={colorImage} alt="Doficy Logo" />
             <h1>Doficy</h1>
           </div>
-          <GoogleLoginButton />
+          <GoogleLoginButton onLoginSuccess={handleGoogleLogin} />
           <Divider sx={{fontSize: '14px', marginTop: '10px', marginBottom: '10px'}}>Hoặc dùng email hoặc mật khẩu</Divider>
         </div>
 

@@ -1,5 +1,6 @@
 import api from './api';
 import Cookies from 'js-cookie';
+import axios from 'axios';
 
 export const loginRequest = async (email, password) => {
   try {
@@ -83,6 +84,26 @@ export const updateUserRequest = async (avatar, name, current_password, new_pass
     return response.data;
   } catch (error) {
     console.error("Update user error:", error);
+    throw error;
+  }
+}
+
+export const googleLoginRequest = async (credentialResponse) => {
+  console.log("Google login with:", { credentialResponse });
+  try {
+    const response = await axios.post('http://localhost:8000/api/login/google', {
+      credential: credentialResponse.credential,
+    });
+    console.log("Google login response:", response);
+    Cookies.set('token', response.data.token, { expires: 7, path: '/' });
+    Cookies.set('token', response.data.token, { expires: 7, path: '/' });
+    Cookies.set('role', response.data.user.role_id, { expires: 7, path: '/' });
+    Cookies.set('name', response.data.user.name, { expires: 7, path: '/' });
+    Cookies.set('user_id', response.data.user.id , { expires: 7, path: '/' });
+    Cookies.set('avatar', response.data.user.avatar, { expires: 7, path: '/' });
+    return response.data;
+  } catch (error) {
+    console.error("Google login error:", error);
     throw error;
   }
 }

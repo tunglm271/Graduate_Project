@@ -12,6 +12,7 @@ import NewChat from "./components/NewChat";
 import WorkingSchedule from "./components/doctor/WorkingSchedule";
 
 import AppContext from "./context/AppContext";
+import { getUser } from "./utlis/auth";
 
 import {
   PatientMainLayout,
@@ -37,6 +38,7 @@ import {
   NewDetail,
   AllNews,
   AllExternalNews,
+  Facilities,
   DiagnosisPage,
   FacilityBooking,
   FacilityLandingPage,
@@ -50,6 +52,7 @@ import {
   StaffManage,
   StaffCreate,
   StaffDetail,
+  SalesManage,
   ServiceAssignmentPage,
   ReservationList,
   PatientList,
@@ -63,6 +66,7 @@ import {
   EditBlog,
   Login,
   Register,
+  FacilityRegister,
   NotFound,
   BlogDetail,
 } from "./pages";
@@ -80,6 +84,7 @@ const router = createBrowserRouter([
       { path: "appointments", element: <AppointmentPage /> },
       { path: "medicines", element: <MedicinePage /> },
       { path: "booking/:facilityId", element: <FacilityBooking /> },
+      { path: "clinics", element: <Facilities /> },
       { path: "clinic/:facilityId", element: <FacilityLandingPage /> },
       { path: "services", element: <Services /> },
       { path: "services/:id", element: <ServicePage /> },
@@ -124,6 +129,7 @@ const router = createBrowserRouter([
       { path: "staffs/:id/edit", element: <StaffCreate /> },
       { path: "staffs/new", element: <StaffCreate /> },
       { path: "profile", element: <FacilityProfile /> },
+      { path: "sales", element: <SalesManage /> },
     ],
   },
   {
@@ -143,6 +149,7 @@ const router = createBrowserRouter([
     children: [
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+      { path: "facility-register", element: <FacilityRegister /> },
     ],
   },
   {
@@ -168,9 +175,10 @@ const router = createBrowserRouter([
 
 function App() {
   const [chatbox, setChatbox] = useState(null);
+  const [user, setUser] = useState(getUser());
 
   return (
-    <AppContext.Provider value={{ chatbox, setChatbox }}>
+    <AppContext.Provider value={{ chatbox, setChatbox, user, setUser }}>
       <QueryClientProvider client={queryClient}>
         <SnackbarProvider
           maxSnack={3}

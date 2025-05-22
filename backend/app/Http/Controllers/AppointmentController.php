@@ -27,6 +27,20 @@ class AppointmentController extends Controller
         return $appointments;
     }
 
+    public function getByDate(Request $request)
+    {
+        $date = $request->query('date');
+        $healthProfiles = $request->user()->patient->healthProfiles;
+        $appointments = [];
+        foreach ($healthProfiles as $healthProfile) {
+            $healthProfileAppointments = $healthProfile->appointments()->with(['medicalService','doctor','medicalFacility'])->where('date', $date)->get();
+            foreach ($healthProfileAppointments as $appointment) {
+                $appointments[] = $appointment;
+            }
+        }
+        return $appointments;
+    }
+
     public function indexByDoctor(Request $request)
     {
         return $request->user()->doctor->appointments()->with(['healthProfile','medicalService','doctor'])->get();

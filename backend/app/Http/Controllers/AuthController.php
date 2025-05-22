@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Google_Client;
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -16,7 +17,6 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role_id' => 'required|integer|exists:roles,id',
         ]);
     
         if ($validator->fails()) {
@@ -31,42 +31,17 @@ class AuthController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role_id' => $request->role_id,
+                'role_id' => 2,
                 'last_activity' => now(),
             ]);
-    
-            switch ($request->role_id) {
-                case 2:
-                    $patient = $user->patient()->create([
-                        'name' => $request->name,
-                    ]);
-                    $patient->healthProfiles()->create([
-                        'name' => $request->name,
-                        'relationship' => 'Self',
-                    ]);
-                    break;
-                case 4:
-                    $user->medicalFacility()->create([
-                        'facility_name' => $request->facility_name,
-                        'phone' => $request->phone ?? null,
-                        'address' => $request->address,
-                        'description' => $request->description ?? null,
-                        'status' => 'pending',
-                        'working_time' => $request->working_time ?? null,
-                        'thumbnail' => $request->thumbnail ?? null,
-                        'logo' => $request->logo ?? null,
-                        'website' => $request->website ?? null,
-                        'lat' => $request->lat ?? null,
-                        'lng' => $request->lng ?? null,
-                        'legal_representative_name' => $request->legal_representative_name,
-                        'legal_representative_id' => $request->legal_representative_id,
-                        'tax_code' => $request->tax_code ?? null,
-                        'medical_practice_license' => $request->medical_practice_license,
-                        'issuance_date' => $request->issuance_date,
-                        'issuance_place' => $request->issuance_place,
-                    ]);
-                    break;
-            }
+
+            $patient = $user->patient()->create([
+                'name' => $request->name,
+            ]);
+            $patient->healthProfiles()->create([
+                'name' => $request->name,
+                'relationship' => 'Self',
+            ]);
     
             // Tạo token sau khi hoàn tất
             $token = $user->createToken($user->email)->plainTextToken;
@@ -84,6 +59,66 @@ class AuthController extends Controller
             // Nếu có lỗi, rollback transaction
             DB::rollBack();
             return response()->json(['error' => 'Registration failed', 'details' => $e->getMessage()], 500);
+        }
+    }
+
+    public function facilityRegister(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'facility_name' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'legal_representative_name' => 'required|string|max:255',
+            'legal_representative_id' => 'required|string|max:255',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role_id' => 4,
+            ]);
+
+            $user->medicalFacility()->create([
+                'facility_name' => $request->facility_name,
+                'phone' => $request->phone ?? null,
+                'address' => $request->address,
+                'description' => $request->description ?? null,
+                'status' => 'pending',
+                'working_time' => $request->working_time ?? null,
+                'thumbnail' => $request->thumbnail ?? null,
+                'logo' => $request->logo ?? null,
+                'website' => $request->website ?? null,
+                'lat' => $request->lat ?? null,
+                'lng' => $request->lng ?? null,
+                'legal_representative_name' => $request->legal_representative_name,
+                'legal_representative_id' => $request->legal_representative_id,
+                'tax_code' => $request->tax_code ?? null,
+                'medical_practice_license' => $request->medical_practice_license,
+                'issuance_date' => $request->issuance_date,
+                'issuance_place' => $request->issuance_place,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'User registered successfully', 
+                'user' => $user,
+            ], 201);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['error' => 'Registration failed', 'details' => $th->getMessage()], 500);
         }
     }
 
@@ -153,5 +188,54 @@ class AuthController extends Controller
     {
         $request->user()->tokens()->delete();
         return response()->json(['message' => 'Successfully logged out'], 200);
+    }
+
+    public function loginWithGoogle(Request $request)
+    {
+        $idToken = $request->input('credential');
+
+        $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]); // Validate token against your app's Client ID
+
+        $payload = $client->verifyIdToken($idToken);
+
+        if ($payload) {
+            $googleId = $payload['sub'];
+            $email = $payload['email'];
+            $name = $payload['name'];
+            $avatar = $payload['picture'];
+
+
+            $user = User::where('email', $email)->first();
+
+            if (!$user) {
+                // Nếu chưa có thì tạo user mới
+                $user = User::create([
+                    'name' => $name,
+                    'email' => $email,
+                    'google_id' => $googleId,
+                    'avatar' => $avatar,
+                    'role_id' => 2,
+                    'last_activity' => now(),
+                ]);
+            }
+
+            $patient = $user->patient()->create([
+                'name' => $name,
+            ]);
+            $patient->healthProfiles()->create([
+                'name' =>$name,
+                'relationship' => 'Self',
+            ]);
+
+            // Đăng nhập user
+            $token = $user->createToken('google-login')->plainTextToken;
+
+            return response()->json([
+                'token' => $token,
+                'user' => $user,
+            ]);
+        } else {
+            return response()->json(['error' => 'Invalid Google token'], 401);
+        }
     }
 }

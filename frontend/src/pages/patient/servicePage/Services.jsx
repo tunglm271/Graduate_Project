@@ -154,14 +154,13 @@ const Services = () => {
     <div id="services-page" className="p-4 md:p-6">
       <div
         id="service-search-bar"
-        className="flex items-center gap-2 p-2 bg-white rounded-lg shadow-sm mb-6"
+        className="flex items-center gap-2 p-2 bg-white rounded-lg shadow-sm mb-6 mx-auto"
       >
         <Button
           startIcon={<FilterAltIcon />}
           onClick={() => setFilterOpen(true)}
-          className="text-gray-600 hover:bg-gray-100"
         >
-          Bộ lọc
+          {isMobile ? "" : "Bộ lọc"}
         </Button>
         <Divider orientation="vertical" flexItem />
         <input
@@ -185,12 +184,12 @@ const Services = () => {
         <SearchResult loading={loading} services={servicesList} />
       ) : (
         <>
-          <h2 className="text-xl font-semibold mb-4">Danh mục khám</h2>
+          <p className="text-xl font-semibold mb-4">Danh mục khám</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
             {serviceCategories.map((category, index) => (
               <button
                 key={index}
-                className="service-category-card hover:shadow-md transition-shadow duration-200"
+                className="service-category-card hover:shadow-md transition-shadow duration-200 mx-auto"
               >
                 {category.icon}
                 <p className="text-sm mt-2">{category.label}</p>
@@ -198,11 +197,11 @@ const Services = () => {
             ))}
           </div>
 
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4">Dịch vụ nổi bật</h2>
+          <div className="mb-20">
+            <p className="text-2xl font-semibold mb-4">Dịch vụ nổi bật</p>
             <div className="px-2">
               <Slider {...settings}>
-                {servicesList.map((service, index) => (
+                {servicesList.slice(0, 10).map((service, index) => (
                   <div key={index} className="px-2">
                     <VerticalServiceCard service={service} />
                   </div>
@@ -211,12 +210,12 @@ const Services = () => {
             </div>
           </div>
 
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4">
+          <div className="lg:mb-6">
+            <p className="text-xl font-semibold mb-4">
               Cơ sở y tế đặt khám nhiều nhất
-            </h2>
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {facilityList.map((facility, index) => (
+              {facilityList.slice(0, 4).map((facility, index) => (
                 <FacilityVerticalCard key={index} facility={facility} />
               ))}
             </div>

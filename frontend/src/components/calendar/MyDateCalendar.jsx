@@ -6,26 +6,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay } from '@mui/x-date-pickers/PickersDay';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
-
-function getRandomNumber(min, max) {
-  return Math.round(Math.random() * (max - min) + min);
-}
-
-function fakeFetch(date, { signal }) {
-  return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      const daysInMonth = date.daysInMonth();
-      const daysToHighlight = [1, 2, 3].map(() => getRandomNumber(1, daysInMonth));
-
-      resolve({ daysToHighlight });
-    }, 500);
-
-    signal.onabort = () => {
-      clearTimeout(timeout);
-      reject(new DOMException('aborted', 'AbortError'));
-    };
-  });
-}
+import { Link } from 'react-router-dom';
+import Appoinment from './Appoinment';
+import { set } from 'date-fns';
 
 const initialValue = dayjs();
 
@@ -33,107 +16,115 @@ function ServerDay(props) {
   const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
 
   const isSelected =
-    !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
+    !outsideCurrentMonth && highlightedDays.includes(day.date());
 
   return (
     <Badge
-      key={props.day.toString()}
+      key={day.toString()}
       overlap="circular"
       badgeContent={isSelected ? <span style={{ color: 'red' }}>●</span> : undefined}
     >
       <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} />
     </Badge>
-  )
+  );
 }
 
-export default function MyDateCalendar() {
-  const requestAbortController = React.useRef(null);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15]);
+export default function MyDateCalendar({ appointments }) {
+  const [currentMonth, setCurrentMonth] = React.useState(initialValue);
+  const [selectedDate, setSelectedDate] = React.useState(initialValue);
+  const [highlightedDays, setHighlightedDays] = React.useState([]);
+  const [appoinmentsInDay, setAppoinmentsInDay] = React.useState([]);
 
-  const fetchHighlightedDays = (date) => {
-    const controller = new AbortController();
-    fakeFetch(date, {
-      signal: controller.signal,
-    })
-      .then(({ daysToHighlight }) => {
-        setHighlightedDays(daysToHighlight);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        // ignore the error if it's caused by `controller.abort`
-        if (error.name !== 'AbortError') {
-          throw error;
-        }
-      });
+  const updateHighlightedDays = (monthToDisplay) => {
+    const days = appointments
+      .map(item => dayjs(item.date))
+      .filter(date =>
+        date.month() === monthToDisplay.month() &&
+        date.year() === monthToDisplay.year()
+      )
+      .map(date => date.date()); // lấy số ngày (1–31)
 
-    requestAbortController.current = controller;
+    setHighlightedDays(days);
   };
 
   React.useEffect(() => {
-    fetchHighlightedDays(initialValue);
-    // abort request on unmount
-    return () => requestAbortController.current?.abort();
-  }, []);
+    updateHighlightedDays(currentMonth);
+  }, [appointments, currentMonth]);
+
+  React.useEffect(() => {
+    const appoinmentsInDay = appointments.filter(item => {
+      const date = dayjs(item.date);
+      return date.date() === selectedDate.date() &&
+        date.month() === selectedDate.month() &&
+        date.year() === selectedDate.year();
+    });
+    setAppoinmentsInDay(appoinmentsInDay);
+  }, [appointments, selectedDate]);
 
   const handleMonthChange = (date) => {
-    if (requestAbortController.current) {
-      // make sure that you are aborting useless requests
-      // because it is possible to switch between months pretty quickly
-      requestAbortController.current.abort();
-    }
-
-    setIsLoading(true);
-    setHighlightedDays([]);
-    fetchHighlightedDays(date);
+    setCurrentMonth(date);
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <DateCalendar
-          defaultValue={initialValue}
-          loading={isLoading}
-          onMonthChange={handleMonthChange}
-          renderLoading={() => <DayCalendarSkeleton />}
-          slots={{
-            day: ServerDay,
-          }}
-          slotProps={{
-            day: {
-              highlightedDays,
-            },
-          }}
-          sx={{
-            width: '100%', 
-            maxHeight: '400px',
-            '.MuiPickersDay-root': {
-              fontSize: '14px', 
-              padding: '22px',
-            },
-            '.MuiPickersDay-day': {
-              fontSize: '1.5rem', 
-            },
-            '.MuiPickersToolbar-root': {
-              height: '60px', 
-              fontSize: '1.25rem', 
-              display: 'flex',
-              justifyContent: 'space-around',
-            },
-            '.MuiPickersToolbarText-root': {
-              fontSize: '1.25rem',
-              fontWeight: 'bold', 
-            },
-            '.MuiDayCalendar-weekDayLabel': {
-              width: '44px', 
-              textAlign: 'center', 
-            },
-            '.MuiPickersCalendarHeader-root': {
-              padding: 0
-            }
-          }}
-        />
+    <div id="appointment-quick-view">
+      <h3>Lịch hẹn</h3>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <DateCalendar
+            value={selectedDate}
+            onChange={(newValue) => setSelectedDate(newValue)}
+            onMonthChange={handleMonthChange}
+            renderLoading={() => <DayCalendarSkeleton />}
+            slots={{ day: ServerDay }}
+            slotProps={{ day: { highlightedDays } }}
+            sx={{
+              width: '100%',
+              maxHeight: '400px',
+              '.MuiPickersDay-root': {
+                fontSize: '14px',
+                padding: '22px',
+              },
+              '.MuiPickersToolbar-root': {
+                height: '60px',
+                fontSize: '1.25rem',
+                display: 'flex',
+                justifyContent: 'space-around',
+              },
+              '.MuiPickersToolbarText-root': {
+                fontSize: '1.25rem',
+                fontWeight: 'bold',
+              },
+              '.MuiDayCalendar-weekDayLabel': {
+                width: '44px',
+                textAlign: 'center',
+              },
+              '.MuiPickersCalendarHeader-root': {
+                padding: 0,
+              },
+            }}
+          />
+        </div>
+      </LocalizationProvider>
+      <div>
+        <div className="row">
+          <h3>Lịch khám</h3>
+          <Link to="/appointments" className='text-blue-400 text-sm hover:text-blue-500 hover:underline'>
+            Xem thêm
+          </Link>
+        </div>
+
+        <div id="appoinment-list">
+          {
+            appoinmentsInDay.length > 0 ? (
+              appoinmentsInDay.map((item, index) => (
+                <Appoinment key={index} appoinment={item} />
+              ))
+            ) : (
+              <p>Không có lịch hẹn nào trong ngày này</p>
+            )
+          }
+        </div>
       </div>
-    </LocalizationProvider>
+    </div>
   );
 }

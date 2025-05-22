@@ -17,6 +17,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 const PatientHeader = () => {
     const { t } = useTranslation();
@@ -69,36 +70,26 @@ const PatientHeader = () => {
             <button id="sidebar-btn" onClick={() => setSidebarCollapse(!sidebarCollapse)}>
                 <MenuIcon size="30px"/>
             </button>
-
-            <Button sx={{
-                display: {
-                    xs: "block",
-                    sm: "none",
-                    md: "none",
-                    lg: "none",
-                },
-            }}>
-                <SearchIcon sx={{
-                    position: "absolute",
-                    right: "3%",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                }}/>
-            </Button>
             
 
             <Stack direction="row" spacing={3} sx={{
                 alignItems: "center",
             }}>
-                <Button variant="contained" startIcon={<AddIcon />} sx={{
-                    borderRadius: "7px",
-                    display: {
-                        xs: "none",
-                        sm: "none",
-                        md: "none",
-                        lg: "flex",
-                    }
-                }}>
+                <Button 
+                    variant="contained" 
+                    startIcon={<AddIcon />} 
+                    sx={{
+                        borderRadius: "7px",
+                        display: {
+                            xs: "none",
+                            sm: "none",
+                            md: "none",
+                            lg: "flex",
+                        }
+                    }}
+                    component={Link}
+                    to="/services"
+                >
                     {t("header.patient.booking")}
                 </Button>
 

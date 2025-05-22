@@ -3,8 +3,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { format, addDays, isToday, isSameDay } from "date-fns";
 import PropTypes from "prop-types";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 const DateSlider = ({ selectedDate, setSelectedDate }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const swiperRef = useRef(null);
 
   // Tạo danh sách 21 ngày (10 ngày trước, ngày hiện tại, 10 ngày sau)
@@ -30,7 +33,7 @@ const DateSlider = ({ selectedDate, setSelectedDate }) => {
   return (
     <div className="w-full mx-auto mb-5">
       <Swiper
-        slidesPerView={7}
+        slidesPerView={isMobile ? 5 : 7} // Số lượng slide
         spaceBetween={30}
         modules={[]}
         centeredSlides={false}
@@ -39,7 +42,7 @@ const DateSlider = ({ selectedDate, setSelectedDate }) => {
         {days.map((date, index) => (
           <SwiperSlide key={date.toISOString()}>
             <button
-              className={`w-20 h-20 flex flex-col items-center justify-center rounded-2xl border-none cursor-pointer hover:bg-gray-300
+              className={`w-16 h-16 lg:w-20 lg:h-20 flex flex-col items-center justify-center rounded-2xl border-none cursor-pointer hover:bg-gray-300
                 ${
                   isSameDay(selectedDate, date)
                     ? "bg-gray-200 text-black"

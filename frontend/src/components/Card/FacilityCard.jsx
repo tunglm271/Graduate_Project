@@ -1,22 +1,30 @@
 import { Button } from "@mui/material";
-import facilityImg from "@images/facility.jpg";
-
-const FacilityCard = () => {
+import { Link } from "react-router-dom";
+const FacilityCard = ({ facility }) => {
   return (
     <div className="facility-card">
-      <img src={facilityImg} alt="" />
+      <div className="p-1 w-2/5">
+        <img src={facility.logo} alt="" className="object-cover"/>
+      </div>
       <div className="my-2">
-        <h4 className="text-lg font-semibold">
-          Bệnh viện Đa khoa Quốc tế Vinmec
-        </h4>
+        <p className="text-sm font-semibold line-clamp-2 mb-1">
+          {facility.facility_name}
+        </p>
         <div className="row" style={{ padding: 0 }}>
-          <p style={{fontSize: '12px'}}>Địa chỉ: Số 11 Thái Hà, Đống Đa, Hà Nội</p>
+          <p className="text-xs line-clamp-2 mb-2">{facility.address}</p>
         </div>
-        <div style={{display: 'flex', gap: '10px', margin: '5px 0px', padding: 0}}>
-          <Button variant="outlined" sx={{
-            boxShadow: 'none',
-            padding: '3px 10px',
-          }}>Liên hệ</Button>
+        <div className="flex gap-4 mx-2">
+          <Button 
+            variant="outlined"
+            component={Link}
+            to={`/clinic/${facility.id}`}
+            sx={{
+              boxShadow: 'none',
+              padding: '3px 10px',
+            }}
+          >
+            Liên hệ
+          </Button>
           <Button variant="contained" sx={{
             boxShadow: 'none',
             padding: '3px 10px',

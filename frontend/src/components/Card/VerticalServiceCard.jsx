@@ -1,4 +1,3 @@
-import serviceImg from '@images/service.png';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import MaleIcon from '@mui/icons-material/Male';
 import TransgenderIcon from '@mui/icons-material/Transgender';
@@ -7,7 +6,7 @@ import { Link } from 'react-router-dom';
 const VerticalServiceCard = ({ service }) => {
     return (
         <Link className="vertical-service-card" to={`/services/${service?.id}`}>
-            <img src={serviceImg} alt="" />
+            <img src={service.thumbnail} alt="" />
             <h4 style={{marginBottom: "5px"}}>{service?.name || "Gói khám tổng quát cơ bản nữ"}</h4>
             <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                 <div className='service-price'>

@@ -66,7 +66,7 @@ const FacilitySidebar = () => {
                 <ul>
                     <li><FacilityNavLink icon={<EqualizerIcon />} text={"Tài khoản"} to={"/facility/statistics"}/></li>
                     <li><FacilityNavLink icon={<PaidIcon />} text={"Doanh thu"} to={"/facility/payments"}/></li>
-                    <li><FacilityNavLink icon={<ShoppingBasketIcon />} text={"Phương thức thanh toán"} to={"/facility/products"}/></li>
+                    <li><FacilityNavLink icon={<ShoppingBasketIcon />} text={"Chương trình khuyến mãi"} to={"/facility/sales"}/></li>
                 </ul>
                 <Divider />
                 <ul>

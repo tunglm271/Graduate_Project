@@ -1,8 +1,8 @@
 
 #auth-layout {
     background: linear-gradient(135deg, #00b5e2, #007bff);
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-y: auto;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -107,6 +107,8 @@
         flex-direction: column;
         min-width: 90%;
         padding: 20px;
+        min-height: 100vh;
+        border-radius: 0;
     }
 
     .auth-card > img {

@@ -44,3 +44,14 @@ export const getIndicatorTypes = () => {
         staleTime: 8 * 1000 * 60 * 60
     });
 }
+
+export const getCities = () => {
+    return useQuery({
+        queryKey: ['cities'],
+        queryFn: async () => {
+            const res = await api.get('cities');
+            return res.data;
+        },
+        staleTime: 8 * 1000 * 60 * 60
+    });
+}

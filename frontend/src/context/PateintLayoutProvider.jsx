@@ -14,10 +14,10 @@ export const PateintLayoutProvider = ({ children }) => {
     if (!isMobile) {
       const content = document.getElementById("content");
       if (content) {
-        content.style.marginLeft = sidebarCollapse ? "220px" : "120px";
+        content.style.marginLeft = sidebarCollapse ? "220px" : "100px";
         content.style.width = sidebarCollapse
           ? "calc(100% - 220px)"
-          : "calc(100% - 120px)";
+          : "calc(100% - 100px)";
       }
     }
   }, [sidebarCollapse, isMobile]);

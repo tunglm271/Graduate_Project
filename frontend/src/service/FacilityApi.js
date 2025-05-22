@@ -26,6 +26,10 @@ const facilityApi = {
     delete(id) {
         return api.delete(`${resource}/${id}`);
     },
+
+    dashboard() {
+        return api.get(`medical-facility/dashboard`);
+    }
 };
 
 export default facilityApi;

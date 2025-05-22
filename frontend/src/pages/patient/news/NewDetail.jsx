@@ -13,6 +13,7 @@ const NewsDetail = () => {
   const { id } = useParams();
   const [article, setArticle] = useState(null);
   const [topRecentArticles, setTopRecentArticles] = useState([]);
+  const [recommendedServices, setRecommendedServices] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const { showErrorSnackbar } = useCustomSnackbar();
@@ -35,52 +36,16 @@ const NewsDetail = () => {
     tags: ["Diabetes", "Research", "Healthcare", "Treatment"],
   };
 
-  // Mock data for recent news
-  const recentNews = [
-    {
-      id: 1,
-      title: "New Guidelines for Heart Disease Prevention",
-      image: "/images/news/heart-health.jpg",
-      date: "2024-03-14",
-    },
-    {
-      id: 2,
-      title: "COVID-19 Vaccine Update: Latest Developments",
-      image: "/images/news/covid-vaccine.jpg",
-      date: "2024-03-13",
-    },
-    {
-      id: 3,
-      title: "Mental Health Awareness Month: Tips for Well-being",
-      image: "/images/news/mental-health.jpg",
-      date: "2024-03-12",
-    },
-  ];
-
-  // Mock data for recommended services
-  const recommendedServices = [
-    {
-      id: 1,
-      title: "Diabetes Screening",
-      description: "Comprehensive diabetes screening and consultation",
-      price: "$50",
-      image: "/images/services/diabetes-screening.jpg",
-    },
-    {
-      id: 2,
-      title: "Health Check-up Package",
-      description: "Complete health assessment and consultation",
-      price: "$150",
-      image: "/images/services/health-checkup.jpg",
-    },
-  ];
 
   useEffect(() => {
+    setLoading(true);
     articleApi
       .getArticleById(id)
       .then((res) => {
         console.log(res.data);
-        setArticle(res.data);
+        setArticle(res.data.article);
+        setTopRecentArticles(res.data.recommend_article);
+        setRecommendedServices(res.data.services);
         setLoading(false);
       })
       .catch((error) => {
@@ -91,7 +56,7 @@ const NewsDetail = () => {
         );
         navigate("/news");
       });
-  }, []);
+  }, [id]);
 
   const formatDateWithTime = (dateString) => {
     const date = new Date(dateString);
@@ -208,24 +173,28 @@ const NewsDetail = () => {
         <div className="w-full lg:w-80 space-y-6 sm:space-y-8">
           {/* Recent News */}
           <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm">
-            <h3 className="text-lg font-semibold mb-4">
+            <p className="text-lg font-semibold mb-4">
               {t("news.recentNews")}
-            </h3>
+            </p>
             <div className="space-y-4">
-              {recentNews.map((news) => (
-                <div key={news.id} className="flex gap-3">
+              {topRecentArticles.map((news) => (
+                <Link 
+                  key={news.id} 
+                  className="flex gap-3 group"
+                  to={`/news/${news.id}`}
+                >
                   <img
-                    src={news.image}
+                    src={news.cover_image}
                     alt={news.title}
                     className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg"
                   />
                   <div>
-                    <h4 className="font-medium text-sm line-clamp-2">
+                    <p className="font-semibold text-sm line-clamp-2 group-hover:text-blue-500">
                       {news.title}
-                    </h4>
-                    <p className="text-xs text-gray-500 mt-1">{news.date}</p>
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">{formatDateWithTime(news.created_at)}</p>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -237,27 +206,29 @@ const NewsDetail = () => {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
               {recommendedServices.map((service) => (
-                <div key={service.id} className="bg-gray-50 rounded-lg p-3">
+                <Link 
+                  key={service.id} 
+                  className="bg-gray-50 rounded-lg p-3"
+                  to={`/services/${service.id}`}
+                >
                   <img
-                    src={service.image}
-                    alt={service.title}
+                    src={service.thumbnail}
+                    alt={service.name}
                     className="w-full h-24 sm:h-32 object-cover rounded-lg mb-3"
                   />
-                  <h4 className="font-medium">{service.title}</h4>
+                  <h4 className="font-medium">{service.name}</h4>
                   <p className="text-sm text-gray-500 mb-2">
                     {service.description}
                   </p>
                   <p className="text-blue-500 font-medium">{service.price}</p>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
 
           {/* Advertisement Space */}
-          <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm">
-            <div className="aspect-[4/5] bg-gray-100 rounded-lg flex items-center justify-center">
-              <p className="text-gray-400">{t("news.advertisement")}</p>
-            </div>
+          <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm">
+            <img src="https://nuu.edu.vn/wp-content/uploads/quang-cao-phong-kham-da-khoa-nhu-the-nao-1024x1024.jpg" alt="" className="rounded" />
           </div>
         </div>
       </div>

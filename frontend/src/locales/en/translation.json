@@ -97,7 +97,9 @@
       "setting": "Settings",
       "profile": "Profile",
       "log-out": "Log out"
-    }
+    },
+    "doctor": "Doctor",
+    "facility": "Facility"
   },
   "msg": {
     "log-out-success": "Log out successfully"

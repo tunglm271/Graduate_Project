@@ -9,11 +9,8 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import medicalServiceApi from "../../service/medicalServiceAPi";
-import patientApi from "../../service/patientApi";
-import doctorApi from "../../service/doctorApi";
-import appointmentApi from "../../service/appointmentApi";
 import PropTypes from "prop-types";
+import facilityApi from "../../service/FacilityApi";
 
 const StatCard = ({ title, value, icon, subtitle }) => (
   <Paper
@@ -99,15 +96,9 @@ const FacilityDashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [patientsRes, doctorsRes, servicesRes, appointmentsRes] =
-          await Promise.all([
-            patientApi.getAll(),
-            doctorApi.getAll(),
-            medicalServiceApi.getAll(),
-            appointmentApi.getByFacility(),
-          ]);
+        const response = await facilityApi.dashboard();
+        const { total_patients, total_doctors, total_services, appointments } = response.data;
 
-        const appointments = appointmentsRes.data;
         const completedAppointments = appointments.filter(
           (apt) => apt.status === "completed"
         ).length;
@@ -122,9 +113,9 @@ const FacilityDashboard = () => {
         ).length;
 
         setStats({
-          totalPatients: patientsRes.data.length,
-          totalDoctors: doctorsRes.data.length,
-          totalServices: servicesRes.data.services.length,
+          totalPatients: total_patients,
+          totalDoctors: total_doctors,
+          totalServices:  total_services,
           totalAppointments: appointments.length,
           completedAppointments,
           pendingAppointments,
@@ -139,6 +130,9 @@ const FacilityDashboard = () => {
     };
 
     fetchData();
+    facilityApi.dashboard().then((response) => {
+      console.log(response.data);
+    });
   }, []);
 
   return (

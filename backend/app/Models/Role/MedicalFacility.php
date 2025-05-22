@@ -9,6 +9,9 @@ use App\Models\MedicalService;
 use App\Models\Appointment;
 use App\Models\FacilityType;
 use App\Models\HealthProfile;
+use App\Models\City;
+use App\Models\Sale;
+
 class MedicalFacility extends Model
 {
     /** @use HasFactory<\Database\Factories\Role\MedicalFacilityFactory> */
@@ -34,11 +37,13 @@ class MedicalFacility extends Model
         'issuance_date',
         'issuance_place',
         'facility_type_id',
+        'city_id',
     ];
 
-    protected $appends = ['email', 'number_of_services', 'number_of_doctors', 'status', 'facility_type_name'];
+    protected $appends = ['email', 'number_of_services', 'number_of_doctors', 'status', 'facility_type_name', 'city_name'];
     protected $hidden = [
         'facility_type',
+        'city',
     ];
 
     public function user()
@@ -66,6 +71,16 @@ class MedicalFacility extends Model
         return $this->hasManyThrough(HealthProfile::class, Appointment::class, 'facility_id', 'id', 'id', 'health_profile_id')->distinct();
     }
 
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
+    public function sales() 
+    {
+        return $this->hasManyThrough(Sale::class,MedicalService::class, 'medical_facility_id', 'medical_service_id', 'id', 'id');
+    }
+
     public function facilityType()
     {
         return $this->belongsTo(FacilityType::class);
@@ -91,8 +106,24 @@ class MedicalFacility extends Model
         return optional($this->user)->active ? 'active' : 'inactive';
     }
 
+    public function getCityNameAttribute()
+    {
+        return optional($this->city)->name;
+    }
+
     public function getFacilityTypeNameAttribute()
     {
         return optional($this->facilityType)->name;
     }
+
+    public function scopeSearch($query, $search)
+    {
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('facility_name', 'like', "%$search%");
+            });
+        }
+    }
+
+    
 }

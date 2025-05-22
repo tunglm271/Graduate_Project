@@ -55,7 +55,7 @@ class PatientController extends Controller
         $facilities = MedicalFacility::inRandomOrder()->limit(5)->get();
         $services = MedicalService::inRandomOrder()->limit(6)->get();
         $appointments = $request->user()->patient->HealthProfiles->map(function ($healthProfile) {
-            return $healthProfile->appointments;
+            return $healthProfile->appointments->load(['medicalService','medicalFacility']);
         })->flatten()->unique('id');
 
         return response()->json([

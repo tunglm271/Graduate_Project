@@ -97,14 +97,14 @@ const PatientMedicinePage = () => {
         {
           selectedProfile == 0 ?
           <div 
-            className="w-[65%] min-h-96 p-4 bg-white rounded-lg shadow-[0px_4px_8px_rgba(173,216,230,0.7)]"
+            className="w-full lg:w-[65%] min-h-96 p-4 bg-white rounded-lg shadow-[0px_4px_8px_rgba(173,216,230,0.7)]"
           >
-            <div className="w-full h-full flex text-center justify-center items-center bg-gray-100 rounded-lg text-lg">
+            <div className="w-full h-full flex text-center justify-center items-center bg-gray-100 rounded-lg text-lg m-auto">
               Chưa chọn hồ sơ sức khỏe
             </div>
           </div>
           :
-          <div className="patient-medicine-calendar">
+          <div className="patient-medicine-calendar w-full lg:w-[65%]">
             <div className="flex gap-1 items-center rounded-full">
               <Avatar
                 src="/images/medicine.png"
@@ -138,7 +138,7 @@ const PatientMedicinePage = () => {
         {
           selectedProfile == 0 ?
           <div 
-            className="w-[35%] p-4 bg-white rounded-lg shadow-[0px_4px_8px_rgba(173,216,230,0.7)]"
+            className="w-full lg:w-[35%] p-4 bg-white rounded-lg shadow-[0px_4px_8px_rgba(173,216,230,0.7)]"
           >
             <div className="w-full h-full flex text-center justify-center items-center bg-gray-100 rounded-lg text-lg">
               Chưa chọn hồ sơ sức khỏe
@@ -147,7 +147,7 @@ const PatientMedicinePage = () => {
           :
           (
             medicinesLoading ?
-            <div className="w-[35%] p-4 bg-white rounded-lg shadow-[0px_4px_8px_rgba(173,216,230,0.7)] flex justify-center items-center">
+            <div className="w-full lg:w-[35%] p-4 bg-white rounded-lg shadow-[0px_4px_8px_rgba(173,216,230,0.7)] flex justify-center items-center">
               <CircularProgress />
             </div>
             :

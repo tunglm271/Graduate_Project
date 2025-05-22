@@ -19,6 +19,10 @@ const medicalServiceApi = {
     return api.get(`${resource}/${id}`);
   },
 
+  getByIdForPatient(id) {
+    return api.get(`patient/medical-services/${id}`);
+  },
+
   create(formData) {
     return api.post(resource, formData, {
       headers: {
