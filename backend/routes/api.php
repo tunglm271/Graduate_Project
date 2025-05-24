@@ -23,6 +23,7 @@ use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\ProfileMedicineController;
 use App\Http\Controllers\ProfileMedicineLogController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\SaleController;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('user', [AuthController::class, 'getUser']);
@@ -57,6 +58,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('medicines', [MedicineController::class, 'index']);
     Route::get('cities', CityController::class);
     Route::get('indicator-types', [IndicatorController::class, 'getIndicatorTypes']);
+    Route::apiResource('sales', SaleController::class)->except('show')->middleware('role:facility');
     Route::apiResource('appointments', AppointmentController::class)->except('update');
     Route::post('appointment/assign-doctor', [AppointmentController::class, 'assignDoctor']);
     Route::get('appointment/facility', [AppointmentController::class, 'indexByFacility']);
@@ -65,6 +67,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('vnpay_payment', [TransactionController::class, 'vnpay_payment']);
     Route::post('appointments/{appointmentId}/vnpay_verify_payment', [TransactionController::class, 'verifyPayment']);
     Route::get('appointments/{appointment}/bill', [TransactionController::class, 'showBill']);
+    Route::get('revenue-statistics', [TransactionController::class, 'getRevenueStats']);
     Route::post('appointments/{appointment}/add-result', [AppointmentController::class, 'addResult']);
     Route::get('medical-records/{medicalRecord}', [MedicalRecordController::class, 'show']);
     Route::get('medical-records/{medicalRecord}/prescription-download', [MedicalRecordController::class, 'precriptionDownload']);

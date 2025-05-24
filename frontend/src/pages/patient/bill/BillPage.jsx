@@ -5,6 +5,7 @@ import transactionApi from "../../../service/transactionApi";
 import { useParams, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Skeleton from "@mui/material/Skeleton";
+import useCustomSnackbar from "../../../hooks/useCustomSnackbar";
 
 const BillPage = () => {
   const { id } = useParams();
@@ -12,6 +13,7 @@ const BillPage = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const { showErrorSnackbar } = useCustomSnackbar();
 
   useEffect(() => {
     if (id) {
@@ -25,6 +27,7 @@ const BillPage = () => {
         .catch((error) => {
           console.error("Error fetching bill data:", error);
           setError(true);
+          showErrorSnackbar("Có lỗi xảy ra trong quá trình lấy dữ liệu");
           setLoading(false);
         });
     }

@@ -10,6 +10,10 @@ const transactionApi = {
     },
     verifyPayment(data,appointmentId) {
         return api.post(`appointments/${appointmentId}/vnpay_verify_payment`,data);
+    },
+
+    getRevenueStats(params) {
+        return api.get('revenue-statistics', { params });
     }
 }
 

@@ -19,14 +19,14 @@ const DateSlider = ({ selectedDate, setSelectedDate }) => {
 
   useEffect(() => {
     if (swiperRef.current) {
-      swiperRef.current.slideTo(todayIndex - 3); // Cuộn slider về ngày hôm nay
+      swiperRef.current.slideTo(todayIndex - (isMobile?2:3)); // Cuộn slider về ngày hôm nay
     }
   }, []);
 
   const handleTodayClick = () => {
     setSelectedDate(today);
     if (swiperRef.current) {
-      swiperRef.current.slideTo(todayIndex - 3); // Cuộn slider về ngày hôm nay
+      swiperRef.current.slideTo(todayIndex - (isMobile?2:3) ); // Cuộn slider về ngày hôm nay
     }
   };
 
@@ -51,7 +51,7 @@ const DateSlider = ({ selectedDate, setSelectedDate }) => {
               `}
               onClick={() => {
                 setSelectedDate(date);
-                if (swiperRef.current) swiperRef.current.slideTo(index - 3); // Cuộn về ngày được chọn
+                if (swiperRef.current) swiperRef.current.slideTo(index - (isMobile?2:3)); // Cuộn về ngày được chọn
               }}
             >
               <p

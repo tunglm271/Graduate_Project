@@ -35,20 +35,6 @@
   margin-bottom: 14px;
 }
 
-#welcome-booking button {
-  background-color: #ff9d3d;
-  padding: 10px 20px;
-  border-radius: 15px;
-  border: none;
-  cursor: pointer;
-  font-weight: 700;
-}
-
-#welcome-booking button:hover {
-  background-color: #f8f8f8;
-  color: #ff9d3d;
-}
-
 #welcome-booking img {
   position: absolute;
   right: 5%;

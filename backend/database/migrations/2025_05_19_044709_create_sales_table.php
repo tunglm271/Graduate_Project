@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('medical_service_id')->constrained()->onDelete('cascade');
             $table->enum('type', ['amount', 'percent'])->default('percent');
             $table->decimal('value', 10, 2);
-            $table->boolean('is_active')->default(true);
+            $table->date('start_date');
+            $table->date('end_date');
             $table->timestamps();
         });
     }

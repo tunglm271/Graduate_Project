@@ -61,7 +61,7 @@ const FacilityLandingPage = () => {
         } justify-between items-start gap-8`}
       >
         <div className={`${isMobile ? "w-full" : "w-1/3"}`}>
-          <div className="facility-info">
+          <div className="facility-info bg-white">
             {loading ? (
               <>
                 <Skeleton
@@ -162,11 +162,11 @@ const FacilityLandingPage = () => {
         </div>
 
         <div className={`${isMobile ? "w-full" : "w-2/3"}`}>
-          <div className="facility-description">
+          <div className="facility-description bg-white">
             <img
               src="https://medpro.vn/_next/image?url=https%3A%2F%2Fcdn.medpro.vn%2Fprod-partner%2F9e35b250-4872-4384-b3c9-5bebe7b48939-gt1.jpg&w=3840&q=75"
               alt="clinic-thumbnail"
-              className="w-full h-48 object-cover rounded-lg"
+              className="w-full h-48 object-cover rounded-t-lg"
             />
             <div className="flex flex-col gap-4 p-4">
               {loading ? (

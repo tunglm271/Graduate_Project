@@ -83,7 +83,7 @@ class DoctorController extends Controller
      */
     public function show(Doctor $doctor)
     {
-        //
+        return $doctor->load(['user', 'schedule','appointments','appointments.healthProfile', 'appointments.medicalService']);
     }
 
     /**

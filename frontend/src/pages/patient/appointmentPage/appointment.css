@@ -1,59 +1,131 @@
 #profile-list {
-    width: 20%;
-    height: fit-content;
-    margin-top: 50px;
-    background-color: white;
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 3px rgba(173, 216, 230, 0.7);
+  width: 20%;
+  height: fit-content;
+  margin-top: 50px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 3px rgba(173, 216, 230, 0.7);
 }
 
 #profile-list h4 {
-    text-align: center;
+  text-align: center;
 }
 
-
 .appointment-card {
-    background-color: white;
-    box-shadow: 0px 0px 3px rgba(173, 216, 230, 0.7);
-    border-radius: 10px;
-    padding: 10px;
+  background-color: white;
+  box-shadow: 0px 0px 3px rgba(173, 216, 230, 0.7);
+  border-radius: 10px;
+  padding: 10px;
 }
 
 .appointment-card-content > .facility-link {
-    color: #007bff;
-    display: flex;
-    align-items: center;
-    font-size: 14px;
+  color: #007bff;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
 }
 
 .appointment-card-content > .facility-link:hover {
-    color: #0056b3;
+  color: #0056b3;
 }
 
 .appointment-card-content {
-    padding: 10px;
+  padding: 10px;
 }
 
 .booked-service {
-    display: flex;
-    align-items: center;
-    border: 2px dotted gray;
-    border-radius: 10px;
-    padding: 7px;
-    margin: 10px 0;
+  display: flex;
+  align-items: center;
+  border: 2px dotted gray;
+  border-radius: 10px;
+  padding: 7px;
+  margin: 10px 0;
 }
 
 .booked-service > img {
-    width: 120px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 10px;
+  width: 120px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
 }
 
 .appointment-doctor-info {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, auto);
-    gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 10px;
+}
+
+#appointment-detail {
+  padding: 20px;
+}
+
+.appointment-infor-section {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-infor-section h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 16px 0 8px 0;
+}
+
+.appointment-result {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.examination-result {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  #appointment-detail {
+    padding: 10px;
+  }
+
+  .appointment-infor-section,
+  .appointment-result {
+    padding: 15px;
+  }
+
+  .appointment-infor-section h1 {
+    font-size: 1.25rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .appointment-infor-section,
+  .appointment-result {
+    padding: 12px;
+  }
+
+  .appointment-infor-section h1 {
+    font-size: 1.1rem;
+  }
 }

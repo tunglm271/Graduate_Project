@@ -1,15 +1,15 @@
 export { default as PatientHomePage } from './patient/homepage/PatientHomePage.jsx';
-export {default as AppointmentPage } from './patient/appointmentPage/AppointmentPage.jsx';
+export { default as AppointmentPage } from './patient/appointmentPage/AppointmentPage.jsx';
 export { default as ServicePage } from './patient/servicePage/ServicePage.jsx';
 export { default as Services } from './patient/servicePage/Services.jsx';
 export { default as MedicinePage } from './patient/medicinePage/PatientMedicinePage.jsx';
 export { default as HealthProfilePage } from './patient/healthProfiles/HealthProfiles.jsx';
 export { default as HealthProfileDetail } from './patient/healthProfiles/HealthProfileDetail.jsx';
-export {default as HealthProfileEdit } from './patient/healthProfiles/HealthProfileEdit.jsx';
-export {default as MedicalRecord} from './patient/medicalRecord/MedicalRecord.jsx';
-export {default as FacilityBooking} from './patient/facility/FacilityBooking.jsx';
-export {default as FacilityLandingPage} from './patient/facility/FacilityLandingPage.jsx';
-export {default as BillPage} from "./patient/bill/BillPage.jsx"
+export { default as HealthProfileEdit } from './patient/healthProfiles/HealthProfileEdit.jsx';
+export { default as MedicalRecord } from './patient/medicalRecord/MedicalRecord.jsx';
+export { default as FacilityBooking } from './patient/facility/FacilityBooking.jsx';
+export { default as FacilityLandingPage } from './patient/facility/FacilityLandingPage.jsx';
+export { default as BillPage } from "./patient/bill/BillPage.jsx"
 export { default as PaymentResult } from "./patient/bill/PaymentResult.jsx"
 export { default as SettingPage } from './patient/Settings/SettingPage.jsx';
 export { default as NewsList } from './patient/news/NewsList.jsx';
@@ -17,7 +17,7 @@ export { default as NewDetail } from './patient/news/NewDetail.jsx';
 export { default as AllNews } from './patient/news/AllNews.jsx';
 export { default as AllExternalNews } from './patient/news/AllExternalNews.jsx';
 
-export { default as FacilityDashboard} from './facility/FacilityDashboard.jsx';
+export { default as FacilityDashboard } from './facility/FacilityDashboard.jsx';
 export { default as FacilityReservations } from './facility/FacilityReservations.jsx';
 export { default as PatientManage } from './facility/PatientManage.jsx';
 export { default as ServiceManage } from './facility/ServiceManage.jsx';
@@ -30,6 +30,8 @@ export { default as FacilityProfile } from './facility/FacilityProfile.jsx';
 export { default as DiagnosisPage } from './patient/diagnosis/DiagnosisPage.jsx';
 export { default as Facilities } from './patient/facility/Facilities.jsx';
 export { default as SalesManage } from './facility/sales/SalesManage.jsx';
+export { default as AppointmentDetail } from './patient/appointmentPage/AppointmentDetail.jsx';
+export { default as RevenueDashboard } from './facility/RevenueDashboard.jsx';
 
 export { default as ServiceAssignmentPage } from './doctor/service-assignment/ServiceAssignmentPage.jsx';
 export { default as ReservationList } from './doctor/reservations-list/ReservationsList.jsx';
@@ -50,3 +52,5 @@ export { default as Register } from './auth/Register.jsx';
 export { default as FacilityRegister } from './auth/FaciltyRegister.jsx';
 
 export { default as NotFound } from './NotFound.jsx';
+export { default as LandingPage } from './LandingPage.jsx';
+export { default as MessagePage } from './MessagePage.jsx';

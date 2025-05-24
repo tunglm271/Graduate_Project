@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import "./facility-booking.css";
 import BookingPopUp from "../../../components/dialog/BookingPopUp";
 import facilityApi from "../../../service/FacilityApi";
+import { formatCurrency } from "../../../utlis/caculateFun";
 
 const FacilityBooking = () => {
   const { facilityId } = useParams();
@@ -132,14 +133,14 @@ const FacilityBooking = () => {
                       {index + 1}
                     </td>
                     <td className="w-1/2 text-left">
-                      <p className="font-bold">{service.service_name}</p>
+                      <p className="font-bold">{service.name}</p>
                       <p className="italic">
                         Thời gian: {service.duration} phút
                       </p>
                     </td>
                     <td className="w-[100px] whitespace-normal break-words">
                       {service.price
-                        ? `${service.price.toLocaleString()} VND`
+                        ? `${formatCurrency(service.price)}`
                         : "Thanh toán trực tiếp"}
                     </td>
                     <td>

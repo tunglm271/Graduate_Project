@@ -51,9 +51,9 @@ body {
     position: fixed;
     height: 100vh;
     display: flex;
+    gap: 50px;
     flex-direction: column;
     padding: 20px;
-    justify-content: space-between;
     text-align: center;
     transition: width 0.3s ease;
     background-color: #007bff;
@@ -195,6 +195,12 @@ body {
   @media (max-width: 768px) {
     #search-bar {
       display: none;
+    }
+
+    #footer {
+      margin-left: 0;
+      margin-right: 0;
+      border-radius: 0;
     }
   }
 

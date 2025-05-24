@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Dialog,
   DialogActions,
   DialogContent,
@@ -25,9 +23,6 @@ import {
   Select,
   MenuItem,
   InputAdornment,
-  OutlinedInput,
-  Checkbox,
-  ListItemText,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -40,6 +35,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 import medicalServiceApi from "../../../service/medicalServiceAPi";
+import saleApi from "../../../service/saleApi";
+import useCustomSnackbar from "../../../hooks/useCustomSnackbar";
 
 const SalesManage = () => {
   const [sales, setSales] = useState([]);
@@ -49,39 +46,26 @@ const SalesManage = () => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    discountType: "percentage", // percentage or fixed
+    discountType: "percent", // percentage or fixed
     discountValue: "",
     startDate: dayjs(),
     endDate: dayjs(),
     status: "active", // active, inactive, scheduled
     serviceId: "", // Changed from applicableServices array to single serviceId
   });
+  const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
 
   // Mock data - Replace with actual API call
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setSales([
-        {
-          id: 1,
-          discountType: "percentage",
-          discountValue: 20,
-          startDate: "2024-06-01",
-          endDate: "2024-08-31",
-          status: "scheduled",
-          serviceId: 1,
-        },
-        {
-          id: 2,
-          discountType: "fixed",
-          discountValue: 100000,
-          startDate: "2024-05-01",
-          endDate: "2024-05-31",
-          status: "active",
-          serviceId: 1,
-        },
-      ]);
-    }, 1000);
+    saleApi
+      .getAll()
+      .then((response) => {
+        setSales(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching sales data:", error);
+      });
   }, []);
 
   // Fetch available services
@@ -108,9 +92,7 @@ const SalesManage = () => {
     } else {
       setSelectedSale(null);
       setFormData({
-        name: "",
-        description: "",
-        discountType: "percentage",
+        discountType: "percent",
         discountValue: "",
         startDate: dayjs(),
         endDate: dayjs(),
@@ -128,9 +110,56 @@ const SalesManage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission - Replace with actual API call
-    console.log("Form submitted:", formData);
-    handleCloseDialog();
+    const submitData = new FormData();
+
+    submitData.append("type", formData.discountType);
+    submitData.append("value", formData.discountValue);
+    submitData.append("start_date", formData.startDate.format("YYYY-MM-DD"));
+    submitData.append("end_date", formData.endDate.format("YYYY-MM-DD"));
+    submitData.append("status", formData.status);
+    submitData.append("medical_service_id", formData.serviceId);
+
+    if (selectedSale) {
+      saleApi
+        .update(selectedSale.id, submitData)
+        .then((response) => {
+          setSales((prevSales) =>
+            prevSales.map((sale) =>
+              sale.id === selectedSale.id ? response.data : sale
+            )
+          );
+          showSuccessSnackbar("Cập nhật chương trình thành công");
+          handleCloseDialog();
+        })
+        .catch((error) => {
+          console.error("Error updating sale:", error);
+        });
+    } else {
+      saleApi
+        .create(submitData)
+        .then((response) => {
+          setSales((prevSales) => [...prevSales, response.data]);
+          showSuccessSnackbar("Thêm chương trình thành công");
+          handleCloseDialog();
+        })
+        .catch((error) => {
+          console.error("Error creating sale:", error);
+        });
+    }
+  };
+
+  const calculateStatus = (startDate, endDate) => {
+    const now = dayjs();
+    const start = dayjs(startDate);
+    const end = dayjs(endDate);
+
+    if (now.isBefore(start)) {
+      return "scheduled"; // Chưa bắt đầu
+    } else if (now.isAfter(end)) {
+      return "inactive"; // Đã kết thúc
+    } else {
+      return "active"; // Đang diễn ra
+    }
   };
 
   const getStatusColor = (status) => {
@@ -165,6 +194,20 @@ const SalesManage = () => {
       serviceId: event.target.value,
     });
   };
+
+  const handleDelete = (id) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa chương trình này?")) {
+      saleApi
+        .delete(id)
+        .then(() => {
+          setSales((prevSales) => prevSales.filter((sale) => sale.id !== id));
+          showSuccessSnackbar("Xóa chương trình thành công");
+        })
+        .catch((error) => {
+          console.error("Error deleting sale:", error);
+        });
+    }
+  }
 
   return (
     <Box sx={{ p: 3 }}>
@@ -205,18 +248,18 @@ const SalesManage = () => {
               <TableRow key={sale.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>
-                  {sale.discountType === "percentage"
-                    ? `${sale.discountValue}%`
-                    : `${sale.discountValue.toLocaleString("vi-VN")}đ`}
+                  {sale.type === "percent"
+                    ? `${sale.value}%`
+                    : `${sale.value.toLocaleString("vi-VN")}đ`}
                 </TableCell>
                 <TableCell>
-                  {dayjs(sale.startDate).format("DD/MM/YYYY")} -{" "}
-                  {dayjs(sale.endDate).format("DD/MM/YYYY")}
+                  {dayjs(sale.start_date).format("DD/MM/YYYY")} -{" "}
+                  {dayjs(sale.end_date).format("DD/MM/YYYY")}
                 </TableCell>
                 <TableCell>
                   {(() => {
                     const service = services.find(
-                      (s) => s.id === sale.serviceId
+                      (s) => s.id === sale.medical_service_id
                     );
                     return service ? (
                       <Chip
@@ -229,8 +272,12 @@ const SalesManage = () => {
                 </TableCell>
                 <TableCell>
                   <Chip
-                    label={getStatusText(sale.status)}
-                    color={getStatusColor(sale.status)}
+                    label={getStatusText(
+                      calculateStatus(sale.start_date, sale.end_date)
+                    )}
+                    color={getStatusColor(
+                      calculateStatus(sale.start_date, sale.end_date)
+                    )}
                     size="small"
                   />
                 </TableCell>
@@ -242,7 +289,7 @@ const SalesManage = () => {
                   >
                     <EditIcon />
                   </IconButton>
-                  <IconButton size="small" color="error">
+                  <IconButton size="small" color="error" onClick={() => handleDelete(sale.id)}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -274,8 +321,8 @@ const SalesManage = () => {
                       setFormData({ ...formData, discountType: e.target.value })
                     }
                   >
-                    <MenuItem value="percentage">Phần trăm (%)</MenuItem>
-                    <MenuItem value="fixed">Số tiền cố định (đ)</MenuItem>
+                    <MenuItem value="percent">Phần trăm (%)</MenuItem>
+                    <MenuItem value="amount">Số tiền cố định (đ)</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -327,22 +374,6 @@ const SalesManage = () => {
                     slotProps={{ textField: { fullWidth: true } }}
                   />
                 </LocalizationProvider>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel>Trạng thái</InputLabel>
-                  <Select
-                    value={formData.status}
-                    label="Trạng thái"
-                    onChange={(e) =>
-                      setFormData({ ...formData, status: e.target.value })
-                    }
-                  >
-                    <MenuItem value="active">Đang áp dụng</MenuItem>
-                    <MenuItem value="inactive">Đã kết thúc</MenuItem>
-                    <MenuItem value="scheduled">Sắp diễn ra</MenuItem>
-                  </Select>
-                </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth>

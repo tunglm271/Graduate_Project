@@ -48,6 +48,18 @@ class MedicalService extends Model
         return $this->hasMany(Sale::class);
     }
 
+    public function bills()
+    {
+        return $this->belongsToMany(Bill::class, 'bill_services', 'medical_service_id', 'bill_id')
+            ->withPivot('quantity')
+            ->withTimestamps();
+    }
+
+    public function totalPaidAmount()
+    {
+        return $this->bills()->sum('total_amount');
+    }
+
     public function scopeSearch($query, $term)
     {
         $term = '%' . $term . '%';

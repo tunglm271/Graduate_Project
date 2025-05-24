@@ -12,7 +12,8 @@ class Sale extends Model
         'medical_service_id',
         'type',
         'value',
-        'is_active',
+        'start_date',
+        'end_date',
     ];
 
     public function medicalService()
@@ -22,6 +23,6 @@ class Sale extends Model
 
     public function medicalFacility()
     {
-        return $this->belongsTo(MedicalFacility::class);
+        return $this->hasOneThrough(MedicalFacility::class,MedicalService::class,'id','id','medical_service_id','medical_facility_id');
     }
 }

@@ -96,17 +96,6 @@ const PatientSidebar = () => {
           collapse={sidebarCollapse}
         />
       </div>
-
-      <Button
-        sx={{
-          color: "#897ee0",
-          "&:hover": {
-            color: "#f0f0f0",
-          },
-        }}
-      >
-        <LogoutIcon />
-      </Button>
     </>
   );
 

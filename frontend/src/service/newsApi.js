@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-const apiKey = 'pub_61438c9d4b761f29509ca770cb50451f32a7d'
 
 const newsApi = axios.create({
     baseURL: 'https://newsdata.io/api/1/news', 
@@ -13,7 +12,7 @@ export const getNews = async (retries = 3, delayMs = 1000) => {
     const params = {
         country: 'vi',
         language: 'vi',
-        apiKey: apiKey,
+        apiKey: import.meta.env.VITE_NEWS_API_KEY,
         category: 'health', 
     };
     try {

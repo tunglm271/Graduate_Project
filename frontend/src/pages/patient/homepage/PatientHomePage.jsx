@@ -104,9 +104,9 @@ const PatientHomePage = () => {
                   <p className="text-white lg:mb-3 w-3/5">
                     Đơn khám của bạn đã có kết quả chưa ?
                   </p>
-                  <button className="booking-btn px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                  <Link to="/services" className="text-sm font-bold px-4 py-2 bg-[#ff9d3d] text-white cursor-pointer rounded-2xl hover:bg-[#f8f8f8] hover:text-[#ff9d3d] transition-colors">
                     Đặt lịch ngay
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>

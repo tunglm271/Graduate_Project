@@ -102,4 +102,59 @@ class TransactionController extends Controller
         }
         return response()->json(['message' => 'Payment failed'], 400);
     }
+
+    public function getRevenueStats(Request $request) {
+        $facility = $request->user()->medicalFacility;
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $bills = Bill::where('medical_facility_id', $facility->id)
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->get();
+        $totalRevenue = $bills->sum('total_amount');
+        $totalPaid = $bills->where('status', 'paid')->sum('total_amount');
+        $totalUnpaid = $bills->where('status', 'unpaid')->sum('total_amount');
+        $totalAppointments = $bills->count();
+        $totalPaidAppointments = $bills->where('status', 'paid')->count();
+        $totalUnpaidAppointments = $bills->where('status', 'unpaid')->count();
+
+        // Calculate daily revenue in array format for chart
+        $dailyRevenue = $bills->where('status', 'paid')
+            ->groupBy(function($bill) {
+                return \Carbon\Carbon::parse($bill->payment_date)->format('Y-m-d');
+            })
+            ->map(function($group, $date) {
+                return [
+                    'date' => $date,
+                    'revenue' => $group->sum('total_amount')
+                ];
+            })
+            ->values();
+        
+        $topServices = $facility->services
+                ->sortByDesc(function ($service) {
+                    return $service->totalPaidAmount();
+                })
+                ->take(3)  
+                ->map(function ($service) {
+                    return [
+                        'name' => $service->name,
+                        'revenue' => $service->totalPaidAmount(),
+                    ];
+                })
+                ->values();
+                    
+        
+
+        return response()->json([
+            'bills' => $bills->load(['healthProfile', 'services']),
+            'total_revenue' => $totalRevenue,
+            'total_paid' => $totalPaid,
+            'total_unpaid' => $totalUnpaid,
+            'total_appointments' => $totalAppointments,
+            'total_paid_appointments' => $totalPaidAppointments,
+            'total_unpaid_appointments' => $totalUnpaidAppointments,
+            'daily_revenue' => $dailyRevenue,
+            'top_services' => $topServices,
+        ]);
+    }
 }

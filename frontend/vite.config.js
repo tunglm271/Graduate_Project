@@ -18,6 +18,6 @@ export default defineConfig({
   server: {
     host: true, // or specify a string like '0.0.0.0'
     // To allow specific hosts, use the 'allowedHosts' option (Vite 5+)
-    allowedHosts: ['0062-2001-ee0-4141-316b-d57-43ef-6e8c-676.ngrok-free.app', 'localhost'],
+    allowedHosts: ['fd8c-2001-ee0-4141-316b-3d8a-be1c-57f8-86a8.ngrok-free.app', 'localhost'],
   },
 })

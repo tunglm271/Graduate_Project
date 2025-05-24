@@ -128,7 +128,7 @@ class AppointmentController extends Controller
      */
     public function show(Appointment $appointment)
     {
-        //
+        return $appointment->load(['healthProfile', 'medicalService', 'doctor', 'medicalFacility','medicalRecord']);
     }
 
     /**

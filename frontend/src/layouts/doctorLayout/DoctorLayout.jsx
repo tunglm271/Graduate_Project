@@ -14,6 +14,7 @@ const DoctorLayout = () => {
                 <FacilityNavLink to="/doctor/reservations" icon={<ListIcon />} text="Quản lý đơn khám" />
                 <FacilityNavLink to="/doctor/service-assignment" icon={<MedicalServicesIcon />} text="Chỉ định dịch vụ" />
                 <FacilityNavLink to="/doctor/patients" icon={<PeopleIcon />} text="Danh sách bệnh nhân" />
+                <FacilityNavLink to="/doctor/messages" icon={<PeopleIcon />} text="Trao đổi với bệnh nhân" />
             </AgentSidebar>
             <div style={{ flex: 1, marginLeft: "250px" }}>
                 <AgentHeader />

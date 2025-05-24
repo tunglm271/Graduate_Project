@@ -36,6 +36,8 @@ import {
   SettingPage,
   NewsList,
   NewDetail,
+  AppointmentDetail,
+  RevenueDashboard,
   AllNews,
   AllExternalNews,
   Facilities,
@@ -68,7 +70,9 @@ import {
   Register,
   FacilityRegister,
   NotFound,
+  LandingPage,
   BlogDetail,
+  MessagePage,
 } from "./pages";
 
 const googleClientId =
@@ -80,8 +84,11 @@ const router = createBrowserRouter([
     path: "/",
     element: <ProtectedRoute role={2} element={<PatientMainLayout />} />,
     children: [
+      { path: "", element: <LandingPage /> },
       { path: "home", element: <PatientHomePage /> },
+      { path: "messages", element: <MessagePage /> },
       { path: "appointments", element: <AppointmentPage /> },
+      { path: "appointments/:id", element: <AppointmentDetail /> },
       { path: "medicines", element: <MedicinePage /> },
       { path: "booking/:facilityId", element: <FacilityBooking /> },
       { path: "clinics", element: <Facilities /> },
@@ -130,6 +137,8 @@ const router = createBrowserRouter([
       { path: "staffs/new", element: <StaffCreate /> },
       { path: "profile", element: <FacilityProfile /> },
       { path: "sales", element: <SalesManage /> },
+      { path: "revenue", element: <RevenueDashboard /> },
+      { path: "messages", element: <MessagePage /> },
     ],
   },
   {
@@ -141,6 +150,7 @@ const router = createBrowserRouter([
       { path: "reservations", element: <ReservationList /> },
       { path: "patients", element: <PatientList /> },
       { path: "patients/:id", element: <PatientDetail /> },
+      { path: "messages", element: <MessagePage /> },
     ],
   },
   {
@@ -177,6 +187,7 @@ function App() {
   const [chatbox, setChatbox] = useState(null);
   const [user, setUser] = useState(getUser());
 
+  console.log(import.meta.env);
   return (
     <AppContext.Provider value={{ chatbox, setChatbox, user, setUser }}>
       <QueryClientProvider client={queryClient}>

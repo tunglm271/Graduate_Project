@@ -109,6 +109,7 @@
         padding: 20px;
         min-height: 100vh;
         border-radius: 0;
+        justify-content: center;
     }
 
     .auth-card > img {
@@ -130,6 +131,10 @@
 
     .fade-in {
         display: flex;
+    }
+
+    .patient-register-form {
+        width: 100%;
     }
 }
   
