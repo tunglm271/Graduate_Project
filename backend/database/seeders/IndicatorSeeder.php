@@ -12,6 +12,19 @@ class IndicatorSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::unprepared(file_get_contents(dirname(__DIR__) . '\sql\IndicatorData.sql'));
+        try {
+            $sqlPath = database_path('sql/IndicatorData.sql');
+            
+            if (!file_exists($sqlPath)) {
+                $this->command->error("SQL file not found at: {$sqlPath}");
+                return;
+            }
+
+            $sql = file_get_contents($sqlPath);
+            DB::unprepared($sql);
+            $this->command->info('Indicator data seeded successfully.');
+        } catch (\Exception $e) {
+            $this->command->error("Error seeding indicator data: " . $e->getMessage());
+        }
     }
 }

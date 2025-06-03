@@ -13,6 +13,7 @@ const DashboardPage = () => {
     useEffect(() => {
       setTitle("admin.dashboard.title")
       api.get("admin/dashboard").then((response) => {
+        console.log(response.data);
         setData(response.data.data);
         setLoading(false);
       })
@@ -21,22 +22,22 @@ const DashboardPage = () => {
     const stats = [
         {
           title: "Medical Facilities",
-          count: 247,
-          increase: "+12%",
+          count: data?.facilities.count || <Skeleton variant="text" width={50} />,
+          increase: data?.facilities.percentage_change,
           icon: <Hospital className="text-blue-500" size={24} />,
           bgColor: "bg-blue-50"
         },
         {
           title: "Patient User Accounts",
-          count: 14829,
-          increase: "+5.3%",
+          count: data?.patients.count || <Skeleton variant="text" width={50} />,
+          increase: data?.patients.percentage_change ,
           icon: <Users className="text-green-500" size={24} />,
           bgColor: "bg-green-50"
         },
         {
           title: "Medical Vlogs",
-          count: 392,
-          increase: "+18%",
+          count: data?.articles.count || <Skeleton variant="text" width={50} />,
+          increase: data?.articles.percentage_change,
           icon: <ScrollText className="text-purple-500" size={24} />,
           bgColor: "bg-purple-50"
         }
@@ -51,16 +52,21 @@ const DashboardPage = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-500">{stat.title}</p>
-                    <p className="text-3xl font-bold text-gray-800 mt-1">{stat.count.toLocaleString()}</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-1">{stat.count}</p>
                   </div>
                   <div className={`p-3 rounded-full ${stat.bgColor}`}>
                     {stat.icon}
                   </div>
                 </div>
-                <div className="flex items-center mt-4">
-                  <span className="text-green-500 text-sm font-medium">{stat.increase}</span>
-                  <span className="text-gray-500 text-sm ml-2">from last month</span>
-                </div>
+                  {
+                    loading ?
+                      <Skeleton variant="text" width={100} className="mt-4" />
+                    :
+                    <div className="flex items-center mt-4">
+                      <span className="text-green-500 text-sm font-medium">{stat.increase}</span>
+                      <span className="text-gray-500 text-sm ml-2">from last month</span>
+                    </div>
+                  }
               </div>
             ))}
           </div>

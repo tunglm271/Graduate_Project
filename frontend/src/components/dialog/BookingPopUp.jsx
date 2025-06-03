@@ -22,8 +22,8 @@ import {
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import dayjs from "dayjs";
-import "./BookingPopUp.css";
-import MonthPicker from "./monthPicker";
+import "./bookingPopUp.css";
+import MonthPicker from "./MonthPicker";
 import DatePicker from "./DatePicker";
 import SectionPicker from "./SectionPicker";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";

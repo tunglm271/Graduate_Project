@@ -8,6 +8,8 @@ use App\Models\Role\Patient;
 use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+
 class PatientController extends Controller
 {
     public function index(Request $request)
@@ -63,5 +65,29 @@ class PatientController extends Controller
             'services' => $services,
             'appointments' => $appointments,
         ]);
+    }
+
+    public function diagnosis(Request $request)
+    {
+        $request->validate([
+            'symptoms' => 'required|string|max:255',
+        ]);
+
+        $service = MedicalService::distinct()->pluck('name')->toArray();
+
+        $symptoms = $request->input('symptoms');
+        $response = Http::post('http://localhost:5000/answer', [
+        'symptoms' => $symptoms,
+        'services' => $service,
+    ]);
+        // Here you would typically call a service to process the symptoms
+        // and return a diagnosis. For now, we will just return the symptoms.
+        if ($response->successful()) {
+            return response()->json([
+                'answer' => $response->json()['answer']
+            ]);
+        } else {
+            return response()->json(['error' => 'Model API call failed'], 500);
+        }
     }
 }

@@ -12,7 +12,7 @@ export const loginRequest = async (email, password) => {
     Cookies.set('token', response.data.token, { expires: 7, path: '/' });
     Cookies.set('role', response.data.user.role_id, { expires: 7, path: '/' });
     Cookies.set('name', response.data.user.name, { expires: 7, path: '/' });
-    Cookies.set('user_id', response.data.user.id , { expires: 7, path: '/' });
+    Cookies.set('user_id', response.data.user.id, { expires: 7, path: '/' });
     Cookies.set('avatar', response.data.user.avatar, { expires: 7, path: '/' });
     return response.data;
   } catch (error) {
@@ -47,7 +47,7 @@ export const logoutRequest = async () => {
     Cookies.remove('name');
     Cookies.remove('user_id');
     Cookies.remove('avatar');
-    
+
     return response.data;
   } catch (error) {
     console.error("Logout error:", error);
@@ -68,14 +68,14 @@ export const getUserRequest = async () => {
 export const updateUserRequest = async (avatar, name, current_password, new_password) => {
   try {
     const formData = new FormData();
-    if(avatar) {
+    if (avatar) {
       formData.append("avatar", avatar);
     }
     formData.append("name", name);
     if (current_password !== "" || new_password !== "") {
       formData.append("current_password", current_password);
       formData.append("new_password", new_password);
-    }    
+    }
     const response = await api.post("/user/update", formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -91,15 +91,14 @@ export const updateUserRequest = async (avatar, name, current_password, new_pass
 export const googleLoginRequest = async (credentialResponse) => {
   console.log("Google login with:", { credentialResponse });
   try {
-    const response = await axios.post('http://localhost:8000/api/login/google', {
+    const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/login/google`, {
       credential: credentialResponse.credential,
     });
     console.log("Google login response:", response);
     Cookies.set('token', response.data.token, { expires: 7, path: '/' });
-    Cookies.set('token', response.data.token, { expires: 7, path: '/' });
     Cookies.set('role', response.data.user.role_id, { expires: 7, path: '/' });
     Cookies.set('name', response.data.user.name, { expires: 7, path: '/' });
-    Cookies.set('user_id', response.data.user.id , { expires: 7, path: '/' });
+    Cookies.set('user_id', response.data.user.id, { expires: 7, path: '/' });
     Cookies.set('avatar', response.data.user.avatar, { expires: 7, path: '/' });
     return response.data;
   } catch (error) {

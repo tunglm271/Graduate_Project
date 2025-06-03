@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from 'js-cookie';
 
 const api = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api",
   withCredentials: true,
   headers: {
     "Content-Type": "multipart/form-data",
@@ -11,7 +11,7 @@ const api = axios.create({
 
 export const getMedicines = async () => {
   try {
-    const response = await api.get("/api/medicines", {
+    const response = await api.get("/medicines", {
       headers: {
         'Authorization': `Bearer ${Cookies.get('authToken')}`
       }
@@ -25,7 +25,7 @@ export const getMedicines = async () => {
 
 export const getAllergies = async () => {
   try {
-    const response = await api.get("/api/allergies", {
+    const response = await api.get("/allergies", {
       headers: {
         'Authorization': `Bearer ${Cookies.get('authToken')}`
       }
@@ -40,7 +40,7 @@ export const getAllergies = async () => {
 
 export const getChronicDiseases = async () => {
   try {
-    const response = await api.get("/api/chronic-diseases", {
+    const response = await api.get("/chronic-diseases", {
       headers: {
         'Authorization': `Bearer ${Cookies.get('authToken')}`
       }
@@ -67,9 +67,9 @@ export const createHealthProfile = async (data, avatar) => {
     formData.append("avatar", data.avatar);
     formData.append("allergies", JSON.stringify(data.allergies));
     formData.append("chronicDiseases", JSON.stringify(data.chronicDiseases));
-    const response = await api.post("/api/health-profiles", formData, {
-        headers: {
-          'Authorization': `Bearer ${Cookies.get('authToken')}`
+    const response = await api.post("/health-profiles", formData, {
+      headers: {
+        'Authorization': `Bearer ${Cookies.get('authToken')}`
       }
     })
     return response.data

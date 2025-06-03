@@ -1,137 +1,229 @@
 #health-profiles-section {
-    min-height: 80vh;
-    padding: 20px;
+  min-height: 80vh;
+  padding: 20px;
 }
 
 .insurance-number {
-    border: none;
-    background-color: transparent;
-    font-size: 0.75rem;
-    font-weight: 500;
-    width: 70px;
+  border: none;
+  background-color: transparent;
+  font-size: 0.75rem;
+  font-weight: 500;
+  width: 70px;
 }
 
 .insurance-number[type="text"] {
-    width: 110px;
+  width: 110px;
 }
 
 .insurance-number:focus {
-    outline: none;
+  outline: none;
 }
-
 
 /* health profile detail */
 .health-profile-detail {
-    padding: 20px;
+  padding: 20px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.main-content {
+.health-profile-detail .main-content {
+  width: 100%;
+  padding: 10px 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(173, 216, 230, 0.7);
+  min-height: 500px;
+}
+
+.health-profile-detail .basic-infor-section {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(173, 216, 230, 0.7);
+  padding: 10px 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Responsive layout */
+@media screen and (min-width: 1024px) {
+  .health-profile-detail .content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 20px;
+  }
+
+  .health-profile-detail .main-content {
     width: 75%;
-    padding: 10px 20px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(173, 216, 230, 0.7);
-    min-height: 500px;
+  }
+
+  .health-profile-detail .basic-infor-section {
+    width: 25%;
+  }
 }
 
-.basic-infor-section {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(173, 216, 230, 0.7);
-    padding: 10px 20px;
-    width: 25%;
+@media screen and (max-width: 1023px) {
+  .health-profile-detail .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-direction: column-reverse;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .health-profile-detail .main-content,
+  .health-profile-detail .basic-infor-section {
+    width: 100%;
+  }
+
+  .health-profile-detail .basic-infor-section {
+    max-width: 100%;
+  }
+}
+
+/* Responsive avatar */
+.health-profile-detail .avatar-container {
+  padding: 10px;
+  width: 150px;
+  height: 150px;
+  border: 10px solid transparent;
+  margin: 0 auto;
+  background-image: url(${AvatarFrame});
+  background-size: calc(1.6 * 100%) auto;
+  background-position: center;
+}
+
+@media screen and (max-width: 480px) {
+  .health-profile-detail .avatar-container {
+    width: 120px;
+    height: 120px;
+  }
+
+  .health-profile-detail {
+    padding: 10px;
+  }
+
+  .health-profile-detail .main-content,
+  .health-profile-detail .basic-infor-section {
+    padding: 10px;
+  }
+}
+
+/* Responsive table */
+.health-profile-history {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.health-profile-history table {
+  min-width: 600px;
+}
+
+/* Responsive buttons */
+.health-profile-detail .action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media screen and (max-width: 480px) {
+  .health-profile-detail .action-buttons button {
+    width: 100%;
+  }
 }
 
 .health-profile-history {
-    padding: 20px 0;
-    display: flex;
-    flex-direction: column;
-    max-height: 90vh;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
 }
 
 .record-list {
-    overflow-y: scroll;
+  overflow-y: scroll;
 }
 
 .health-examination-record {
-    background-color: #BBDEFB;
-    border-radius: 10px;
-    box-shadow: inset 0px 0px 10px rgba(173, 216, 230, 0.7);
+  background-color: #bbdefb;
+  border-radius: 10px;
+  box-shadow: inset 0px 0px 10px rgba(173, 216, 230, 0.7);
 }
 
 .record-filter {
-    margin: 10px;
-    width: 100%;
-    display: flex;
-    background-color: #F0F0F0;
-    border-radius: 5px;
-    padding: 5px;
+  margin: 10px;
+  width: 100%;
+  display: flex;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  padding: 5px;
 }
 
 .record-filter > button {
-    flex-grow: 1;
-    padding: 10px;
-    background-color: transparent;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 5px;
+  flex-grow: 1;
+  padding: 10px;
+  background-color: transparent;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
 .record-filter > button:hover {
-    background-color: white;
+  background-color: white;
 }
 
 .filter-active {
-    background-color: #007bff !important;
-    color: white;
+  background-color: #007bff !important;
+  color: white;
 }
 
 #profile-edit-section {
-    margin: 20px;
+  margin: 20px;
 }
 
 .profile-edit-card {
-    position: relative;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(173, 216, 230, 0.7);
-    padding-bottom: 20px;
+  position: relative;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(173, 216, 230, 0.7);
+  padding-bottom: 20px;
 }
 
 .profile-edit-form {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 20px;
 }
 
 .health-profiles-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
 }
 
 .new-profile-card {
-    width: 100%;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(173, 216, 230, 0.7);
-    overflow: hidden;
-    transition: all 0.2s ease-in-out;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(173, 216, 230, 0.7);
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
 }
 
 .new-profile-card:hover {
-    box-shadow: 0px 0px 10px rgba(173, 216, 230, 1);
-    transform: translateY(-2px);
+  box-shadow: 0px 0px 10px rgba(173, 216, 230, 1);
+  transform: translateY(-2px);
 }
 
 .new-profile-card-header {
-    background: linear-gradient(135deg, rgb(24, 144, 255) 0%, rgb(9, 109, 217));
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    text-align: center;
-    padding: 10px;
-    color: white;
-    position: relative;
+  background: linear-gradient(135deg, rgb(24, 144, 255) 0%, rgb(9, 109, 217));
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: center;
+  padding: 10px;
+  color: white;
+  position: relative;
 }

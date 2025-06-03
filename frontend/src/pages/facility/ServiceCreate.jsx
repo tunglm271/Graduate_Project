@@ -13,7 +13,7 @@ import { Box, Button, MenuItem, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import medicalServiceApi from "../../service/medicalServiceAPi";
 import MultiSelectAutocomplete from "../../components/MultiSelectAutocomplete";
-import doctorApi from "../../service/Doctorapi";
+import doctorApi from "../../service/DoctorApi";
 import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 
 const categorys = [
@@ -107,8 +107,9 @@ const ServiceCreate = () => {
     });
     data.append("doctors", JSON.stringify(formData.doctors));
     console.log(JSON.stringify(formData.doctors));
-    if(isEditMode) {
-        medicalServiceApi.update(id, data)
+    if (isEditMode) {
+      medicalServiceApi
+        .update(id, data)
         .then(() => {
           navigate("/facility/services");
           showSuccessSnackbar("Cập nhật dịch vụ thành công!");
@@ -118,7 +119,7 @@ const ServiceCreate = () => {
           showErrorSnackbar("Cập nhật dịch vụ thất bại!");
           setLoading(false);
         });
-        return;
+      return;
     }
     medicalServiceApi
       .create(data)

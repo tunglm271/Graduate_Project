@@ -13,6 +13,18 @@ class MedicineSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::unprepared(file_get_contents(dirname(__DIR__) . '\sql\medicinesData.sql'));
+        $sqlPath = database_path('sql/MedicinesData.sql');
+        
+        if (!file_exists($sqlPath)) {
+            $this->command->error("SQL file not found at: {$sqlPath}");
+            return;
+        }
+
+        try {
+            DB::unprepared(file_get_contents($sqlPath));
+            $this->command->info('Medicine data seeded successfully.');
+        } catch (\Exception $e) {
+            $this->command->error("Error seeding medicine data: " . $e->getMessage());
+        }
     }
 }

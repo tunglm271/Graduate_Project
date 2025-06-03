@@ -25,7 +25,7 @@ import { useParams } from "react-router-dom";
 import { formatDateTime } from "../../utlis/DateFun";
 import ScheduleSelectRow from "../../components/ScheduleSelectRow";
 import "./staff.css";
-import doctorApi from "../../service/doctorApi";
+import doctorApi from "../../service/DoctorApi";
 import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 
 const StaffDetail = () => {
@@ -316,117 +316,118 @@ const StaffDetail = () => {
           </Tabs>
         </Box>
         <div style={{ padding: "1rem" }}>
-            {
-                tab === 0 && 
+          {tab === 0 && (
             <>
-                <Typography
+              <Typography
                 variant="h6"
                 sx={{
-                    borderLeft: "3px solid #007df4",
-                    pl: "1rem",
-                    textTransform: "uppercase",
-                    fontWeight: 600,
-                    fontSize: "18px",
-                    marginBottom: "1rem",
+                  borderLeft: "3px solid #007df4",
+                  pl: "1rem",
+                  textTransform: "uppercase",
+                  fontWeight: 600,
+                  fontSize: "18px",
+                  marginBottom: "1rem",
                 }}
-                >
+              >
                 Thông tin cơ bản
                 <Typography
-                    variant="span"
-                    sx={{
+                  variant="span"
+                  sx={{
                     marginLeft: "0.5rem",
                     color: "gray",
                     fontSize: "14px",
                     fontWeight: 400,
                     textTransform: "none",
-                    }}
+                  }}
                 >
-                    Last update at {formatDateTime(doctor.updated_at)}
+                  Last update at {formatDateTime(doctor.updated_at)}
                 </Typography>
-                </Typography>
-                <div
+              </Typography>
+              <div
                 style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "1rem",
-                    marginBottom: "1rem",
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "1rem",
+                  marginBottom: "1rem",
                 }}
-                >
+              >
                 <p className="text-gray-500 text-sm">
-                    Họ và tên
-                    <p className="text-black text-base">{doctor.name}</p>
+                  Họ và tên
+                  <p className="text-black text-base">{doctor.name}</p>
                 </p>
                 <p className="text-gray-500 text-sm">
-                    Chức vụ
-                    <p className="text-black text-base">{doctor.position}</p>
+                  Chức vụ
+                  <p className="text-black text-base">{doctor.position}</p>
                 </p>
                 <p className="text-gray-500 text-sm">
-                    Email
-                    <p className="text-black text-base">{doctor.email}</p>
+                  Email
+                  <p className="text-black text-base">{doctor.email}</p>
                 </p>
                 <p className="text-gray-500 text-sm">
-                    Số điện thoại
-                    <p className="text-black text-base">{doctor.phone}</p>
+                  Số điện thoại
+                  <p className="text-black text-base">{doctor.phone}</p>
                 </p>
                 <p className="text-gray-500 text-sm">
-                    Chuyên khoa
-                    <p className="text-black text-base">{doctor.specialization}</p>
+                  Chuyên khoa
+                  <p className="text-black text-base">
+                    {doctor.specialization}
+                  </p>
                 </p>
                 <p className="text-gray-500 text-sm">
-                    Trạng thái
-                    <p className="text-black text-base">
+                  Trạng thái
+                  <p className="text-black text-base">
                     <span
-                        style={{
-                        color: doctor.status === "active" ? "#4caf50" : "#f44336",
+                      style={{
+                        color:
+                          doctor.status === "active" ? "#4caf50" : "#f44336",
                         fontWeight: 500,
-                        }}
+                      }}
                     >
-                        {doctor.status === "active"
+                      {doctor.status === "active"
                         ? "Đang làm việc"
                         : "Không hoạt động"}
                     </span>
-                    </p>
+                  </p>
                 </p>
                 <p className="text-gray-500 text-sm col-span-2">
-                    Mô tả
-                    <p className="text-black text-base">
+                  Mô tả
+                  <p className="text-black text-base">
                     {doctor.about || "Chưa có mô tả"}
-                    </p>
+                  </p>
                 </p>
-                </div>
-                <Divider />
-                <Typography
+              </div>
+              <Divider />
+              <Typography
                 variant="h6"
                 sx={{
-                    borderLeft: "3px solid #007df4",
-                    pl: "1rem",
-                    textTransform: "uppercase",
-                    fontWeight: 600,
-                    fontSize: "18px",
-                    marginBottom: "1rem",
-                    marginTop: "1rem",
+                  borderLeft: "3px solid #007df4",
+                  pl: "1rem",
+                  textTransform: "uppercase",
+                  fontWeight: 600,
+                  fontSize: "18px",
+                  marginBottom: "1rem",
+                  marginTop: "1rem",
                 }}
-                >
+              >
                 Lịch làm việc
-                </Typography>
-                <div className="flex flex-col gap-3" style={{ paddingRight: "2rem" }}>
+              </Typography>
+              <div
+                className="flex flex-col gap-3"
+                style={{ paddingRight: "2rem" }}
+              >
                 {weekDays.map(({ day, dayOfWeek }) => (
-                    <ScheduleSelectRow
+                  <ScheduleSelectRow
                     key={day}
                     day={day}
                     dayOfWeek={dayOfWeek}
                     schedule={getScheduleForDay(dayOfWeek)}
                     onScheduleChange={handleScheduleChange}
-                    />
+                  />
                 ))}
-                </div>
-            </>
-            }
-          {tab === 1 && (
-            <>
-              {renderAppointmentsTab()}
+              </div>
             </>
           )}
+          {tab === 1 && <>{renderAppointmentsTab()}</>}
           {tab === 2 && (
             <Typography
               variant="body1"

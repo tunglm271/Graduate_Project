@@ -15,7 +15,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import patientApi from "../../../service/patientApi";
-import medicalServiceApi from "../../../service/medicalServiceApi";
+import medicalServiceApi from "../../../service/medicalServiceAPi";
 import appointmentApi from "../../../service/appointmentApi";
 import useCustomSnackbar from "../../../hooks/useCustomSnackbar";
 import { useNavigate } from "react-router-dom";

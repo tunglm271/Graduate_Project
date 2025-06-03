@@ -15,8 +15,20 @@ class ArticleSeeder extends Seeder
      */
     public function run(): void
     {
-        $sql = File::get(database_path('sql\vietnamese_medical_articles_insert.sql'));
+        try {
+            $sqlPath = database_path('sql/vietnamese_medical_articles_insert.sql');
+            
+            if (!file_exists($sqlPath)) {
+                $this->command->error("SQL file not found at: {$sqlPath}");
+                return;
+            }
+
+            $sql = file_get_contents($sqlPath);
         DB::unprepared($sql);
+            $this->command->info('Article data seeded successfully.');
+        } catch (\Exception $e) {
+            $this->command->error("Error seeding article data: " . $e->getMessage());
+        }
         // Article::factory()->count(20)->create([
         //     'status' => 'published',
         // ]);

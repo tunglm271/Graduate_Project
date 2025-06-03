@@ -15,10 +15,19 @@ class FacilityTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        // Read the contents of the SQL file
-        $sql = File::get(database_path('sql/facility_types.sql'));
+        try {
+            $sqlPath = database_path('sql/facility_types.sql');
 
-        // Execute the SQL commands
+            if (!file_exists($sqlPath)) {
+                $this->command->error("SQL file not found at: {$sqlPath}");
+                return;
+            }
+
+            $sql = file_get_contents($sqlPath);
         DB::unprepared($sql);
+            $this->command->info('Facility type data seeded successfully.');
+        } catch (\Exception $e) {
+            $this->command->error("Error seeding facility type data: " . $e->getMessage());
+        }
     }
 }

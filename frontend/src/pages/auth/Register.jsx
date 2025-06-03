@@ -3,7 +3,7 @@ import { useState } from 'react';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
-import PhoneIcon from '@mui/icons-material/phone'
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
@@ -102,7 +102,7 @@ const Register = () => {
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
-                                <PhoneIcon />
+                                <LocalPhoneIcon />
                             </InputAdornment>
                         ),
                         style: { padding: '0 9px' }

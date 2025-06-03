@@ -1,4 +1,4 @@
-import "./patientHomePage.css";
+import "./patientHomepage.css";
 import doctorImg from "@images/doctor.png";
 import { useTranslation } from "react-i18next";
 import ServiceCard from "../../../components/card/ServiceCard";
@@ -104,7 +104,10 @@ const PatientHomePage = () => {
                   <p className="text-white lg:mb-3 w-3/5">
                     Đơn khám của bạn đã có kết quả chưa ?
                   </p>
-                  <Link to="/services" className="text-sm font-bold px-4 py-2 bg-[#ff9d3d] text-white cursor-pointer rounded-2xl hover:bg-[#f8f8f8] hover:text-[#ff9d3d] transition-colors">
+                  <Link
+                    to="/services"
+                    className="text-sm font-bold px-4 py-2 bg-[#ff9d3d] text-white cursor-pointer rounded-2xl hover:bg-[#f8f8f8] hover:text-[#ff9d3d] transition-colors"
+                  >
                     Đặt lịch ngay
                   </Link>
                 </div>
@@ -117,16 +120,13 @@ const PatientHomePage = () => {
               Dịch vụ nổi bật
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {
-                loading.main ?
-                Array.from({length: 6}).map(() => 
-                  <Skeleton width={"100%"} height={50} />
-                )
-                :
-                services.map((service, index) => (
+              {loading.main
+                ? Array.from({ length: 6 }).map((_, index) => (
+                    <Skeleton key={index} width={"100%"} height={50} />
+                  ))
+                : services.map((service, index) => (
                   <ServiceCard service={service} key={service.id || index} />
-                ))
-              }
+                  ))}
             </div>
           </div>
         </div>
@@ -142,9 +142,7 @@ const PatientHomePage = () => {
 
       <div className="flex flex-col lg:flex-row gap-8 mt-10">
         <div className="w-full lg:w-[65%]">
-          <p className="text-xl md:text-2xl font-semibold mb-6">
-            Tin tức y tế
-          </p>
+          <p className="text-xl md:text-2xl font-semibold mb-6">Tin tức y tế</p>
           <div>
             {loading.news ? (
               <div className="flex justify-center items-center min-h-[200px]">

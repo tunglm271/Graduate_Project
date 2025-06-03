@@ -13,10 +13,19 @@ class DiseaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Read the contents of the SQL file
-        $sql = File::get(database_path('sql/diseaseData.sql'));
+        try {
+            $sqlPath = database_path('sql/DiseaseData.sql');
 
-        // Execute the SQL commands
+            if (!file_exists($sqlPath)) {
+                $this->command->error("SQL file not found at: {$sqlPath}");
+                return;
+            }
+
+            $sql = file_get_contents($sqlPath);
         DB::unprepared($sql);
+            $this->command->info('Disease data seeded successfully.');
+        } catch (\Exception $e) {
+            $this->command->error("Error seeding disease data: " . $e->getMessage());
+        }
     }
 }

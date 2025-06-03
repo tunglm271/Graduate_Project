@@ -14,9 +14,19 @@ class CitySeeder extends Seeder
      */
     public function run(): void
     {
-        $sql = File::get(database_path('sql/cityData.sql'));
+        try {
+            $sqlPath = database_path('sql/cityData.sql');
 
-        // Execute the SQL commands
+            if (!file_exists($sqlPath)) {
+                $this->command->error("SQL file not found at: {$sqlPath}");
+                return;
+            }
+
+            $sql = file_get_contents($sqlPath);
         DB::unprepared($sql);
+            $this->command->info('City data seeded successfully.');
+        } catch (\Exception $e) {
+            $this->command->error("Error seeding city data: " . $e->getMessage());
+        }
     }
 }

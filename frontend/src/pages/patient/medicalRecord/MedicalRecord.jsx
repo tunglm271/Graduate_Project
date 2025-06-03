@@ -1,4 +1,4 @@
-import "./MedicalRecord.css";
+import "./medicalRecord.css";
 import {
   Button,
   Breadcrumbs,
@@ -27,8 +27,8 @@ import { formatDateTime } from "../../../utlis/DateFun";
 import MetricsExaminationResult from "../../../components/table/MetricsExaminationResult";
 import ImagesExaminationResult from "../../../components/ImagesExaminationResult";
 import PrescriptionTable from "../../../components/table/PrescriptionTable";
-import DownloadIcon from '@mui/icons-material/Download';
-import PillIcon from "@icon/PillIcon"
+import DownloadIcon from "@mui/icons-material/Download";
+import PillIcon from "@icon/PillIcon";
 import { useTranslation } from "react-i18next";
 
 const MedicalRecord = () => {
@@ -52,23 +52,24 @@ const MedicalRecord = () => {
   }, []);
 
   const handleDownloadDescription = () => {
-    medicalRecordApi.downloadDescription(recordId)
-    .then((response) => {
-      const file = new Blob([response.data], { type: 'application/pdf' });
-      const fileURL = URL.createObjectURL(file);
-      window.open(fileURL, '_blank');
-    })
-    .catch((error) => {
+    medicalRecordApi
+      .downloadDescription(recordId)
+      .then((response) => {
+        const file = new Blob([response.data], { type: "application/pdf" });
+        const fileURL = URL.createObjectURL(file);
+        window.open(fileURL, "_blank");
+      })
+      .catch((error) => {
         console.error("Tải đơn thuốc thất bại:", error);
-    });
+      });
   };
 
   return (
     <div id="medical-record-detail">
       <Breadcrumbs aria-label="breadcrumb" sx={{ marginBottom: 2 }}>
-      <Link to={"/health-profile"} className="hover:underline">
+        <Link to={"/health-profile"} className="hover:underline">
           {t("health-profiles-list")}
-      </Link>
+        </Link>
         <Typography color="text.primary">Nguyen Van A (Bố)</Typography>
         <Typography color="text.primary">Medical Record</Typography>
       </Breadcrumbs>
@@ -182,30 +183,31 @@ const MedicalRecord = () => {
           )}
         </div>
       </div>
-      {
-        loading ? ( 
-          <div className="flex justify-center items-center text-center h-20 italic">
-            <CircularProgress size={24} /> Đang tải kết quả khám bệnh
-          </div>
-        )
-        : 
+      {loading ? (
+        <div className="flex justify-center items-center text-center h-20 italic">
+          <CircularProgress size={24} /> Đang tải kết quả khám bệnh
+        </div>
+      ) : (
         <div className="appoiment-result">
           <div className="examination-result">
-              {
-                  medicalRecord?.examinations.map((examination, index) => {
-                      if (examination.examination_type === "metrics") {
-                      return <MetricsExaminationResult key={index} indicators={examination.indicators} conclusion={examination.conclusion} />;
-                      }
-
-                      if (examination.examination_type === "images") {
-                      return <ImagesExaminationResult key={index} />;
-                      }
-
-                      return null;
-                  })
+            {medicalRecord?.examinations.map((examination, index) => {
+              if (examination.examination_type === "metrics") {
+                return (
+                  <MetricsExaminationResult
+                    key={index}
+                    indicators={examination.indicators}
+                    conclusion={examination.conclusion}
+                  />
+                );
               }
-            {
-              medicalRecord?.prescription &&
+
+              if (examination.examination_type === "images") {
+                return <ImagesExaminationResult key={index} />;
+              }
+
+              return null;
+            })}
+            {medicalRecord?.prescription && (
               <Accordion sx={{ boxShadow: "none" }}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
@@ -228,10 +230,12 @@ const MedicalRecord = () => {
                       Tải đơn thuốc
                     </Button>
                   </Stack>
-                  <PrescriptionTable prescription={medicalRecord?.prescription} />
+                  <PrescriptionTable
+                    prescription={medicalRecord?.prescription}
+                  />
                 </AccordionDetails>
               </Accordion>
-            }
+            )}
 
             <Accordion sx={{ boxShadow: "none" }}>
               <AccordionSummary
@@ -251,7 +255,7 @@ const MedicalRecord = () => {
             </Accordion>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 };

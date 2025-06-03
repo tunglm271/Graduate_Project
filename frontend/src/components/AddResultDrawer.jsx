@@ -542,13 +542,12 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
               </div>
 
               <FileUploader text="Tải lên hình ảnh" onChange={handleAddImage} />
-
               {previewImages.length > 0 && (
-                <Slider {...sliderSettings}>
+                <div className="flex flex-col gap-2 my-5">
                   {previewImages.map((image, index) => (
                     <div
                       key={index}
-                      className="flex justify-center items-center h-80"
+                      className="flex justify-center items-center w-3/4 h-auto mx-auto"
                     >
                       <img
                         src={image.url}
@@ -557,7 +556,7 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
                       />
                     </div>
                   ))}
-                </Slider>
+                </div>
               )}
 
               <TextField
