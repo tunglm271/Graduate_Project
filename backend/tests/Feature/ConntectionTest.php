@@ -5,7 +5,7 @@ namespace Tests\Feature;
 // use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ExampleTest extends TestCase
+class ConntectionTest extends TestCase
 {
     /**
      * A basic test example.
@@ -15,5 +15,14 @@ class ExampleTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
+    }
+    public function test_database_connection()
+    {
+        try {
+            \DB::connection()->getPdo();
+            $this->assertTrue(true);
+        } catch (\Exception $e) {
+            $this->fail('Could not connect to the database: ' . $e->getMessage());
+        }
     }
 }

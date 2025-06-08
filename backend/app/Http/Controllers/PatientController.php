@@ -16,7 +16,7 @@ class PatientController extends Controller
     {
         $facility = $request->user()->medicalFacility;
         if ($facility) {
-            return $facility->patients;
+            return $facility->patients->load(['allergies', 'diseases']);
         }
         return response()->json(['message' => 'Facility not found'], 404);
     }

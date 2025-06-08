@@ -20,7 +20,7 @@ class AuthController extends Controller
         ]);
     
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json($validator->errors(), 422);
         }
     
         try {
@@ -126,7 +126,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required|min:8',
         ]);
     
         // Tìm user theo email

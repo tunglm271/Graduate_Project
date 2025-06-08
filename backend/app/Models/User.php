@@ -12,7 +12,7 @@ use App\Models\Role\Doctor;
 use App\Models\Role\MedicalFacility;
 use Illuminate\Database\Eloquent\Model;
 
-class User extends Model
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;

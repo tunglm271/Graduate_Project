@@ -12,6 +12,7 @@ import {
   Autocomplete,
   Typography,
   Box,
+  CircularProgress,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -67,8 +68,16 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
     const previews = files.map((file) => ({
       file,
       url: URL.createObjectURL(file),
+      examinationName: "",
     }));
     setPreviewImages((prev) => [...prev, ...previews]);
+  };
+
+  // Add handler for examination name changes
+  const handleExaminationNameChange = (index, value) => {
+    const updatedPreviews = [...previewImages];
+    updatedPreviews[index].examinationName = value;
+    setPreviewImages(updatedPreviews);
   };
 
   // Handlers for medicine state changes
@@ -103,13 +112,22 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
   };
 
   const handleSubmit = () => {
+    if (isSubmitting) return; // Prevent multiple submissions
+
     if (!result.trim()) {
       alert("Vui lòng nhập kết quả khám bệnh.");
       return;
     }
 
-    console.log(JSON.stringify(numerialResults));
-    console.log(JSON.stringify(medicines));
+    // Validate examination names if images are uploaded
+    if (
+      toggleImageResult &&
+      previewImages.some((img) => !img.examinationName.trim())
+    ) {
+      alert("Vui lòng nhập tên xét nghiệm cho tất cả hình ảnh.");
+      return;
+    }
+
     setIsSubmitting(true);
     const formData = new FormData();
     formData.append("diagnosis", result);
@@ -123,20 +141,25 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
     if (toggleImageResult && postedFiles.length > 0) {
       postedFiles.forEach((file, index) => {
         formData.append(`images[${index}]`, file);
+        formData.append(
+          `examinationNames[${index}]`,
+          previewImages[index].examinationName
+        );
       });
       formData.append("imageTestSummary", imageTestSummary);
     }
 
     appointmentApi
       .addResult(appointmentId, formData)
-      .then((res) => {
+      .then(() => {
         alert("Thêm kết quả thành công!");
-        console.log(res.data);
         onClose();
       })
       .catch((error) => {
         console.error("Error adding result:", error);
-        alert("Có lỗi xảy ra khi thêm kết quả.");
+        alert(
+          error.response?.data?.message || "Có lỗi xảy ra khi thêm kết quả."
+        );
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -170,7 +193,10 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
   const renderTreatmentPlan = () => (
     <div>
       <div className="flex mb-4 items-center">
-        <IconButton onClick={() => setTreatmentPlan(false)}>
+        <IconButton
+          onClick={() => setTreatmentPlan(false)}
+          disabled={isSubmitting}
+        >
           <KeyboardReturnIcon />
         </IconButton>
         <p className="font-bold">Kế hoạch điều trị</p>
@@ -184,6 +210,7 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
               variant="outlined"
               color="error"
               onClick={handleTogglePrescription}
+              disabled={isSubmitting}
             >
               Xóa
             </Button>
@@ -271,6 +298,7 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
                 sx={{ p: 1, mt: 2 }}
                 color="error"
                 onClick={() => handleRemoveMedicine(index)}
+                disabled={isSubmitting}
               >
                 <DeleteIcon fontSize="small" />
               </IconButton>
@@ -304,6 +332,7 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
               variant="outlined"
               color="error"
               onClick={handleToggleSchedule}
+              disabled={isSubmitting}
             >
               Xóa
             </Button>
@@ -374,6 +403,7 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
                   variant="outlined"
                   color="error"
                   onClick={() => setToggleNumerialResult(false)}
+                  disabled={isSubmitting}
                 >
                   Xóa
                 </Button>
@@ -493,6 +523,7 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
                           numerialResults.filter((_, i) => i !== index)
                         )
                       }
+                      disabled={isSubmitting}
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>
@@ -536,6 +567,7 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
                   variant="outlined"
                   color="error"
                   onClick={() => setToggleImageResult(false)}
+                  disabled={isSubmitting}
                 >
                   Xóa
                 </Button>
@@ -543,17 +575,31 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
 
               <FileUploader text="Tải lên hình ảnh" onChange={handleAddImage} />
               {previewImages.length > 0 && (
-                <div className="flex flex-col gap-2 my-5">
+                <div className="flex flex-col gap-4 my-5">
                   {previewImages.map((image, index) => (
                     <div
                       key={index}
-                      className="flex justify-center items-center w-3/4 h-auto mx-auto"
+                      className="flex flex-col gap-2 justify-center items-center w-3/4 mx-auto"
                     >
-                      <img
-                        src={image.url}
-                        alt="preview"
-                        className="w-full object-contain"
+                      <TextField
+                        label="Tên xét nghiệm"
+                        variant="outlined"
+                        fullWidth
+                        required
+                        value={image.examinationName}
+                        onChange={(e) =>
+                          handleExaminationNameChange(index, e.target.value)
+                        }
+                        placeholder="Nhập tên xét nghiệm"
+                        size="small"
                       />
+                      <div className="w-full h-auto">
+                        <img
+                          src={image.url}
+                          alt="preview"
+                          className="w-full object-contain"
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -602,12 +648,21 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
           sx={{ borderStyle: "dashed", mt: "auto" }}
           startIcon={<AddIcon />}
           onClick={() => setTreatmentPlan(true)}
+          disabled={isSubmitting}
         >
           Kế hoạch điều trị
         </Button>
 
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
-          Thêm kết quả
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          startIcon={
+            isSubmitting ? <CircularProgress size={20} color="inherit" /> : null
+          }
+        >
+          {isSubmitting ? "Đang xử lý..." : "Thêm kết quả"}
         </Button>
       </div>
     </div>

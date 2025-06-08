@@ -15,7 +15,7 @@ import {
   Drawer,
   CircularProgress,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -25,6 +25,8 @@ import medicalRecordApi from "../../../service/medicalRecordApi";
 
 const PatientDetail = () => {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const appointmentId = searchParams.get("appointmentId");
   const { t } = useTranslation();
   const [tab, setTab] = useState(0);
   const [patient, setPatient] = useState({});
@@ -53,7 +55,7 @@ const PatientDetail = () => {
       medicalRecordApi
         .getById(selectedAppointment?.medical_record.id)
         .then((response) => {
-        console.log(response.data);
+          console.log(response.data);
           setMedicalRecord(response.data);
           setMedicalRecordLoading(false);
         })
@@ -65,6 +67,18 @@ const PatientDetail = () => {
       setMedicalRecord(null);
     }
   }, [selectedAppointment]);
+
+  useEffect(() => {
+    if (appointmentId && patient.appointments) {
+      const appointment = patient.appointments.find(
+        (app) => app.id === parseInt(appointmentId)
+      );
+      if (appointment) {
+        setTab(1);
+        setSelectedAppointment(appointment);
+      }
+    }
+  }, [appointmentId, patient.appointments]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("vi-VN");
@@ -107,7 +121,10 @@ const PatientDetail = () => {
             )}
           </div>
           <div className="flex gap-2 items-center">
-            <Link className="rounded bg-[#007bff] text-white px-4 py-2 hover:bg-[#0056b3]" to={`/doctor/service-assignment?patientId=${id}`}>
+            <Link
+              className="rounded bg-[#007bff] text-white px-4 py-2 hover:bg-[#0056b3]"
+              to={`/doctor/service-assignment?patientId=${id}`}
+            >
               Thêm lịch hẹn
             </Link>
             <Button variant="outlined" color="primary" sx={{ paddingX: 0 }}>
@@ -205,7 +222,7 @@ const PatientDetail = () => {
                     patient.allergies.map((allergy, index) => (
                       <Chip
                         key={index}
-                        label={allergy}
+                        label={allergy.name}
                         color="warning"
                         variant="outlined"
                       />
@@ -230,7 +247,7 @@ const PatientDetail = () => {
                     patient.chronicDiseases.map((disease, index) => (
                       <Chip
                         key={index}
-                        label={disease}
+                        label={disease.name}
                         color="error"
                         variant="outlined"
                       />
@@ -296,7 +313,10 @@ const PatientDetail = () => {
                             {`${appointment.start_time} - ${appointment.end_time}`}
                           </p>
                           {appointment.doctor && (
-                            <p>Bác sĩ phụ trách: {appointment.doctor.name} - {appointment.medical_facility.facility_name}</p>
+                            <p>
+                              Bác sĩ phụ trách: {appointment.doctor.name} -{" "}
+                              {appointment.medical_facility.facility_name}
+                            </p>
                           )}
                         </div>
                       }
@@ -310,8 +330,8 @@ const PatientDetail = () => {
           </div>
         )}
       </div>
-      <Drawer 
-        open={Boolean(selectedAppointment)} 
+      <Drawer
+        open={Boolean(selectedAppointment)}
         onClose={() => setSelectedAppointment(null)}
         anchor="bottom"
         PaperProps={{
@@ -464,43 +484,44 @@ const PatientDetail = () => {
                   )}
 
                 {/* Prescription Section */}
-                {medicalRecord.prescription && (
-                  <div>
-                    <h4 className="text-lg font-semibold mb-2">Đơn thuốc</h4>
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full border">
-                        <thead>
-                          <tr className="bg-gray-50">
-                            <th className="px-4 py-2 border">Thuốc</th>
-                            <th className="px-4 py-2 border">Đơn vị</th>
-                            <th className="px-4 py-2 border">Số lượng</th>
-                            <th className="px-4 py-2 border">Cách dùng</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {medicalRecord.prescription.medicines.map(
-                            (medicine, index) => (
-                              <tr key={index}>
-                                <td className="px-4 py-2 border">
-                                  {medicine.name}
-                                </td>
-                                <td className="px-4 py-2 border">
-                                  {medicine.unit}
-                                </td>
-                                <td className="px-4 py-2 border">
-                                  {medicine.pivot.amount}
-                                </td>
-                                <td className="px-4 py-2 border">
-                                  {medicine.pivot.usage}
-                                </td>
-                              </tr>
-                            )
-                          )}
-                        </tbody>
-                      </table>
+                {medicalRecord.prescription &&
+                  medicalRecord.prescription.medicines && (
+                    <div>
+                      <h4 className="text-lg font-semibold mb-2">Đơn thuốc</h4>
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full border">
+                          <thead>
+                            <tr className="bg-gray-50">
+                              <th className="px-4 py-2 border">Thuốc</th>
+                              <th className="px-4 py-2 border">Đơn vị</th>
+                              <th className="px-4 py-2 border">Số lượng</th>
+                              <th className="px-4 py-2 border">Cách dùng</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {medicalRecord.prescription.medicines.map(
+                              (medicine, index) => (
+                                <tr key={index}>
+                                  <td className="px-4 py-2 border">
+                                    {medicine.name || ""}
+                                  </td>
+                                  <td className="px-4 py-2 border">
+                                    {medicine.unit || ""}
+                                  </td>
+                                  <td className="px-4 py-2 border">
+                                    {medicine.pivot?.amount || ""}
+                                  </td>
+                                  <td className="px-4 py-2 border">
+                                    {medicine.pivot?.usage || ""}
+                                  </td>
+                                </tr>
+                              )
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
             ) : (
               <p className="text-gray-500 text-center">

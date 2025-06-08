@@ -70,6 +70,7 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
   const [sectionList, setSectionList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSection, setSelectedSection] = useState(null);
+  const [reason, setReason] = useState("");
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
@@ -113,6 +114,7 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
     formData.append("date", date.format("YYYY-MM-DD"));
     formData.append("start_time", selectedSection.start_time);
     formData.append("end_time", selectedSection.end_time);
+    formData.append("reason", reason.trim()); 
 
     postedFiles.forEach((file, index) => {
       formData.append(`files[${index}]`, file);
@@ -266,6 +268,8 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
               multiline
               rows={4}
               label="Nhập lí do khám bệnh"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
               sx={{
                 width: "100%",
                 marginTop: "20px",

@@ -8,6 +8,9 @@ use App\Http\Requests\UpdateAppointmentRequest;
 use App\Models\Bill;
 use App\Models\MedicalService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Exception;
+
 class AppointmentController extends Controller
 {
     /**
@@ -56,7 +59,15 @@ class AppointmentController extends Controller
 
     public function store(StoreAppointmentRequest $request)
     {
+        // Check if the user is a patient
+        $user = $request->user();
+        if ($user->role_id !== 2) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
         $fields = $request->validated();
+        if(!$user->patient->healthProfiles()->where('id', $fields['health_profile_id'])->exists()) {
+            return response()->json(['message' => 'User not allowed to book for this profile.'], 404);
+        }
         $medicalService = MedicalService::find($fields['medical_service_id']);
         $facility =  $medicalService->medicalFacility;
         $appointment = Appointment::create([
@@ -163,39 +174,76 @@ class AppointmentController extends Controller
 
     public function addResult(Request $request, Appointment $appointment)
     {
-        $medicalRecord = $appointment->medicalRecord()->create([
-            'doctor_id' => $request->user()->doctor->id,
-            'health_profile_id' => $appointment->healthProfile->id,
-            'diagnosis' => $request->input('diagnosis'),
-        ]);
-        if($request->input('indicators') != null){
-            $examination = $medicalRecord->examinations()->create([
-                'test_name' => 'metrics',
-                'examination_type' => 'metrics',
-                'conclusion' => "test",
-            ]);
-            $examination->indicators()->createMany(json_decode($request->input('indicators'),true));
-        }
-        $medicines = json_decode($request->input('medicines'),true);
-        if($medicines != null){
-            $prescription = $medicalRecord->prescription()->create();
-            foreach ($medicines as $medicine) {
-                $prescription->medicines()->attach($medicine['id'], [
-                    'medicine_id' => $medicine['id'],
-                    'usage' => $medicine['usage'],
-                    'amount' => (int) $medicine['amount'],
-                ]);
-            }
-        }
-        $appointment->update([
-            'result_release_date' => now(),
-            'status' => 'completed',
-        ]);
+        try {
+            DB::beginTransaction();
 
-        return response()->json([
-            'message' => 'Result added successfully',
-            'medicines' => $medicines,
-        ], 200);
+            $medicalRecord = $appointment->medicalRecord()->create([
+                'doctor_id' => $request->user()->doctor->id,
+                'health_profile_id' => $appointment->healthProfile->id,
+                'diagnosis' => $request->input('diagnosis'),
+            ]);
+
+            if($request->input('indicators') != null){
+                $examination = $medicalRecord->examinations()->create([
+                    'test_name' => 'metrics',
+                    'examination_type' => 'metrics',
+                    'conclusion' => $request->input('indicatorTestSummary') ?? 'No conclusion provided',
+                ]);
+                $examination->indicators()->createMany(json_decode($request->input('indicators'),true));
+            }
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $index => $imageFile) {
+                    $examinationName = $request->input("examinationNames.$index");
+
+                    $examination = $medicalRecord->examinations()->create([
+                        'test_name' => $examinationName,
+                        'examination_type' => 'images',
+                        'conclusion' => $request->input('imageTestSummary') || 'No conclusion provided',
+                    ]);
+
+                    $examination->images()->create([
+                        'image_path' => cloudinary()->upload($imageFile->getRealPath())->getSecurePath(),
+                    ]);
+                }
+            }
+
+            $medicines = json_decode($request->input('medicines'),true);
+            if($medicines != null){
+                $prescription = $medicalRecord->prescription()->create();
+                foreach ($medicines as $medicine) {
+                    $prescription->medicines()->attach($medicine['id'], [
+                        'medicine_id' => $medicine['id'],
+                        'usage' => $medicine['usage'],
+                        'amount' => (int) $medicine['amount'],
+                    ]);
+                }
+            }
+
+            $appointment->update([
+                'result_release_date' => now(),
+                'status' => 'completed',
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Result added successfully',
+                'medicines' => $medicines,
+            ], 200);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            
+            // Log the error for debugging
+            \Log::error('Error adding result: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+
+            return response()->json([
+                'message' => 'Failed to add result. Please try again.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function cancel(Request $request, Appointment $appointment)

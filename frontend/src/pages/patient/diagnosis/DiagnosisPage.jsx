@@ -1,64 +1,63 @@
 import { useState, useEffect } from "react";
-import { Box, Button, Paper, Typography, Container } from "@mui/material";
+import { Box, Button, Paper, Typography, Container, Grid } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import api from "../../../service/api";
 import { Skeleton } from "@mui/material";
-const TypingText = ({ text, onComplete }) => {
+import ServiceCard from "../../../components/card/ServiceCard";
+import PropTypes from "prop-types";
+
+const TypingText = ({ text }) => {
   const [displayedText, setDisplayedText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (currentIndex < text.length) {
       const timeout = setTimeout(() => {
         setDisplayedText((prev) => prev + text[currentIndex]);
         setCurrentIndex((prev) => prev + 1);
-      }, 20); // Adjust typing speed here
+      }, 20);
 
       return () => clearTimeout(timeout);
     } else {
       setIsComplete(true);
-      onComplete?.();
     }
-  }, [currentIndex, text, onComplete]);
+  }, [currentIndex, text]);
 
   return (
     <Typography variant="body1">{isComplete ? text : displayedText}</Typography>
   );
 };
 
+TypingText.propTypes = {
+  text: PropTypes.string.isRequired,
+};
+
 const DiagnosisPage = () => {
   const [symptoms, setSymptoms] = useState("");
   const [response, setResponse] = useState(null);
-  const [isTyping, setIsTyping] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     setLoading(true);
     api
-      .post("diagnosis", { symptoms })
+      .post("diagnosis", { prompt: symptoms })
       .then((res) => {
-        const mockResponse = {
-          service: res.data.answer,
-          explanation:
-            res.data.answer ||
-            "Dựa trên triệu chứng của bạn, chúng tôi gợi ý dịch vụ khám nội tổng quát để đánh giá sức khỏe toàn diện.",
-        };
+        console.log(res.data);
         setLoading(false);
-        setResponse(mockResponse);
-        setIsTyping(true);
+        setResponse(res.data);
       })
       .catch((error) => {
         console.error("Error during diagnosis:", error);
+        setLoading(false);
+        alert("Có lỗi xảy ra khi xử lý yêu cầu. Vui lòng thử lại.");
       });
   };
 
   const handleReset = () => {
     setSymptoms("");
     setResponse(null);
-    setIsTyping(false);
   };
 
   return (
@@ -77,40 +76,66 @@ const DiagnosisPage = () => {
           variant="contained"
           endIcon={<AutoAwesomeIcon />}
           onClick={handleSubmit}
-          disabled={!symptoms.trim()}
+          disabled={!symptoms.trim() || loading}
           sx={{
             display: "flex",
             mx: "auto",
             borderRadius: "20px",
           }}
         >
-          Chuẩn đoán
+          {loading ? "Đang xử lý..." : "Chuẩn đoán"}
         </Button>
       </Box>
 
       {loading && (
         <Box sx={{ textAlign: "center", mt: 3 }}>
           <Skeleton variant="text" width={200} height={40} />
-          <Skeleton
-            variant="rectangular"
-            width="100%"
-            height={60}
-            sx={{ mt: 2 }}
-          />
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            {[1, 2, 3].map((index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <Skeleton variant="rectangular" height={200} />
+              </Grid>
+            ))}
+          </Grid>
         </Box>
       )}
-      {!loading && response && (
-        <Paper elevation={2} sx={{ p: 3, bgcolor: "#f5f5f5" }}>
-          <Typography variant="h6" color="primary" gutterBottom>
-            Dịch vụ đề xuất: {response.service}
+
+      {!loading && response && Array.isArray(response.recommended_services) && (
+        <Box sx={{ mt: 4 }}>
+          {/* Overall Explanation */}
+          <Paper elevation={2} sx={{ p: 3, mb: 4, boxShadow: "0px 4px 8px rgba(173, 216, 230, 0.7)", borderRadius: "10px" }}>
+            <Typography variant="h6" color="primary" gutterBottom>
+              Phân tích tổng quan
+            </Typography>
+            <Box sx={{ minHeight: "60px" }}>
+              <TypingText
+                text={
+                  response.overall_explanation ||
+                  "Không có phân tích tổng quan."
+                }
+              />
+            </Box>
+          </Paper>
+
+          {/* Recommended Services */}
+          <Typography variant="h6" color="primary" gutterBottom sx={{ mb: 2 }}>
+            Các dịch vụ được đề xuất
           </Typography>
-          <Box sx={{ minHeight: "60px" }}>
-            <TypingText
-              text={response.explanation}
-              onComplete={() => setIsTyping(false)}
-            />
-          </Box>
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+          <Grid container spacing={3}>
+            {response.recommended_services.map((item, index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <ServiceCard
+                  service={item.service}
+                  explanation={
+                    item.explanation || "Không có giải thích chi tiết."
+                  }
+                  similarityScore={item.similarity_score}
+                />
+              </Grid>
+            ))}
+          </Grid>
+
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4 }}>
             <Button
               variant="outlined"
               startIcon={<RestartAltIcon />}
@@ -119,7 +144,7 @@ const DiagnosisPage = () => {
               Làm mới
             </Button>
           </Box>
-        </Paper>
+        </Box>
       )}
     </Container>
   );

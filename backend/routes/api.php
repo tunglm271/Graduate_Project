@@ -24,12 +24,12 @@ use App\Http\Controllers\ProfileMedicineController;
 use App\Http\Controllers\ProfileMedicineLogController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\DiagnosisController;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('user', [AuthController::class, 'getUser']);
     Route::post('user/update', [AuthController::class, 'updateUser']);
     Route::get('homepage', [PatientController::class, 'homePage']);
-    Route::post('diagnosis', [PatientController::class, 'diagnosis']);
     Route::apiResource('medical-facilities', MedicalFacilityController::class)->except('store');
     Route::get('my-facility', [MedicalFacilityController::class, 'detail']);
     Route::get('medical-facility/dashboard', [MedicalFacilityController::class, 'dashboard']);
@@ -96,3 +96,4 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/login/google', [AuthController::class, 'loginWithGoogle']);
+Route::post('diagnosis', [DiagnosisController::class, 'query']);
