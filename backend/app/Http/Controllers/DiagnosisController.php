@@ -20,19 +20,19 @@ class DiagnosisController extends Controller
     }
 
        public function cosineSimilarity(array $vec1, array $vec2)
-    {
-        $dot = 0.0;
-        $normA = 0.0;
-        $normB = 0.0;
+        {
+            $dot = 0.0;
+            $normA = 0.0;
+            $normB = 0.0;
 
-        for ($i = 0; $i < count($vec1); $i++) {
-            $dot += $vec1[$i] * $vec2[$i];
-            $normA += $vec1[$i] ** 2;
-            $normB += $vec2[$i] ** 2;
+            for ($i = 0; $i < count($vec1); $i++) {
+                $dot += $vec1[$i] * $vec2[$i];
+                $normA += $vec1[$i] ** 2;
+                $normB += $vec2[$i] ** 2;
+            }
+
+            return $dot / (sqrt($normA) * sqrt($normB) + 1e-10);
         }
-
-        return $dot / (sqrt($normA) * sqrt($normB) + 1e-10);
-    }
 
     protected function generateExplanation($prompt, $serviceName, $description)
     {

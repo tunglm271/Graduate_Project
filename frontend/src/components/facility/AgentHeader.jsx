@@ -3,6 +3,7 @@ import AddIcon from "@mui/icons-material/Add";
 import InfoIcon from "@mui/icons-material/Info";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import ConversationList from "../ConversationList";
+import NotificationList from "../NotificationList";
 import {
   IconButton,
   Stack,
@@ -72,26 +73,7 @@ const AgentHeader = () => {
         </IconButton>
       </Stack>
       <Divider orientation="vertical" flexItem />
-      <IconButton>
-        <Badge
-          badgeContent={4}
-          color="primary"
-          sx={{
-            "& .MuiBadge-badge": {
-              transform: "scale(1) translate(50%, -50%)",
-              margin: "3px",
-            },
-          }}
-        >
-          <CircleNotificationsIcon
-            sx={{
-              fontSize: "30px",
-              opacity: 1,
-              color: "rgba(0, 0, 0, 1)",
-            }}
-          />
-        </Badge>
-      </IconButton>
+      <NotificationList />
       <ConversationList />
       <Divider orientation="vertical" flexItem />
       <ListItemButton

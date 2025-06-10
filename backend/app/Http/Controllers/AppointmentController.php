@@ -91,6 +91,8 @@ class AppointmentController extends Controller
         ]);
         $bill->services()->attach($fields['medical_service_id'], ['quantity' => 1]);
 
+        broadcast(new \App\Events\AppointmentBookedEvent($appointment));
+
         return response()->json([
             'message' => 'Appointment created successfully',
         ], 201);

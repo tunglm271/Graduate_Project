@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\Appointment;
 use Carbon\Carbon;
 use App\Models\Role\MedicalFacility;
+use Illuminate\Support\Facades\Cache;
 
 class MedicalServiceController extends Controller
 {

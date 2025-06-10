@@ -1,0 +1,7 @@
+OPENAI_API_KEY=... \
+NUM_SUGGESTIONS=2 \
+NUM_REFERENCES=3 \
+MODEL=gpt-3.5-turbo \
+TEMPERATURE=0.5 \
+MAX_TOKENS=100 \
+python server.py

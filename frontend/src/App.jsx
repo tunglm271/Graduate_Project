@@ -74,6 +74,7 @@ import {
   BlogDetail,
   MessagePage,
 } from "./pages";
+import "./echo";
 
 const googleClientId =
   "91407289131-f8lts1h15ppivupjb5e027806kk88s5o.apps.googleusercontent.com";

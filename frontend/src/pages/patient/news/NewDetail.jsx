@@ -6,6 +6,7 @@ import ParagraphSkeleton from "../../../components/loading/ParagraphSkeleton";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import articleApi from "../../../service/articleApi";
+import { formatCurrency } from "../../../utlis/caculateFun";
 import useCustomSnackbar from "../../../hooks/useCustomSnackbar";
 
 const NewsDetail = () => {
@@ -220,7 +221,7 @@ const NewsDetail = () => {
                   <p className="text-sm text-gray-500 mb-2">
                     {service.description}
                   </p>
-                  <p className="text-blue-500 font-medium">{service.price}</p>
+                  <p className="text-blue-500 font-medium">{formatCurrency(service.price)}</p>
                 </Link>
               ))}
             </div>

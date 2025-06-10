@@ -25,6 +25,8 @@ use App\Http\Controllers\ProfileMedicineLogController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\DiagnosisController;
+use App\Notifications\NewNotification;
+use App\Models\User;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('user', [AuthController::class, 'getUser']);
@@ -97,3 +99,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/login/google', [AuthController::class, 'loginWithGoogle']);
 Route::post('diagnosis', [DiagnosisController::class, 'query']);
+Route::get('test-socket', function (Request $request) {
+    $user = User::find(1);
+    $user->notify(new NewNotification('You have a new message!', $user));
+});

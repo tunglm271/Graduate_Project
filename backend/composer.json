@@ -12,9 +12,11 @@
         "cloudinary-labs/cloudinary-laravel": "^2.2",
         "google/apiclient": "^2.18",
         "laravel/framework": "^11.0",
+        "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "milon/barcode": "^11.0",
+        "predis/predis": "^3.0",
         "pusher/pusher-php-server": "^7.2"
     },
     "require-dev": {

@@ -2,6 +2,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import MaleIcon from '@mui/icons-material/Male';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 import FemaleIcon from '@mui/icons-material/Female';
+import { formatCurrency } from '../../utlis/caculateFun';
 import { Link } from 'react-router-dom';
 const VerticalServiceCard = ({ service }) => {
     return (
@@ -10,8 +11,8 @@ const VerticalServiceCard = ({ service }) => {
             <h4 style={{marginBottom: "5px"}}>{service?.name || "Gói khám tổng quát cơ bản nữ"}</h4>
             <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                 <div className='service-price'>
-                    <p>{service?.price || "1.000.000" }đ</p>
-                    <p>1.200.000đ</p>
+                    <p>{formatCurrency(service?.price * 0.9 )}</p>
+                    <p>{formatCurrency(service?.price)}</p>
                 </div>
                 <div style={{textAlign: "right"}}>
                     <p style={{display: 'flex', alignItems: 'center', fontSize: '12px', marginBottom: "5px"}}><LocationOnIcon fontSize='18' color='primary'/> Hà Nội</p>

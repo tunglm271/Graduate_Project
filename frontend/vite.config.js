@@ -18,6 +18,13 @@ export default defineConfig({
   server: {
     host: true, // or specify a string like '0.0.0.0'
     // To allow specific hosts, use the 'allowedHosts' option (Vite 5+)
-    allowedHosts: ['fd8c-2001-ee0-4141-316b-3d8a-be1c-57f8-86a8.ngrok-free.app', 'localhost'],
+    allowedHosts: ['localhost'],
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, '/api'), // giữ nguyên đường dẫn
+      },
+    },
   },
 })
