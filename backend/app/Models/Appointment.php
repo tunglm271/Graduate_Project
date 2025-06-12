@@ -25,6 +25,8 @@ class Appointment extends Model
         'end_time',
         'reason',
         'result_release_date',
+        'reject_reason',
+        'is_follow_up',
     ];
 
     protected $casts = [
@@ -61,5 +63,10 @@ class Appointment extends Model
     {
         return $this->hasOne(Bill::class);
 
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(AppointmentAttach::class);
     }
 }

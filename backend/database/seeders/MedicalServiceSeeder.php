@@ -107,22 +107,24 @@ class MedicalServiceSeeder extends Seeder
         ];
         for ($i = 0; $i < 5; $i++) {
             foreach ($services as $index => $service) {
-                $medicalService = MedicalService::create([
-                    'name' => $service['name'],
-                    'description' => $service['description'],
-                    'thumbnail' => $this->getImgUrl(rand(1,5)),
-                    'category' => $service['category'],
-                    'price' => rand(300, 1000) * 1000,
-                    'duration' => $service['duration'],
-                    'status' => 'active',
-                    'service_audience_gender' => ['male', 'female', 'both'][rand(0, 2)],
-                    'is_public' => $index >= 5,
-                    'min_age_requirement' => rand(0, 18),
-                    'max_age_requirement' => rand(50, 80),
-                    'medical_facility_id' => $i + 1,
-                ]);
-    
-                $medicalService->doctors()->attach([1, 2]);
+            $medicalService = MedicalService::create([
+                'name' => $service['name'],
+                'description' => $service['description'],
+                'thumbnail' => $this->getImgUrl(rand(1,5)),
+                'category' => $service['category'],
+                'price' => rand(300, 1000) * 1000,
+                'duration' => $service['duration'],
+                'status' => 'active',
+                'service_audience_gender' => ['male', 'female', 'both'][rand(0, 2)],
+                'is_public' => $index >= 5,
+                'min_age_requirement' => rand(0, 18),
+                'max_age_requirement' => rand(50, 80),
+                'medical_facility_id' => $i + 1,
+            ]);
+            // Get all doctor IDs for the medical facility
+            $doctorIds = $medicalService->medicalFacility->doctors()->pluck('id')->toArray();
+            // Attach doctors to the medical service
+            $medicalService->doctors()->attach($doctorIds);
             }
         }
     }

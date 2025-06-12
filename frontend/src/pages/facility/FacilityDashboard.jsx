@@ -1,4 +1,3 @@
-import CashFlowLineChart from "../../components/chart/CashFlowLineChart";
 import { useState, useEffect } from "react";
 import { Box, Grid, Paper, Typography, CircularProgress } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
@@ -11,6 +10,16 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import PropTypes from "prop-types";
 import facilityApi from "../../service/FacilityApi";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 const StatCard = ({ title, value, icon, subtitle }) => (
   <Paper
@@ -72,6 +81,13 @@ StatCard.propTypes = {
   subtitle: PropTypes.string,
 };
 
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(amount);
+};
+
 const FacilityDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -83,6 +99,8 @@ const FacilityDashboard = () => {
     pendingAppointments: 0,
     cancelledAppointments: 0,
     unassignedAppointments: 0,
+    totalRevenue: 0,
+    dailyRevenue: [],
   });
 
   const formattedDate = new Intl.DateTimeFormat("vi-VN", {
@@ -97,7 +115,14 @@ const FacilityDashboard = () => {
       try {
         setLoading(true);
         const response = await facilityApi.dashboard();
-        const { total_patients, total_doctors, total_services, appointments } = response.data;
+        const {
+          total_patients,
+          total_doctors,
+          total_services,
+          appointments,
+          total_revenue,
+          daily_revenue,
+        } = response.data;
 
         const completedAppointments = appointments.filter(
           (apt) => apt.status === "completed"
@@ -115,12 +140,14 @@ const FacilityDashboard = () => {
         setStats({
           totalPatients: total_patients,
           totalDoctors: total_doctors,
-          totalServices:  total_services,
+          totalServices: total_services,
           totalAppointments: appointments.length,
           completedAppointments,
           pendingAppointments,
           cancelledAppointments,
           unassignedAppointments,
+          totalRevenue: total_revenue,
+          dailyRevenue: daily_revenue,
         });
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -130,15 +157,12 @@ const FacilityDashboard = () => {
     };
 
     fetchData();
-    facilityApi.dashboard().then((response) => {
-      console.log(response.data);
-    });
   }, []);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Facility Overview</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Tổng quan cơ sở</h2>
         <p className="text-gray-500 font-medium">{formattedDate}</p>
       </div>
 
@@ -158,34 +182,34 @@ const FacilityDashboard = () => {
           <Grid container spacing={3} sx={{ mb: 4 }}>
             <Grid item xs={12} sm={6} md={3}>
               <StatCard
-                title="Total Patients"
+                title="Tổng số bệnh nhân"
                 value={stats.totalPatients}
                 icon={<PeopleIcon />}
-                subtitle="Registered patients"
+                subtitle="Bệnh nhân đã đăng ký"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <StatCard
-                title="Medical Staff"
+                title="Đội ngũ y tế"
                 value={stats.totalDoctors}
                 icon={<LocalHospitalIcon />}
-                subtitle="Active doctors"
+                subtitle="Bác sĩ đang hoạt động"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <StatCard
-                title="Services"
+                title="Dịch vụ"
                 value={stats.totalServices}
                 icon={<MedicalServicesIcon />}
-                subtitle="Available services"
+                subtitle="Dịch vụ có sẵn"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <StatCard
-                title="Appointments"
-                value={stats.totalAppointments}
+                title="Tổng doanh thu"
+                value={formatCurrency(stats.totalRevenue)}
                 icon={<CalendarMonthIcon />}
-                subtitle="Total appointments"
+                subtitle="30 ngày gần nhất"
               />
             </Grid>
           </Grid>
@@ -202,7 +226,7 @@ const FacilityDashboard = () => {
                 }}
               >
                 <Typography variant="h6" sx={{ mb: 3, fontWeight: 500 }}>
-                  Appointment Status
+                  Trạng thái cuộc hẹn
                 </Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
@@ -213,7 +237,7 @@ const FacilityDashboard = () => {
                           {stats.completedAppointments}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Completed
+                          Hoàn thành
                         </Typography>
                       </Box>
                     </Box>
@@ -226,7 +250,7 @@ const FacilityDashboard = () => {
                           {stats.pendingAppointments}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Pending
+                          Đang chờ
                         </Typography>
                       </Box>
                     </Box>
@@ -239,7 +263,7 @@ const FacilityDashboard = () => {
                           {stats.unassignedAppointments}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Unassigned
+                          Chưa được chỉ định
                         </Typography>
                       </Box>
                     </Box>
@@ -252,7 +276,7 @@ const FacilityDashboard = () => {
                           {stats.cancelledAppointments}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Cancelled
+                          Đã hủy
                         </Typography>
                       </Box>
                     </Box>
@@ -261,7 +285,57 @@ const FacilityDashboard = () => {
               </Paper>
             </Grid>
             <Grid item xs={12} md={6}>
-              <CashFlowLineChart />
+              <Paper sx={{ p: 3, height: "100%" }}>
+                <Typography variant="h6" sx={{ mb: 3, fontWeight: 500 }}>
+                  Doanh thu 30 ngày gần nhất
+                </Typography>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart
+                    data={stats.dailyRevenue}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 40,
+                      bottom: 5,
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString("vi-VN", {
+                          day: "2-digit",
+                          month: "2-digit",
+                        })
+                      }
+                    />
+                    <YAxis
+                      tickFormatter={(value) => formatCurrency(value)}
+                      domain={["auto", "auto"]}
+                      padding={{ top: 20, bottom: 20 }}
+                      width={100}
+                      style={{ fontSize: "12px" }}
+                    />
+                    <Tooltip
+                      formatter={(value) => formatCurrency(value)}
+                      labelFormatter={(date) =>
+                        new Date(date).toLocaleDateString("vi-VN", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })
+                      }
+                    />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke="#8884d8"
+                      name="Doanh thu"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </Paper>
             </Grid>
           </Grid>
         </>

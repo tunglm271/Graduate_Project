@@ -15,6 +15,9 @@ import "@schedule-x/theme-default/dist/index.css";
 import { useState, useEffect } from "react";
 import "./schedule.css";
 import doctorApi from "../../service/DoctorApi";
+import { Button } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import ManageScheduleDialog from "./ManageScheduleDialog";
 
 function createSchedule(data) {
   const dayMap = {
@@ -63,8 +66,9 @@ function createAppointment(data) {
 
 const WorkingSchedule = () => {
   const eventsService = useState(() => createEventsServicePlugin())[0];
+  const [openManageDialog, setOpenManageDialog] = useState(false);
 
-  useEffect(() => {
+  const fetchSchedule = () => {
     doctorApi
       .getDoctorSchedule()
       .then((response) => {
@@ -78,6 +82,10 @@ const WorkingSchedule = () => {
       .catch((error) => {
         console.error("Error fetching schedules:", error);
       });
+  };
+
+  useEffect(() => {
+    fetchSchedule();
   }, []);
 
   const calendarControls = useState(() => createCalendarControlsPlugin())[0];
@@ -119,7 +127,27 @@ const WorkingSchedule = () => {
 
   return (
     <div>
+      <div className="flex justify-end p-4">
+        <Button
+          variant="contained"
+          startIcon={<EditIcon />}
+          onClick={() => setOpenManageDialog(true)}
+          sx={{
+            backgroundColor: "#007bff",
+            "&:hover": {
+              backgroundColor: "#0056b3",
+            },
+          }}
+        >
+          Quản lý lịch làm việc
+        </Button>
+      </div>
       <ScheduleXCalendar calendarApp={calendar} />
+      <ManageScheduleDialog
+        open={openManageDialog}
+        onClose={() => setOpenManageDialog(false)}
+        onScheduleUpdate={fetchSchedule}
+      />
     </div>
   );
 };

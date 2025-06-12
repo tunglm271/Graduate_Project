@@ -7,21 +7,25 @@ import {
   Pagination,
   Chip,
   Stack,
+  Tooltip,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getUser } from "../../utlis/auth";
+import PropTypes from "prop-types";
 
 const PatientTable = ({ loading, patients }) => {
   const { t } = useTranslation();
   const rowsPerPage = 10;
   const [page, setPage] = useState(1);
+  const user = getUser();
 
   const columns = [
     {
       field: "id",
-      headerName: "ID",
+      headerName: t("patient.table.id"),
       width: 90,
       align: "center",
       headerAlign: "center",
@@ -40,7 +44,7 @@ const PatientTable = ({ loading, patients }) => {
     },
     {
       field: "name",
-      headerName: t("name"),
+      headerName: t("patient.table.name"),
       flex: 1,
       minWidth: 200,
       renderCell: (params) => (
@@ -52,7 +56,7 @@ const PatientTable = ({ loading, patients }) => {
     },
     {
       field: "gender",
-      headerName: t("gender"),
+      headerName: t("patient.table.gender"),
       width: 100,
       align: "center",
       headerAlign: "center",
@@ -65,13 +69,13 @@ const PatientTable = ({ loading, patients }) => {
             justifyContent: "center",
           }}
         >
-          {params.value}
+          {t(params.value)}
         </Box>
       ),
     },
     {
       field: "date_of_birth",
-      headerName: t("date-of-birth"),
+      headerName: t("patient.table.date_of_birth"),
       width: 140,
       align: "center",
       headerAlign: "center",
@@ -90,7 +94,7 @@ const PatientTable = ({ loading, patients }) => {
     },
     {
       field: "allergies",
-      headerName: t("allergies"),
+      headerName: t("patient.table.allergies"),
       width: 200,
       align: "center",
       headerAlign: "center",
@@ -121,7 +125,7 @@ const PatientTable = ({ loading, patients }) => {
           ))}
           {(!params.row.allergies || params.row.allergies.length === 0) && (
             <Typography variant="caption" color="text.secondary">
-              {t("none")}
+              {t("patient.table.none")}
             </Typography>
           )}
         </Stack>
@@ -129,7 +133,7 @@ const PatientTable = ({ loading, patients }) => {
     },
     {
       field: "chronic_diseases",
-      headerName: t("chronic-diseases"),
+      headerName: t("patient.table.chronic_diseases"),
       width: 200,
       align: "center",
       headerAlign: "center",
@@ -160,7 +164,7 @@ const PatientTable = ({ loading, patients }) => {
           ))}
           {(!params.row.diseases || params.row.diseases.length === 0) && (
             <Typography variant="caption" color="text.secondary">
-              {t("none")}
+              {t("patient.table.none")}
             </Typography>
           )}
         </Stack>
@@ -168,7 +172,7 @@ const PatientTable = ({ loading, patients }) => {
     },
     {
       field: "contact",
-      headerName: t("phone"),
+      headerName: t("patient.table.phone"),
       flex: 1,
       minWidth: 150,
     },
@@ -178,14 +182,18 @@ const PatientTable = ({ loading, patients }) => {
       sortable: false,
       width: 70,
       renderCell: (params) => (
-        <IconButton
-          component={Link}
-          to={`/doctor/patients/${params.row.id}`}
-          color="primary"
-          size="small"
-        >
-          <VisibilityIcon />
-        </IconButton>
+        <Tooltip title={t("patient.table.view_details")}>
+          <IconButton
+            component={Link}
+            to={`/${user.role == 4 ? "facility" : "doctor"}/patients/${
+              params.row.id
+            }`}
+            color="primary"
+            size="small"
+          >
+            <VisibilityIcon />
+          </IconButton>
+        </Tooltip>
       ),
     },
   ];
@@ -243,6 +251,30 @@ const PatientTable = ({ loading, patients }) => {
       </Box>
     </div>
   );
+};
+
+PatientTable.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  patients: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      name: PropTypes.string.isRequired,
+      avatar: PropTypes.string,
+      gender: PropTypes.string,
+      date_of_birth: PropTypes.string,
+      allergies: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string.isRequired,
+        })
+      ),
+      diseases: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string.isRequired,
+        })
+      ),
+      contact: PropTypes.string,
+    })
+  ).isRequired,
 };
 
 export default PatientTable;

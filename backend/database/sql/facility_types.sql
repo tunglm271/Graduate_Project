@@ -21,4 +21,4 @@ INSERT INTO facility_types (name, created_at, updated_at) VALUES
 ('Cơ sở xét nghiệm và chẩn đoán hình ảnh', NOW(), NOW()),
 
 -- Các loại hình khác
-('Cơ sở khám chữa bệnh theo hình thức khác', NOW(), NOW());
+('khác', NOW(), NOW());

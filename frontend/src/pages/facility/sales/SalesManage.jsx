@@ -37,8 +37,10 @@ import "dayjs/locale/vi";
 import medicalServiceApi from "../../../service/medicalServiceAPi";
 import saleApi from "../../../service/saleApi";
 import useCustomSnackbar from "../../../hooks/useCustomSnackbar";
+import { useTranslation } from "react-i18next";
 
 const SalesManage = () => {
+  const { t } = useTranslation();
   const [sales, setSales] = useState([]);
   const [services, setServices] = useState([]); // List of available services
   const [openDialog, setOpenDialog] = useState(false);
@@ -128,22 +130,24 @@ const SalesManage = () => {
               sale.id === selectedSale.id ? response.data : sale
             )
           );
-          showSuccessSnackbar("Cập nhật chương trình thành công");
+          showSuccessSnackbar(t("sales.management.table.update_success"));
           handleCloseDialog();
         })
         .catch((error) => {
           console.error("Error updating sale:", error);
+          showErrorSnackbar(error.message);
         });
     } else {
       saleApi
         .create(submitData)
         .then((response) => {
           setSales((prevSales) => [...prevSales, response.data]);
-          showSuccessSnackbar("Thêm chương trình thành công");
+          showSuccessSnackbar(t("sales.management.table.add_success"));
           handleCloseDialog();
         })
         .catch((error) => {
           console.error("Error creating sale:", error);
+          showErrorSnackbar(error.message);
         });
     }
   };
@@ -196,18 +200,19 @@ const SalesManage = () => {
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa chương trình này?")) {
+    if (window.confirm(t("sales.management.table.delete_confirm"))) {
       saleApi
         .delete(id)
         .then(() => {
           setSales((prevSales) => prevSales.filter((sale) => sale.id !== id));
-          showSuccessSnackbar("Xóa chương trình thành công");
+          showSuccessSnackbar(t("sales.management.table.delete_success"));
         })
         .catch((error) => {
           console.error("Error deleting sale:", error);
+          showErrorSnackbar(error.message);
         });
     }
-  }
+  };
 
   return (
     <Box sx={{ p: 3 }}>
@@ -220,14 +225,14 @@ const SalesManage = () => {
         }}
       >
         <Typography variant="h5" component="h1">
-          Quản lý chương trình khuyến mãi
+          {t("sales.management.title")}
         </Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => handleOpenDialog()}
         >
-          Thêm chương trình
+          {t("sales.management.add_promotion")}
         </Button>
       </Box>
 
@@ -235,66 +240,84 @@ const SalesManage = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell width="80px">STT</TableCell>
-              <TableCell>Giảm giá</TableCell>
-              <TableCell>Thời gian</TableCell>
-              <TableCell>Dịch vụ áp dụng</TableCell>
-              <TableCell>Trạng thái</TableCell>
-              <TableCell align="right">Thao tác</TableCell>
+              <TableCell width="80px">
+                {t("sales.management.table.stt")}
+              </TableCell>
+              <TableCell>{t("sales.management.table.discount")}</TableCell>
+              <TableCell>{t("sales.management.table.time")}</TableCell>
+              <TableCell>{t("sales.management.table.service")}</TableCell>
+              <TableCell>{t("sales.management.table.status")}</TableCell>
+              <TableCell align="right">
+                {t("sales.management.table.actions")}
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {sales.map((sale, index) => (
-              <TableRow key={sale.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>
-                  {sale.type === "percent"
-                    ? `${sale.value}%`
-                    : `${sale.value.toLocaleString("vi-VN")}đ`}
-                </TableCell>
-                <TableCell>
-                  {dayjs(sale.start_date).format("DD/MM/YYYY")} -{" "}
-                  {dayjs(sale.end_date).format("DD/MM/YYYY")}
-                </TableCell>
-                <TableCell>
-                  {(() => {
-                    const service = services.find(
-                      (s) => s.id === sale.medical_service_id
-                    );
-                    return service ? (
-                      <Chip
-                        label={service.name}
-                        size="small"
-                        variant="outlined"
-                      />
-                    ) : null;
-                  })()}
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={getStatusText(
-                      calculateStatus(sale.start_date, sale.end_date)
-                    )}
-                    color={getStatusColor(
-                      calculateStatus(sale.start_date, sale.end_date)
-                    )}
-                    size="small"
-                  />
-                </TableCell>
-                <TableCell align="right">
-                  <IconButton
-                    size="small"
-                    onClick={() => handleOpenDialog(sale)}
-                    color="primary"
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton size="small" color="error" onClick={() => handleDelete(sale.id)}>
-                    <DeleteIcon />
-                  </IconButton>
+            {sales.length > 0 ? (
+              sales.map((sale, index) => (
+                <TableRow key={sale.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>
+                    {sale.type === "percent"
+                      ? `${sale.value}%`
+                      : `${sale.value.toLocaleString("vi-VN")}đ`}
+                  </TableCell>
+                  <TableCell>
+                    {dayjs(sale.start_date).format("DD/MM/YYYY")} -{" "}
+                    {dayjs(sale.end_date).format("DD/MM/YYYY")}
+                  </TableCell>
+                  <TableCell>
+                    {(() => {
+                      const service = services.find(
+                        (s) => s.id === sale.medical_service_id
+                      );
+                      return service ? (
+                        <Chip
+                          label={service.name}
+                          size="small"
+                          variant="outlined"
+                        />
+                      ) : null;
+                    })()}
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={getStatusText(
+                        calculateStatus(sale.start_date, sale.end_date)
+                      )}
+                      color={getStatusColor(
+                        calculateStatus(sale.start_date, sale.end_date)
+                      )}
+                      size="small"
+                    />
+                  </TableCell>
+                  <TableCell align="right">
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenDialog(sale)}
+                      color="primary"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={() => handleDelete(sale.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
+                  <Typography color="text.secondary">
+                    {t("sales.management.no_sales")}
+                  </Typography>
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </TableContainer>

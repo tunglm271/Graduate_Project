@@ -14,12 +14,12 @@ import { getCities } from "../../../hooks/useCachedData";
 
 const facilityTypes = [
   { value: "all", label: "Tất cả" },
-  { value: "public_hospital", label: "Bệnh viện công" },
-  { value: "private_hospital", label: "Bệnh viện tư" },
-  { value: "general_clinic", label: "Phòng khám đa khoa" },
-  { value: "specialized_clinic", label: "Phòng khám chuyên khoa" },
-  { value: "laboratory", label: "Phòng xét nghiệm" },
-  { value: "other", label: "Khác" },
+  { value: "Bệnh viện đa khoa", label: "Bệnh viện đa khoa" },
+  { value: "Bệnh viện chuyên khoa", label: "Bệnh viện chuyên khoa" },
+  { value: "Phòng khám đa khoa", label: "Phòng khám đa khoa" },
+  { value: "Phòng khám chuyên khoa", label: "Phòng khám chuyên khoa" },
+  { value: "Cơ sở xét nghiệm", label: "Phòng xét nghiệm" },
+  { value: "Khác", label: "Khác" },
 ];
 
 const Facilities = () => {
@@ -42,6 +42,7 @@ const Facilities = () => {
       try {
         setLoading(true);
         const response = await facilityApi.getAll();
+        console.log("Fetched facilities:", response.data);
         setFacilities(response.data);
         setFilteredFacilities(response.data);
       } catch (error) {
@@ -59,7 +60,7 @@ const Facilities = () => {
 
     // Filter by type
     if (selectedType !== "all") {
-      result = result.filter((facility) => facility.type === selectedType);
+      result = result.filter((facility) => facility.facility_type_name === selectedType);
     }
 
     // Filter by search term
@@ -78,7 +79,7 @@ const Facilities = () => {
     // Filter by location (if implemented)
     if (selectedLocation !== "all") {
       result = result.filter(
-        (facility) => facility.location === selectedLocation
+        (facility) => facility.city_id == selectedLocation
       );
     }
 

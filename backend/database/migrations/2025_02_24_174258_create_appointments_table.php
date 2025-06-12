@@ -18,12 +18,14 @@ return new class extends Migration
             $table->time('end_time');
             $table->string('status')->default('pending');
             $table->string('reason')->nullable();
+            $table->string('reject_reason')->nullable();
             $table->date('result_release_date')->nullable();
+            $table->boolean('is_follow_up')->default(false);
             $table->timestamps();
 
             $table->foreignId('health_profile_id')->constrained('health_profiles')->onDelete('cascade');
             $table->foreignId('doctor_id')->nullable()->constrained('doctors');
-            $table->foreignId('medical_service_id')->constrained('medical_services');
+            $table->foreignId('medical_service_id')->constrained('medical_services')->nullable();
             $table->foreignId('facility_id')->constrained('medical_facilities')->onDelete('cascade');
         });
     }

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreMedicalFacilityRequest;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateMedicalFacilityRequest;
 use Gate;
+use App\Models\Bill;
 
 class MedicalFacilityController extends Controller
 {
@@ -60,11 +61,35 @@ class MedicalFacilityController extends Controller
         $totalDoctors = $medicalFacility->doctors()->count();
         $totalServices = $medicalFacility->services()->count();
         $appointments = $medicalFacility->appointments()->select('status')->get();
+
+        // Get revenue data for the last 30 days
+        $startDate = now()->subDays(30)->format('Y-m-d');
+        $endDate = now()->format('Y-m-d');
+        
+        $bills = Bill::where('medical_facility_id', $medicalFacility->id)
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->get();
+
+        $totalRevenue = $bills->sum('total_amount');
+        $dailyRevenue = $bills->where('status', 'paid')
+            ->groupBy(function($bill) {
+                return \Carbon\Carbon::parse($bill->payment_date)->format('Y-m-d');
+            })
+            ->map(function($group, $date) {
+                return [
+                    'date' => $date,
+                    'revenue' => $group->sum('total_amount')
+                ];
+            })
+            ->values();
+
         return response()->json([
             'total_patients' => $totalPatients,
             'total_doctors' => $totalDoctors,
             'total_services' => $totalServices,
-            'appointments' => $appointments
+            'appointments' => $appointments,
+            'total_revenue' => $totalRevenue,
+            'daily_revenue' => $dailyRevenue
         ]);
     }
 }

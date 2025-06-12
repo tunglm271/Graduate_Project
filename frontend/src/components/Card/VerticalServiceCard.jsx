@@ -8,7 +8,7 @@ const VerticalServiceCard = ({ service }) => {
     return (
         <Link className="vertical-service-card" to={`/services/${service?.id}`}>
             <img src={service.thumbnail} alt="" />
-            <h4 style={{marginBottom: "5px"}}>{service?.name || "Gói khám tổng quát cơ bản nữ"}</h4>
+            <p className='mb-2 font-semibold line-clamp-1 truncate'>{service?.name || "Gói khám tổng quát cơ bản nữ"}</p>
             <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                 <div className='service-price'>
                     <p>{formatCurrency(service?.price * 0.9 )}</p>

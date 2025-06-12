@@ -13,6 +13,7 @@
   "gender": "Giới tính",
   "male": "Nam",
   "female": "Nữ",
+  "other": "Khác",
   "name": "Tên",
   "date-of-birth": "Ngày sinh",
   "address": "Địa chỉ",
@@ -54,6 +55,7 @@
     "diseases": "Bệnh mãn tính",
     "insurance": "BHYT",
     "delete": "Xóa",
+    "history-empty": "Không có lịch sử khám bệnh",
     "detail": {
       "basic-info": "Thông tin cơ bản",
       "relationship": "Mối quan hệ",
@@ -100,8 +102,8 @@
       "log-out": "Đăng xuất",
       "profile": "Hồ sơ"
     },
-    "doctor":"Bác sĩ",
-    "facility":"Cơ sở y tế"
+    "doctor": "Bác sĩ",
+    "facility": "Cơ sở y tế"
   },
   "msg": {
     "log-out-success": "Đăng xuất thành công"
@@ -411,5 +413,66 @@
     "views": "lượt xem",
     "all_news": "Tất cả tin tức",
     "latest_updates": "Cập nhật mới nhất"
+  },
+  "staff": {
+    "name": "Tên",
+    "contact": "Liên hệ",
+    "services": "Dịch vụ",
+    "delete": "Xóa",
+    "no_phone": "Không có SĐT",
+    "no_services": "Không có dịch vụ",
+    "working_days": "Ngày làm việc",
+    "more": "dịch vụ khác",
+    "all_services": "Tất cả dịch vụ",
+    "days": {
+      "mon": "T2",
+      "tue": "T3",
+      "wed": "T4",
+      "thu": "T5",
+      "fri": "T6",
+      "sat": "T7",
+      "sun": "CN"
+    },
+    "management": {
+      "title": "Bác sĩ",
+      "search_placeholder": "Tìm kiếm bác sĩ theo tên, số điện thoại hoặc email",
+      "add_doctor": "Thêm bác sĩ",
+      "doctors": "Bác sĩ"
+    },
+    "no_doctors": "Không tìm thấy bác sĩ nào"
+  },
+  "patient": {
+    "table": {
+      "id": "ID",
+      "name": "Tên",
+      "gender": "Giới tính",
+      "date_of_birth": "Ngày sinh",
+      "allergies": "Dị ứng",
+      "chronic_diseases": "Bệnh mãn tính",
+      "phone": "Số điện thoại",
+      "none": "Không có",
+      "view_details": "Xem chi tiết"
+    }
+  },
+  "sales": {
+    "management": {
+      "title": "Quản lý chương trình khuyến mãi",
+      "add_promotion": "Thêm chương trình",
+      "no_sales": "Không tìm thấy chương trình khuyến mãi nào",
+      "table": {
+        "stt": "STT",
+        "discount": "Giảm giá",
+        "time": "Thời gian",
+        "service": "Dịch vụ áp dụng",
+        "status": "Trạng thái",
+        "actions": "Thao tác",
+        "edit": "Chỉnh sửa",
+        "delete": "Xóa",
+        "delete_confirm": "Bạn có chắc chắn muốn xóa chương trình này?",
+        "delete_success": "Xóa chương trình thành công",
+        "update_success": "Cập nhật chương trình thành công",
+        "create_success": "Thêm chương trình thành công"
+      }
+    }
   }
 }

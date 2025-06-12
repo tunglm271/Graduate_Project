@@ -18,25 +18,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import FileUploader from "./FileUploader";
-import { useEffect, useState } from "react";
-import Slider from "react-slick";
+import { useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { getIndicatorTypes, getMedicines } from "../hooks/useCachedData";
 import appointmentApi from "../service/appointmentApi";
-const sliderSettings = {
-  dots: true,
-  infinite: true,
-  speed: 500,
-  autoplay: true,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  arrows: false,
-};
+import useCustomSnackbar from "../hooks/useCustomSnackbar";
 
-const AddResultDrawer = ({ open, onClose, appointmentId }) => {
+const AddResultDrawer = ({ open, onClose, appointmentId, onSuccess }) => {
   // State management
   const [toggleNumerialResult, setToggleNumerialResult] = useState(false);
+  const { showErrorSnackbar, showSuccessSnackbar } = useCustomSnackbar();
   const [numerialResults, setNumerialResults] = useState([]);
   const [toggleImageResult, setToggleImageResult] = useState(false);
   const [togglePrescription, setTogglePrescription] = useState(false);
@@ -115,7 +107,7 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
     if (isSubmitting) return; // Prevent multiple submissions
 
     if (!result.trim()) {
-      alert("Vui lòng nhập kết quả khám bệnh.");
+      showErrorSnackbar("Vui lòng nhập kết quả khám bệnh.");
       return;
     }
 
@@ -124,7 +116,7 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
       toggleImageResult &&
       previewImages.some((img) => !img.examinationName.trim())
     ) {
-      alert("Vui lòng nhập tên xét nghiệm cho tất cả hình ảnh.");
+      showErrorSnackbar("Vui lòng nhập tên xét nghiệm cho tất cả hình ảnh.");
       return;
     }
 
@@ -149,16 +141,25 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
       formData.append("imageTestSummary", imageTestSummary);
     }
 
+    if (toggleSchedule) {
+      console.log(scheduleDate, scheduleTime, scheduleReason);
+      formData.append("follow_up_date", scheduleDate);
+      formData.append("follow_up_start_time", scheduleTime);
+      formData.append("follow_up_reason", scheduleReason);
+    }
+
     appointmentApi
       .addResult(appointmentId, formData)
       .then(() => {
-        alert("Thêm kết quả thành công!");
+        showSuccessSnackbar("Thêm kết quả thành công!");
+        onSuccess?.();
         onClose();
       })
       .catch((error) => {
         console.error("Error adding result:", error);
-        alert(
-          error.response?.data?.message || "Có lỗi xảy ra khi thêm kết quả."
+        showErrorSnackbar(
+          error.response?.data?.message ||
+            "Đã xảy ra lỗi khi thêm kết quả. Vui lòng thử lại."
         );
       })
       .finally(() => {
@@ -659,10 +660,40 @@ const AddResultDrawer = ({ open, onClose, appointmentId }) => {
           onClick={handleSubmit}
           disabled={isSubmitting}
           startIcon={
-            isSubmitting ? <CircularProgress size={20} color="inherit" /> : null
+            isSubmitting ? (
+              <CircularProgress
+                size={20}
+                color="inherit"
+                sx={{
+                  animation: "spin 1s linear infinite",
+                  "@keyframes spin": {
+                    "0%": { transform: "rotate(0deg)" },
+                    "100%": { transform: "rotate(360deg)" },
+                  },
+                }}
+              />
+            ) : null
           }
+          sx={{
+            position: "relative",
+            "&.Mui-disabled": {
+              backgroundColor: "primary.main",
+              opacity: 0.7,
+            },
+          }}
         >
-          {isSubmitting ? "Đang xử lý..." : "Thêm kết quả"}
+          {isSubmitting ? (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <span>Đang xử lý</span>
+              <Box sx={{ display: "flex", gap: 0.5 }}>
+                <span>.</span>
+                <span style={{ animationDelay: "0.2s" }}>.</span>
+                <span style={{ animationDelay: "0.4s" }}>.</span>
+              </Box>
+            </Box>
+          ) : (
+            "Thêm kết quả"
+          )}
         </Button>
       </div>
     </div>

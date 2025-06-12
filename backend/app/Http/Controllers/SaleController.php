@@ -15,7 +15,7 @@ class SaleController extends Controller
     public function index(Request $request)
     {
         $facility = $request->user()->medicalFacility;
-        return $facility->sales()->get();
+        return $facility->sales()->with("medicalService")->get();
     }
 
     /**

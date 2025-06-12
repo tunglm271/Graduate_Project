@@ -18,12 +18,12 @@ PROMPT_TEMPLATE = (
     "{0}\n"
     "Thông tin y khoa tham khảo:\n"
     "{1}\n"
-    "Tôi nên đi khám dịch vụ nào trong các dịch vụ sau:\n"
+    "Các dịch vụ khám hiện có:\n"
     "{2}\n"
-    f"Hãy đưa ra {num_suggestions} dịch vụ khám phù hợp nhất (không bắt buộc) theo định dạng:\n"
+    f"Hãy đưa ra {num_suggestions} dịch vụ khám phù hợp nhất trong các dịch vụ sau (không bắt buộc) theo định dạng:\n"
     f"{suggestion_prompt}\n"
-    "Nếu không có dịch vụ nào phù hợp, bỏ qua bước này và đưa ra lời khuyên hợp lý, ngắn gọn.\n"
-    "Nếu có, hãy giải thích lý do tại sao lại chọn các dịch vụ này và không giải thích lý do không chọn các dịch vụ khác."
+    "Nếu không có dịch vụ nào phù hợp trong danh sách, hãy bỏ qua việc đề xuất dịch vụ và thay vào đó đưa ra lời khuyên y tế hợp lý, ngắn gọn."
+    "Đối với mỗi dịch vụ được đề xuất, hãy giải thích rõ lý do lựa chọn. Trong phần giải thích, vui lòng nêu rõ (nếu có thể) triệu chứng của tôi có thể là dấu hiệu của bệnh gì và tại sao dịch vụ khám được chọn lại phù hợp với triệu chứng đó. Không cần giải thích lý do không chọn các dịch vụ khác.\n"
 )
 
 

@@ -83,4 +83,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(MedicalFacility::class);
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(UserNotification::class);
+    }
 }

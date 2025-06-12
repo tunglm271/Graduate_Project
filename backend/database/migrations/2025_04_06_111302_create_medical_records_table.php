@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreignId('appointment_id')->constrained()->onDelete('cascade');
             $table->string('diagnosis');
             $table->timestamps();
+
+            $table->foreignId('follow_up_appointment_id')->nullable()->constrained('appointments')->onDelete('set null');
         });
     }
 

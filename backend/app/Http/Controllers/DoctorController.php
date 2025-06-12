@@ -20,7 +20,7 @@ class DoctorController extends Controller
     public function index(Request $request)
     {
         $facility_id = $request->user()->medicalFacility->id;
-        $doctors = Doctor::where('medical_facility_id', $facility_id)->with('user')->get();
+        $doctors = Doctor::where('medical_facility_id', $facility_id)->with('user','handleService')->get();
         return response()->json($doctors);
     }
 
@@ -73,11 +73,6 @@ class DoctorController extends Controller
     }
 
 
-    public function createSchedule(Request $request) {
-        $doctor = $request->user()->doctor;
-        
-    }
-
     /**
      * Display the specified resource.
      */
@@ -109,5 +104,29 @@ class DoctorController extends Controller
             'schedules' =>$schedules,
             'appointments' => $appointments->load(['healthProfile','medicalRecord','medicalService']),
         ]);
+    }
+
+    public function updateDoctorSchedule(Request $request) {
+        $doctor = $request->user()->doctor;
+        $schedule = json_decode($request->input('schedule'), true);
+
+        \DB::transaction(function () use ($doctor, $schedule) {
+            // Clear existing schedules
+            $doctor->schedule()->delete();
+
+            // Create new schedules
+            foreach ($schedule as $day => $times) {
+                foreach ($times as $time) {
+                    Schedule::create([
+                        'doctor_id' => $doctor->id,
+                        'day_of_week' => $day,
+                        'start_time' => $time['start'],
+                        'end_time' => $time['end'],
+                    ]);
+                }
+            }
+        });
+
+        return response()->json(['message' => 'Schedule updated successfully']);
     }
 }

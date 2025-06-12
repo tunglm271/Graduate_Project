@@ -137,7 +137,7 @@ const HealthProfileDetail = () => {
           {t("health-profiles-list")}
         </Link>
         <Typography>
-          {profile.name} ({t("profile.relationship." + profile.relationship)})
+          {profile.name} ({t(profile.relationship)})
         </Typography>
       </Breadcrumbs>
       <div className="content-wrapper">
@@ -158,7 +158,7 @@ const HealthProfileDetail = () => {
                 {medicalRecords.length === 0 ? (
                   <Box sx={{ p: 3, textAlign: "center" }}>
                     <Typography color="text.secondary">
-                      {t("profile.history.empty")}
+                      {t("profile.history-empty")}
                     </Typography>
                   </Box>
                 ) : (
@@ -197,7 +197,7 @@ const HealthProfileDetail = () => {
                   <AccountCircleIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary={t(`profile.relationship.${profile.relationship}`)}
+                  primary={t(profile.relationship)}
                   secondary={t("profile.detail.relationship")}
                 />
               </ListItem>

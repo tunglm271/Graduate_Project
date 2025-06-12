@@ -29,6 +29,7 @@ import ImagesExaminationResult from "../../../components/ImagesExaminationResult
 import PrescriptionTable from "../../../components/table/PrescriptionTable";
 import DownloadIcon from "@mui/icons-material/Download";
 import PillIcon from "@icon/PillIcon";
+import AddIcon from "@mui/icons-material/Add";
 import { useTranslation } from "react-i18next";
 
 const MedicalRecord = () => {
@@ -202,7 +203,7 @@ const MedicalRecord = () => {
               }
 
               if (examination.examination_type === "images") {
-                return <ImagesExaminationResult key={index} />;
+                return <ImagesExaminationResult key={index} examination={examination} />;
               }
 
               return null;
@@ -228,6 +229,15 @@ const MedicalRecord = () => {
                       onClick={handleDownloadDescription}
                     >
                       Tải đơn thuốc
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<AddIcon />}
+                      component={Link}
+                      to={`/medicines?healthProfileId=${medicalRecord?.health_profile.id}&prescriptionId=${medicalRecord?.prescription.id}`}
+                    >
+                      Thêm vào tủ thuốc
                     </Button>
                   </Stack>
                   <PrescriptionTable

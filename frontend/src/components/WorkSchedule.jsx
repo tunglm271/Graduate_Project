@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Switch, TextField, Button } from "@mui/material";
 
 export default function WorkSchedule({ day, shifts, setShifts }) {
   const [enabled, setEnabled] = useState(shifts.length > 0);
+
+  useEffect(() => {
+    setEnabled(shifts.length > 0);
+  }, [shifts]);
 
   const handleToggle = () => {
     setEnabled(!enabled);
@@ -25,39 +29,47 @@ export default function WorkSchedule({ day, shifts, setShifts }) {
 
   return (
     <div className="py-4 px-8">
-        <div className="flex items-center justify-between">
-          <span className="text-lg font-semibold">{day}</span>
-          <Switch checked={enabled} onChange={handleToggle} />
-        </div>
+      <div className="flex items-center justify-between">
+        <span className="text-lg font-semibold">{day}</span>
+        <Switch checked={enabled} onChange={handleToggle} />
+      </div>
 
-        {enabled && (
-          <div className="mt-4 space-y-4">
-            {shifts.map((shift, index) => (
-              <div key={index} className="flex gap-4 items-center">
-                <TextField
-                  label="Giờ bắt đầu"
-                  type="time"
-                  value={shift.start}
-                  onChange={(e) => handleShiftChange(index, "start", e.target.value)}
-                  InputLabelProps={{ shrink: true }}
-                />
-                <TextField
-                  label="Giờ kết thúc"
-                  type="time"
-                  value={shift.end}
-                  onChange={(e) => handleShiftChange(index, "end", e.target.value)}
-                  InputLabelProps={{ shrink: true }}
-                />
-                <Button variant="outlined" color="error" onClick={() => removeShift(index)}>
-                  Xóa
-                </Button>
-              </div>
-            ))}
-            <Button variant="contained" onClick={addShift}>
-              Thêm ca làm việc
-            </Button>
-          </div>
-        )}
+      {enabled && (
+        <div className="mt-4 space-y-4">
+          {shifts.map((shift, index) => (
+            <div key={index} className="flex gap-4 items-center">
+              <TextField
+                label="Giờ bắt đầu"
+                type="time"
+                value={shift.start}
+                onChange={(e) =>
+                  handleShiftChange(index, "start", e.target.value)
+                }
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                label="Giờ kết thúc"
+                type="time"
+                value={shift.end}
+                onChange={(e) =>
+                  handleShiftChange(index, "end", e.target.value)
+                }
+                InputLabelProps={{ shrink: true }}
+              />
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => removeShift(index)}
+              >
+                Xóa
+              </Button>
+            </div>
+          ))}
+          <Button variant="contained" onClick={addShift}>
+            Thêm ca làm việc
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

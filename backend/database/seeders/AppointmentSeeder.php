@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Appointment;
+use App\Models\Bill;
+
 class AppointmentSeeder extends Seeder
 {
     /**
@@ -37,9 +39,18 @@ class AppointmentSeeder extends Seeder
                     'facility_id' => 2,
                 ],
             ];
-        
+
             foreach ($appointments as $appointmentData) {
-                DB::table('appointments')->insert($appointmentData);
+                $appointment = Appointment::create($appointmentData);
+
+                Bill::create([
+                    'health_profile_id' => $appointment->health_profile_id,
+                    'medical_facility_id' => $appointment->facility_id,
+                    'appointment_id' => $appointment->id,
+                    'status' => 'pending',
+                    'payment_method' => 'vnpay',
+                    'total_amount' => 100000,
+                ]);
             }
         });
     }

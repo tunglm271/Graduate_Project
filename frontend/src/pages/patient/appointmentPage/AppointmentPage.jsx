@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import AppointmentCard from "../../../components/card/AppointmentCard";
 import appointmentApi from "../../../service/appointmentApi";
+import healthProfileApi from "../../../service/healthProfileApi";
 import noResult from "../../../assets/noResult.svg";
 import PeopleIcon from "@mui/icons-material/People";
 
@@ -55,38 +56,66 @@ const AppointmentPage = () => {
   };
 
   useEffect(() => {
-    appointmentApi
+    healthProfileApi
       .getAll()
       .then((response) => {
-        const appointments = response.data;
-        setAllAppointments(appointments);
-        setFilteredAppointments(appointments);
-
-        setCompletedAppointmentsCount(
-          appointments.filter(
-            (appointment) => appointment.status === "completed"
-          ).length
-        );
-        setPendingAppointmentsCount(
-          appointments.filter((appointment) => appointment.status === "pending")
-            .length
-        );
-        setAssignedAppointmentsCount(
-          appointments.filter(
-            (appointment) => appointment.status === "assigned"
-          ).length
-        );
-        setCancelledAppointmentsCount(
-          appointments.filter(
-            (appointment) => appointment.status === "cancelled"
-          ).length
-        );
-        setLoading(false);
+        const profiles = response.data;
+        setHealthProfiles(profiles);
+        if (profileId) {
+          const selectedProfile = profiles.find(
+            (profile) => profile.id === profileId
+          );
+          if (selectedProfile) {
+            setSearchParams({ profileId: selectedProfile.id });
+          } else {
+            setSearchParams({});
+          }
+        } else if (profiles.length > 0) {
+          setSearchParams({ profileId: profiles[0].id });
+        }
       })
       .catch((error) => {
-        console.error("Error fetching appointments:", error);
+        console.error("Error fetching health profiles:", error);
       });
   }, []);
+
+  useEffect(() => {
+    if (profileId) {
+      setLoading(true);
+      appointmentApi
+        .getByProfile(profileId)
+        .then((response) => {
+          const appointments = response.data;
+          setAllAppointments(appointments);
+          setFilteredAppointments(appointments);
+
+          setCompletedAppointmentsCount(
+            appointments.filter(
+              (appointment) => appointment.status === "completed"
+            ).length
+          );
+          setPendingAppointmentsCount(
+            appointments.filter(
+              (appointment) => appointment.status === "pending"
+            ).length
+          );
+          setAssignedAppointmentsCount(
+            appointments.filter(
+              (appointment) => appointment.status === "assigned"
+            ).length
+          );
+          setCancelledAppointmentsCount(
+            appointments.filter(
+              (appointment) => appointment.status === "cancelled"
+            ).length
+          );
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching appointments by profile:", error);
+        });
+    }
+  }, [profileId]);
 
   useEffect(() => {
     switch (value) {
@@ -137,6 +166,8 @@ const AppointmentPage = () => {
               sx={{
                 p: 1,
                 borderRadius: 2,
+                backgroundColor:
+                  profileId == profile.id ? "#e3f2fd" : "transparent",
               }}
               button
               onClick={() => {
@@ -191,6 +222,7 @@ const AppointmentPage = () => {
               zIndex: 1200,
               color: "primary.main",
               backgroundColor: "white",
+              boxShadow: "0px 2px 4px rgba(0,0,0,0.1)",
               "&:hover": {
                 backgroundColor: "grey.100",
               },
@@ -204,12 +236,20 @@ const AppointmentPage = () => {
             onClose={() => setMobileDrawerOpen(false)}
             sx={{
               "& .MuiDrawer-paper": {
-                width: 280,
+                width: "100%",
+                maxWidth: 280,
                 padding: "20px",
                 backgroundColor: "white",
+                boxSizing: "border-box",
               },
             }}
           >
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-lg font-semibold">{t("health-profile")}</h4>
+              <IconButton onClick={() => setMobileDrawerOpen(false)}>
+                <PeopleIcon />
+              </IconButton>
+            </div>
             <ProfileList />
           </Drawer>
         </>
@@ -219,7 +259,7 @@ const AppointmentPage = () => {
 
       <div
         id="appointment-tab"
-        className={isMobile ? "w-full" : "w-[calc(100%-200px)]"}
+        className={isMobile ? "w-full mt-16" : "w-[calc(100%-200px)]"}
       >
         <Box
           sx={{
@@ -319,6 +359,7 @@ const AppointmentPage = () => {
                 </div>
               ) : (
                 filteredAppointments.map((appointment, index) => {
+                  console.log("Appointment data:", appointment);
                   return (
                     <AppointmentCard key={index} appointment={appointment} />
                   );

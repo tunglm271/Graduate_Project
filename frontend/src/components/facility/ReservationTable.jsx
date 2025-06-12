@@ -1,14 +1,20 @@
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Avatar, Button, IconButton, Stack } from "@mui/material";
+import { Avatar, IconButton, Stack } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   renderEditStatus,
   renderStatus,
   STATUS_OPTIONS,
 } from "../../utlis/renderStatus";
+import PropTypes from "prop-types";
 
-export default function ReservationTable({ appointments, setReservationId }) {
+export default function ReservationTable({
+  appointments,
+  setReservationId,
+  loading,
+  onRefresh,
+}) {
   const columns = [
     {
       field: "index",
@@ -81,12 +87,11 @@ export default function ReservationTable({ appointments, setReservationId }) {
       editable: false,
       filterable: false,
       renderCell: (params) => (
-        <IconButton
-          onClick={() => setReservationId(params.row.id)}
-          sx={{ mx: "auto" }}
-        >
-          <VisibilityIcon />
-        </IconButton>
+        <div className="w-full flex justify-between items-center">
+          <IconButton onClick={() => setReservationId(params.row.id)}>
+            <VisibilityIcon />
+          </IconButton>
+        </div>
       ),
     },
   ];
@@ -102,7 +107,7 @@ export default function ReservationTable({ appointments, setReservationId }) {
     >
       <DataGrid
         rows={appointments}
-        loading={!appointments.length}
+        loading={loading}
         columns={columns}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
@@ -124,3 +129,27 @@ export default function ReservationTable({ appointments, setReservationId }) {
     </div>
   );
 }
+
+ReservationTable.propTypes = {
+  appointments: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      health_profile: PropTypes.shape({
+        name: PropTypes.string,
+      }),
+      doctor: PropTypes.shape({
+        name: PropTypes.string,
+      }),
+      medical_service: PropTypes.shape({
+        name: PropTypes.string,
+      }),
+      date: PropTypes.string,
+      start_time: PropTypes.string,
+      end_time: PropTypes.string,
+      status: PropTypes.string,
+    })
+  ).isRequired,
+  setReservationId: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
+  onRefresh: PropTypes.func.isRequired,
+};

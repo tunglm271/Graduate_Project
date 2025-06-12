@@ -10,26 +10,24 @@ import {
   Avatar,
   Divider,
   TextField,
+  Chip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import StickyNote2Icon from "@mui/icons-material/StickyNote2";
 import MedicalInformationIcon from "@mui/icons-material/MedicalInformation";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import AddResultDrawer from "../AddResultDrawer";
-import { useEffect, useState } from "react";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import ImageIcon from "@mui/icons-material/Image";
+import DescriptionIcon from "@mui/icons-material/Description";
+import { useEffect, useState, useMemo } from "react";
 import medicalServiceApi from "../../service/medicalServiceAPi";
 import appointmentApi from "../../service/appointmentApi";
 import { getUser } from "../../utlis/auth";
 import { Link } from "react-router-dom";
-function getRandomColor() {
-  const letters = "0123456789ABCDEF";
-  let color = "#";
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-}
+import useCustomSnackbar from "../../hooks/useCustomSnackbar";
+import PropTypes from "prop-types";
 
 const ReservationPopUp = ({
   open,
@@ -37,6 +35,7 @@ const ReservationPopUp = ({
   reservation,
   openResult,
   handleOpenResult,
+  onRefresh,
 }) => {
   const user = getUser();
   const [doctor, setDoctor] = useState([]);
@@ -44,21 +43,45 @@ const ReservationPopUp = ({
   const [position, setPosition] = useState("50%");
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
+  const [isRejecting, setIsRejecting] = useState(false);
+  const [isAssigning, setIsAssigning] = useState(false);
+  const { showInfoSnackbar } = useCustomSnackbar();
+
+  // Cache random color for the current reservation
+  const avatarColor = useMemo(() => {
+    if (!reservation?.health_profile?.name) return "#000000";
+
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }, [reservation?.health_profile?.name]); // Only recalculate if patient name changes
 
   const handleReject = () => {
     setRejectDialogOpen(true);
   };
 
+  console.log(reservation);
+
   const handleConfirmReject = () => {
+    if (isRejecting) return;
+    setIsRejecting(true);
     appointmentApi
-      .rejectAppointment(reservation?.id, rejectReason)
+      .reject(reservation?.id, rejectReason)
       .then((res) => {
         console.log(res.data);
+        showInfoSnackbar("Từ chối đơn khám thành công");
         setRejectDialogOpen(false);
         onClose();
+        onRefresh();
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setIsRejecting(false);
       });
   };
 
@@ -68,15 +91,22 @@ const ReservationPopUp = ({
   };
 
   const handleUpdate = () => {
+    if (isAssigning) return;
+    setIsAssigning(true);
     appointmentApi
       .assignDoctor(reservation?.id, selectedDoctor)
       .then((res) => {
         console.log(res.data);
+        showInfoSnackbar("Chỉ định bác sĩ thành công");
+        onClose();
+        onRefresh();
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setIsAssigning(false);
       });
-    onClose();
   };
 
   useEffect(() => {
@@ -85,6 +115,7 @@ const ReservationPopUp = ({
       medicalServiceApi
         .getDoctor(reservation?.medical_service.id, reservation?.id)
         .then((res) => {
+          console.log("doctor", res.data);
           setDoctor(res.data);
           if (reservation.doctor) {
             setSelectedDoctor(reservation.doctor?.id);
@@ -112,6 +143,20 @@ const ReservationPopUp = ({
       setPosition("50%");
     }
   }, [openResult]);
+
+  const getFileIcon = (fileType) => {
+    if (fileType?.includes("image")) return <ImageIcon />;
+    if (fileType?.includes("pdf")) return <PictureAsPdfIcon />;
+    return <DescriptionIcon />;
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
 
   return (
     <>
@@ -147,7 +192,7 @@ const ReservationPopUp = ({
         </DialogTitle>
         <DialogContent>
           <div className="flex border-[1.5px] border-gray-300 rounded-lg items-center gap-5 p-5">
-            <Avatar sx={{ width: 56, height: 56, bgcolor: getRandomColor() }}>
+            <Avatar sx={{ width: 56, height: 56, bgcolor: avatarColor }}>
               {reservation?.health_profile.name
                 .split(" ")
                 .map((word) => word[0])
@@ -163,6 +208,10 @@ const ReservationPopUp = ({
               sx={{ marginLeft: "auto" }}
               variant="outlined"
               color="primary"
+              component={Link}
+              to={`/${user.role == 4 ? "facility" : "doctor"}/patients/${
+                reservation?.health_profile.id
+              }`}
             >
               Xem hồ sơ bệnh án
             </Button>
@@ -250,29 +299,92 @@ const ReservationPopUp = ({
             </div>
           </div>
           <Divider />
+          {reservation?.attachments && reservation.attachments.length > 0 && (
+            <div className="mt-4">
+              <p className="flex items-center gap-1 text-gray-500 font-semibold my-2">
+                <AttachFileIcon fontSize="small" />
+                Tài liệu đính kèm
+              </p>
+              <div className="grid grid-cols-1 gap-2">
+                {reservation.attachments.map((file, index) => (
+                  <a
+                    key={index}
+                    href={file.file_path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="no-underline"
+                  >
+                    <Chip
+                      icon={getFileIcon(file.file_type)}
+                      label={`${file.file_name} (${formatFileSize(
+                        file.file_size
+                      )})`}
+                      variant="outlined"
+                      className="w-full justify-start"
+                      sx={{
+                        "& .MuiChip-label": {
+                          whiteSpace: "normal",
+                          textAlign: "left",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 1,
+                          WebkitBoxOrient: "vertical",
+                        },
+                      }}
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
           {user.role !== "3" && (
-            <div className="min-h-44">
+            <div className="min-h-30">
               <p className="flex items-center gap-1 text-gray-500 font-semibold my-2">
                 Bác sĩ phụ trách
               </p>
-              <Select
-                labelId="doctor-select-label"
-                value={selectedDoctor}
-                variant="standard"
-                fullWidth
-                onChange={(e) => setSelectedDoctor(e.target.value)}
-                label="Chọn bác sĩ"
-                displayEmpty
-              >
-                <MenuItem value={null}>
-                  <em>None</em>
-                </MenuItem>
-                {doctor.map((doc) => (
-                  <MenuItem key={doc.id} value={doc.id}>
-                    BS. {doc.name}
+              {reservation?.status == "pending" && (
+                <Select
+                  labelId="doctor-select-label"
+                  value={selectedDoctor}
+                  variant="standard"
+                  fullWidth
+                  onChange={(e) => setSelectedDoctor(e.target.value)}
+                  label="Chọn bác sĩ"
+                  displayEmpty
+                >
+                  <MenuItem value={null}>
+                    <em>None</em>
                   </MenuItem>
-                ))}
-              </Select>
+                  {doctor.map((doc) => (
+                    <MenuItem
+                      key={doc.id}
+                      value={doc.id}
+                      sx={{
+                        fontWeight: doc.recommend ? "bold" : "normal",
+                        "&:hover": {
+                          backgroundColor: doc.recommend
+                            ? "rgba(25, 118, 210, 0.08)"
+                            : "inherit",
+                        },
+                      }}
+                    >
+                      BS. {doc.name}
+                      {doc.recommend && (
+                        <span
+                          style={{
+                            marginLeft: "8px",
+                            color: "#1976d2",
+                            fontSize: "0.75rem",
+                          }}
+                        >
+                          (Đề xuất)
+                        </span>
+                      )}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
               {selectedDoctor && (
                 <div className="flex items-center gap-2 mt-4 p-2">
                   <Avatar
@@ -307,16 +419,25 @@ const ReservationPopUp = ({
         <DialogActions sx={{ padding: "16px" }}>
           {user.role !== "3" && reservation?.status === "pending" && (
             <>
-              <Button variant="outlined" color="error" onClick={handleReject}>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={handleReject}
+                disabled={isRejecting || isAssigning}
+              >
                 Từ chối
               </Button>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleUpdate}
-                disabled={selectedDoctor == reservation?.doctor?.id}
+                disabled={
+                  selectedDoctor == reservation?.doctor?.id ||
+                  isRejecting ||
+                  isAssigning
+                }
               >
-                Cập nhật
+                {isAssigning ? "Đang cập nhật..." : "Cập nhật"}
               </Button>
             </>
           )}
@@ -325,12 +446,14 @@ const ReservationPopUp = ({
               Thêm kết quả khám
             </Button>
           )}
-          {user.role === "3" && reservation?.status === "completed" && (
+          {reservation?.status === "completed" && (
             <Button
               color="primary"
               fullWidth
               component={Link}
-              to={`/doctor/patients/${reservation?.health_profile.id}?appointmentId=${reservation?.id}&tab=1`}
+              to={`/${user.role == 4 ? "facility" : "doctor"}/patients/${
+                reservation?.health_profile.id
+              }?appointmentId=${reservation?.id}&tab=1`}
             >
               Xem kết quả khám
             </Button>
@@ -358,24 +481,67 @@ const ReservationPopUp = ({
             value={rejectReason}
             onChange={(e) => setRejectReason(e.target.value)}
             variant="outlined"
+            disabled={isRejecting}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseRejectDialog} color="primary">
+          <Button
+            onClick={handleCloseRejectDialog}
+            color="primary"
+            disabled={isRejecting}
+          >
             Hủy
           </Button>
           <Button
             onClick={handleConfirmReject}
             color="error"
             variant="contained"
-            disabled={!rejectReason.trim()}
+            disabled={!rejectReason.trim() || isRejecting}
           >
-            Xác nhận từ chối
+            {isRejecting ? "Đang từ chối..." : "Xác nhận từ chối"}
           </Button>
         </DialogActions>
       </Dialog>
     </>
   );
+};
+
+ReservationPopUp.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  reservation: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    health_profile: PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      name: PropTypes.string,
+      date_of_birth: PropTypes.string,
+      gender: PropTypes.string,
+    }),
+    medical_service: PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      name: PropTypes.string,
+    }),
+    doctor: PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    }),
+    date: PropTypes.string,
+    start_time: PropTypes.string,
+    end_time: PropTypes.string,
+    status: PropTypes.string,
+    reason: PropTypes.string,
+    attachments: PropTypes.arrayOf(
+      PropTypes.shape({
+        file_name: PropTypes.string,
+        file_path: PropTypes.string,
+        file_type: PropTypes.string,
+        file_size: PropTypes.number,
+        file_extension: PropTypes.string,
+      })
+    ),
+  }),
+  openResult: PropTypes.bool,
+  handleOpenResult: PropTypes.func,
+  onRefresh: PropTypes.func.isRequired,
 };
 
 export default ReservationPopUp;

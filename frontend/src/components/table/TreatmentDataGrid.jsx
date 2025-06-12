@@ -143,7 +143,7 @@ const TreatmentDataGrid = ({ setDataCount, viewType }) => {
                 sx={{ "& .MuiAvatar-root": { width: 25, height: 25 } }}
               >
                 {doctors.map((doc, index) => (
-                  <Tooltip title={doc.name} key={index}>
+                  <Tooltip title={`BS. ${doc.name}`} key={index}>
                     <Avatar key={index} alt={doc.name} src={doc.avatar} />
                   </Tooltip>
                 ))}

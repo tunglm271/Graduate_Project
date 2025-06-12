@@ -2,7 +2,7 @@ import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 
-const ImagesExaminationResult = () => {
+const ImagesExaminationResult = ({ examination }) => {
     return (
         <Accordion sx={{ boxShadow: "none" }}>
             <AccordionSummary
@@ -12,7 +12,7 @@ const ImagesExaminationResult = () => {
             >
                 <PhotoLibraryIcon />
                 <Typography sx={{ marginLeft: "5px", fontWeight: 600 }}>
-                Xét nghiệm hình ảnh
+                    {examination.test_name}
                 </Typography>
             </AccordionSummary>
             <AccordionDetails>

@@ -19,20 +19,20 @@ class DiagnosisController extends Controller
         return $response['data'][0]['embedding'] ?? null;
     }
 
-       public function cosineSimilarity(array $vec1, array $vec2)
-        {
-            $dot = 0.0;
-            $normA = 0.0;
-            $normB = 0.0;
+    public function cosineSimilarity(array $vec1, array $vec2)
+    {
+        $dot = 0.0;
+        $normA = 0.0;
+        $normB = 0.0;
 
-            for ($i = 0; $i < count($vec1); $i++) {
-                $dot += $vec1[$i] * $vec2[$i];
-                $normA += $vec1[$i] ** 2;
-                $normB += $vec2[$i] ** 2;
-            }
-
-            return $dot / (sqrt($normA) * sqrt($normB) + 1e-10);
+        for ($i = 0; $i < count($vec1); $i++) {
+            $dot += $vec1[$i] * $vec2[$i];
+            $normA += $vec1[$i] ** 2;
+            $normB += $vec2[$i] ** 2;
         }
+
+        return $dot / (sqrt($normA) * sqrt($normB) + 1e-10);
+    }
 
     protected function generateExplanation($prompt, $serviceName, $description)
     {
@@ -75,7 +75,7 @@ class DiagnosisController extends Controller
         $results = MedicalService::whereNotNull('embedding')->distinct('name')->get();
 
         // Step 3: Tính cosine similarity và sắp xếp
-        $scored = $results->map(function ($item) use ($embedding) {
+        $scored = $results->map(callback: function ($item) use ($embedding) {
             $score = $this->cosineSimilarity(
                 json_decode($item->embedding),
                 $embedding
@@ -112,7 +112,7 @@ class DiagnosisController extends Controller
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
         ])->post('https://api.openai.com/v1/chat/completions', [
-            'model' => 'gpt-3.5-turbo',
+            'model' => 'gpt-4o-mini',
             'messages' => [
                 [
                     'role' => 'system',
@@ -123,9 +123,24 @@ class DiagnosisController extends Controller
                     'content' => "Dựa trên nhu cầu: \"$prompt\"\nChúng tôi đề xuất các dịch vụ sau: $servicesList\nHãy viết một đoạn ngắn (3-4 câu) giải thích tổng quan về lý do tại sao những dịch vụ này phù hợp với nhu cầu của người dùng.",
                 ],
             ],
-            'temperature' => 0.7,
+            'temperature' => 0.5,
         ]);
 
         return $response['choices'][0]['message']['content'] ?? null;
+    }
+
+
+    protected function ragQuery(Request $request)
+    {
+        $prompt = $request->input('prompt');
+        if (!$prompt) {
+            return response()->json(['error' => 'Prompt is required'], 400);
+        }
+        $services = MedicalService::distinct('name')->get();
+        $response = Http::post(env('RAG_API_URL') . '/suggest', [
+            'user_input' => $prompt,
+            'services' => $services->toArray(),
+        ]);
+        return $response->json();
     }
 }

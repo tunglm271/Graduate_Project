@@ -32,6 +32,7 @@ import healthProfileApi from "../../service/healthProfileApi";
 import medicalServiceApi from "../../service/medicalServiceAPi";
 import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 import appointmentApi from "../../service/appointmentApi";
+import { useTranslation } from "react-i18next";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -50,11 +51,13 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 export default function BookingPopUp({ open, onClose, facility, id }) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
   const [profileOption, setProfileOption] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   useEffect(() => {
     healthProfileApi.getAll().then((res) => {
       setProfileOption(res.data);
@@ -67,6 +70,7 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
   const [date, setDate] = useState(dayjs());
   const [activeStep, setActiveStep] = useState(0);
   const [postedFiles, setPostedFiles] = useState([]);
+  const [fileNames, setFileNames] = useState({});
   const [sectionList, setSectionList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSection, setSelectedSection] = useState(null);
@@ -107,27 +111,53 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
 
   const steps = ["Nhập thông tin khám", "Chọn ngày khám", "Tài liệu đính kèm"];
 
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+    setPostedFiles((prevFiles) => [...prevFiles, ...files]);
+    const newFileNames = {};
+    files.forEach((file) => {
+      newFileNames[file.name] = file.name.split(".")[0];
+    });
+    setFileNames((prev) => ({ ...prev, ...newFileNames }));
+  };
+
+  const handleFileNameChange = (fileName, newName) => {
+    setFileNames((prev) => ({
+      ...prev,
+      [fileName]: newName,
+    }));
+  };
+
   const handleSubmit = () => {
+    setIsSubmitting(true);
     const formData = new FormData();
     formData.append("health_profile_id", chosenProfile.id);
     formData.append("medical_service_id", id);
     formData.append("date", date.format("YYYY-MM-DD"));
     formData.append("start_time", selectedSection.start_time);
     formData.append("end_time", selectedSection.end_time);
-    formData.append("reason", reason.trim()); 
+    formData.append("reason", reason.trim());
 
     postedFiles.forEach((file, index) => {
       formData.append(`files[${index}]`, file);
+      formData.append(
+        `file_names[${index}]`,
+        fileNames[file.name] || file.name.split(".")[0]
+      );
     });
-
-    console.log(chosenProfile.id);
 
     appointmentApi
       .create(formData)
-      .then((res) => {
+      .then(() => {
         showSuccessSnackbar("Đặt lịch khám thành công!");
         setPostedFiles([]);
         setActiveStep(0);
+        setChosenProfile();
+        setReason("");
+        setDate(dayjs());
+        setMonth(new Date());
+        setSelectedSection(null);
+        setIsSubmitting(false);
         onClose();
       })
       .catch((err) => {
@@ -135,6 +165,7 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
         showErrorSnackbar(
           err.response?.data?.message || "Có lỗi xảy ra khi đặt lịch"
         );
+        setIsSubmitting(false);
       });
   };
 
@@ -207,7 +238,7 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
                 <li {...props} style={{ display: "flex", gap: "10px" }}>
                   <div>{option.name}</div>
                   <div style={{ color: "gray", fontSize: "14px" }}>
-                    {option.relationship}
+                    {t(option.relationship)}
                   </div>
                 </li>
               )}
@@ -337,32 +368,58 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
               <VisuallyHiddenInput
                 type="file"
                 multiple
-                onChange={(event) => {
-                  const files = Array.from(event.target.files);
-                  setPostedFiles((prevFiles) => [...prevFiles, ...files]);
-                }}
+                onChange={handleFileChange}
               />
             </label>
 
             <div className="uploaded-files">
-              <h4 style={{ margin: "10px 0px" }}>Hình ảnh tải lên</h4>
+              <h4 style={{ margin: "10px 0px" }}>Tài liệu đính kèm</h4>
               <div className="file-list">
                 {postedFiles.map((file, index) => (
                   <div key={index} className="uploaded-file">
-                    <a href={URL.createObjectURL(file)} download={file.name}>
-                      {file.name}
-                    </a>
-                    <IconButton
-                      variant="outlined"
-                      color="error"
-                      onClick={() => {
-                        setPostedFiles((prevFiles) =>
-                          prevFiles.filter((_, i) => i !== index)
-                        );
-                      }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                    <div className="flex flex-col gap-2 w-full">
+                      <div className="flex items-center justify-between">
+                        <a
+                          href={URL.createObjectURL(file)}
+                          download={file.name}
+                          className="text-sm underline font-semibold hover:text-blue-400"
+                        >
+                          {file.name}
+                        </a>
+                        <IconButton
+                          variant="outlined"
+                          color="error"
+                          size="small"
+                          onClick={() => {
+                            setPostedFiles((prevFiles) =>
+                              prevFiles.filter((_, i) => i !== index)
+                            );
+                            setFileNames((prev) => {
+                              const newNames = { ...prev };
+                              delete newNames[file.name];
+                              return newNames;
+                            });
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </div>
+                      <TextField
+                        size="small"
+                        label="Tên tài liệu"
+                        value={fileNames[file.name] || ""}
+                        onChange={(e) =>
+                          handleFileNameChange(file.name, e.target.value)
+                        }
+                        placeholder="Nhập tên tài liệu"
+                        fullWidth
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            backgroundColor: "white",
+                          },
+                        }}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -374,12 +431,22 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
         <Button
           color="inherit"
           onClick={handleBack}
-          disabled={activeStep === 0}
+          disabled={activeStep === 0 || isSubmitting}
         >
           Quay lại
         </Button>
-        <Button onClick={handleNext}>
-          {activeStep == 2 ? "Đặt lịch" : "Tiếp tục"}
+        <Button
+          onClick={handleNext}
+          disabled={isSubmitting}
+          startIcon={
+            isSubmitting && <CircularProgress size={20} color="inherit" />
+          }
+        >
+          {activeStep === 2
+            ? isSubmitting
+              ? "Đang xử lý..."
+              : "Đặt lịch"
+            : "Tiếp tục"}
         </Button>
       </DialogActions>
     </Dialog>

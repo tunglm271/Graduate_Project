@@ -17,6 +17,7 @@ import useCustomSnackbar from "../hooks/useCustomSnackbar";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import NotificationApi from "../service/NotificationApi";
 
 const NotificationList = () => {
   const { t } = useTranslation();
@@ -29,6 +30,21 @@ const NotificationList = () => {
 
   useEffect(() => {
     if (!user) return;
+
+    const fetchNotifications = async () => {
+      try {
+        const data = await NotificationApi.getNotifications();
+        console.log(data);
+        const Fetchednotifications = data || []
+        setNotifications(Fetchednotifications);
+        setUnreadCount(Fetchednotifications.filter(n => !n.is_read).length);
+      } catch (error) {
+        console.error("Failed to fetch notifications", error);
+      }
+    };
+
+    fetchNotifications();
+
     const channel = window.Echo.private(`users.${user.id}`)
       .listen(".appointment.booked", (event) => {
         const { appointment } = event;
@@ -36,16 +52,52 @@ const NotificationList = () => {
           data: {
             title: "Yêu cầu khám mới",
             message: "Bạn có yêu cầu khám mới",
-            time: appointment.created_at,
+            created_at: appointment.created_at,
             link: `/${user.role == 4 ? "facility" : "doctor"}/reservations?id=${appointment.id}`,
           },
         };
         setNotifications((prev) => [newNotification, ...prev]);
         setUnreadCount((prev) => prev + 1);
       })
-      .listen("boardcast-test", (event) => {
-        console.log("Boardcast Test", event);
-      });
+      .listen(".appointments.assigned", (event) => {
+        const { appointment, doctor } = event;
+        const newNotification = {
+          data: {
+            title: "Yêu cầu khám đã được chấp nhận",
+            message: "Yêu cầu khám của bạn đã được cơ sở y tế chấp nhận, bác sĩ phụ trách là " + doctor.name + ". Xem tra chi tiết",
+            created_at: appointment.updated_at,
+            link: `/appointments`,
+          },
+        };
+        setNotifications((prev) => [newNotification, ...prev]);
+        setUnreadCount((prev) => prev + 1);
+      })
+      .listen(".bills.paid", (event) => {
+        const { appointment } = event;
+        const newNotification = {
+          data: {
+            title: "Đơn khám đã được thanh toán",
+            message: `Đơn khám ${appointment.id} đã được thanh toán. Ấn vào đây để xem chi tiết`,
+            created_at: appointment.updated_at,
+            link: `/facility/revenue`,
+          },
+        };
+        setNotifications((prev) => [newNotification, ...prev]);
+        setUnreadCount((prev) => prev + 1);
+      })
+      .listen(".appointment.completed", (event) => {
+        const { health_profile_id, medical_record_id } = event;
+        const newNotification = {
+          data: {
+            title: "Đơn khám đã được thanh toán",
+            message: `Đơn khám ${appointment.id} đã được thanh toán. Ấn vào đây để xem chi tiết`,
+            created_at: appointment.updated_at,
+            link: `/health-profile/${health_profile_id}/record/${medical_record_id}`,
+          },
+        };
+        setNotifications((prev) => [newNotification, ...prev]);
+        setUnreadCount((prev) => prev + 1);
+      })
   }, []);
 
   const handleClick = (event) => {
@@ -58,8 +110,45 @@ const NotificationList = () => {
   };
 
   const handleClearAll = () => {
-    setNotifications([]);
-    setUnreadCount(0);
+    NotificationApi.clearAll()
+      .then(() => {
+        setNotifications([]);
+        setUnreadCount(0);
+      })
+      .catch((error) => {
+        console.error("Failed to clear notifications", error);
+      });
+  };
+
+  const handleNotificationClick = async (notification) => {
+    if (!notification.is_read) {
+      await NotificationApi.markAsRead(notification.id);
+      setNotifications((prev) =>
+        prev.map((n) =>
+          n.id === notification.id ? { ...n, is_read: true } : n
+        )
+      );
+    }
+    console.log(getNotificationLink(notification));
+    navigate(getNotificationLink(notification));
+    handleClose();
+  };
+
+  const getNotificationLink = (notification) => {
+    if (notification.data?.link) return notification.data.link;
+
+    switch (notification.data.type) {
+      case "appointment_booked":
+        return `/${user.role == 4 ? "facility" : "doctor"}/reservations?id=${notification.data?.data.appointment_id}`;
+      case "appointments.assigned":
+        return "/appointments";
+      case "bills.paid":
+        return "/facility/revenue";
+      case "appointment_completed":
+        return `/health-profile/${notification.data?.data.health_profile_id}/record/${notification.data?.data.medical_record_id}`;
+      default:
+        return "/";
+    }
   };
 
   return (
@@ -111,23 +200,24 @@ const NotificationList = () => {
       >
         <Box
           sx={{
-            p: 2,
+            px: 2,
+            py: 1,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
           }}
         >
-          <Typography variant="h6">Notifications</Typography>
+          <p className="font-semibold">Thông báo</p>
           {notifications.length > 0 && (
             <Button size="small" onClick={handleClearAll}>
-              Clear All
+              Xóa tất cả
             </Button>
           )}
         </Box>
         <Divider />
         {notifications.length === 0 ? (
           <Box sx={{ p: 2, textAlign: "center" }}>
-            <Typography color="text.secondary">No notifications</Typography>
+            <Typography color="text.secondary" sx={{ fontStyle: "italic" }}>Không có thông báo</Typography>
           </Box>
         ) : (
           <List sx={{ width: "100%", p: 0 }}>
@@ -135,19 +225,27 @@ const NotificationList = () => {
               <React.Fragment key={index}>
                 <ListItem
                   alignItems="flex-start"
-                  onClick={() => {
-                    navigate(notification.data.link);
-                    handleClose();
-                  }}
+                  onClick={() => handleNotificationClick(notification)}
                   sx={{
                     cursor: "pointer",
+                    py: 1,
+                    backgroundColor: notification.is_read ? "inherit" : "rgba(0,0,255,0.05)",
                     "&:hover": {
                       backgroundColor: "rgba(0, 0, 0, 0.04)",
                     },
                   }}
                 >
                   <ListItemText
-                    primary={notification.data.title || "New Notification"}
+                    primary={
+                      <Typography
+                        sx={{ 
+                          fontWeight: notification.is_read ? "normal" : "bold",
+                        }}
+                        variant="subtitle1"
+                      >
+                        {notification.data.title || "New Notification"}
+                      </Typography>
+                    }
                     secondary={
                       <>
                         <Typography
@@ -165,9 +263,9 @@ const NotificationList = () => {
                           color="text.secondary"
                           sx={{ display: "block", mt: 0.5 }}
                         >
-                          {notification.data.time
+                          {notification.data.created_at
                             ? format(
-                                new Date(notification.data.time),
+                                new Date(notification.data.created_at),
                                 "HH:mm dd/MM/yyyy"
                               )
                             : ""}

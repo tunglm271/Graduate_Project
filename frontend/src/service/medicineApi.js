@@ -9,7 +9,15 @@ const medicineApi = {
     },
     getMedicineSchedules: (healthProfileId, date) => {
         return api.get(`/health-profiles/${healthProfileId}/medicines/schedules?date=${date}`);
-    }
+    },
+
+    getPrescription: (prescriptionId) => {
+        return api.get(`/prescriptions/${prescriptionId}`);
+    },
+
+    getPrescriptionMedicines: (prescriptionId) => {
+        return api.get(`/prescriptions/${prescriptionId}/medicines`);
+    },
 }
 
 export default medicineApi;

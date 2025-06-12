@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, ChevronDown, ChevronUp, Delete } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import {
   Dialog,
   DialogTitle,
@@ -18,8 +19,10 @@ import PropTypes from "prop-types";
 import medicineApi from "../service/medicineApi";
 import { getMedicines } from "../hooks/useCachedData";
 
-const MedicineCabinet = ({ medicines, healthProfileId }) => {
+const MedicineCabinet = ({ medicines, healthProfileId, onMedicinesAdded }) => {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const prescriptionId = searchParams.get("prescriptionId");
   const { data: medicinesData = [] } = getMedicines();
   const [activeTab, setActiveTab] = useState("active");
   const [openDialog, setOpenDialog] = useState(false);
@@ -33,6 +36,34 @@ const MedicineCabinet = ({ medicines, healthProfileId }) => {
       total_quantity: "",
     },
   ]);
+
+  useEffect(() => {
+    // If prescriptionId exists in URL, fetch prescription medicines and open dialog
+    if (prescriptionId) {
+      console.log("Prescription ID found in URL:", prescriptionId);
+      medicineApi
+        .getPrescriptionMedicines(prescriptionId)
+        .then((response) => {
+          console.log("Prescription medicines response:", response.data);
+          const prescriptionMedicines = response.data.map((med) => ({
+            medicine_id: med.medicine.id,
+            time_of_day: med.usage.split(",")[0] || "", // Assuming first part of usage is time of day
+            times_per_day: med.usage.split(",")[1] || "", // Assuming second part is times per day
+            dosage_per_time: med.amount || "",
+            notes: med.usage || "",
+            total_quantity: med.amount * 7 || "", // Default to 7 days supply
+          }));
+          console.log("Mapped prescription medicines:", prescriptionMedicines);
+          setMedicinesList(prescriptionMedicines);
+          setOpenDialog(true);
+        })
+        .catch((error) => {
+          console.error("Error fetching prescription medicines:", error);
+        });
+    } else {
+      console.log("No prescription ID found in URL");
+    }
+  }, [prescriptionId]);
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -78,17 +109,24 @@ const MedicineCabinet = ({ medicines, healthProfileId }) => {
   };
 
   const handleSubmit = async () => {
-      const medicinesWithDate = medicinesList.map((medicine) => ({
-        ...medicine,
-        start_date: new Date().toISOString().split("T")[0],
-      }));
+    const medicinesWithDate = medicinesList.map((medicine) => ({
+      ...medicine,
+      start_date: new Date().toISOString().split("T")[0],
+    }));
 
-      medicineApi.storeHealthProfileMedicines(healthProfileId, {
+    medicineApi
+      .storeHealthProfileMedicines(healthProfileId, {
         medicines: medicinesWithDate,
-      }).then((res) => {
+      })
+      .then((res) => {
         console.log(res);
         handleCloseDialog();
-      }).catch((error) => {
+        // Call the callback to refresh medicines data
+        if (onMedicinesAdded) {
+          onMedicinesAdded();
+        }
+      })
+      .catch((error) => {
         console.error("Error adding medicines:", error);
       });
   };
@@ -328,7 +366,7 @@ const MedicineCabinet = ({ medicines, healthProfileId }) => {
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="font-semibold">
-                      {med.medicine.name} {med.dosage}
+                      {med.medicine.name} {med.dosage_per_time}
                     </p>
                     <p className="text-gray-500 text-sm">{med.frequency}</p>
                   </div>
@@ -366,7 +404,7 @@ const MedicineCabinet = ({ medicines, healthProfileId }) => {
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Ngày bắt đầu</p>
-                      <p>{ new Date(med.start_date).toLocaleDateString()}</p>
+                      <p>{new Date(med.start_date).toLocaleDateString()}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Hướng dẫn</p>
@@ -401,7 +439,7 @@ MedicineCabinet.propTypes = {
         name: PropTypes.string.isRequired,
         unit: PropTypes.string.isRequired,
       }).isRequired,
-      dosage: PropTypes.string.isRequired,
+      dosage_per_time: PropTypes.string,
       frequency: PropTypes.string.isRequired,
       time_of_day: PropTypes.string.isRequired,
       times_per_day: PropTypes.number.isRequired,
@@ -413,6 +451,7 @@ MedicineCabinet.propTypes = {
     })
   ).isRequired,
   healthProfileId: PropTypes.number.isRequired,
+  onMedicinesAdded: PropTypes.func,
 };
 
 export default MedicineCabinet;

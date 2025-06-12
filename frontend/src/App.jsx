@@ -128,6 +128,7 @@ const router = createBrowserRouter([
       { path: "dashboard", element: <FacilityDashboard /> },
       { path: "reservations", element: <FacilityReservations /> },
       { path: "patients", element: <PatientManage /> },
+      { path: "patients/:id", element: <PatientDetail /> },
       { path: "services", element: <ServiceManage /> },
       { path: "services/:id", element: <ServiceDetail /> },
       { path: "services/:id/edit", element: <ServiceCreate /> },

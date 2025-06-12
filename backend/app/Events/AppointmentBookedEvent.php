@@ -31,8 +31,9 @@ class AppointmentBookedEvent implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
+        $userId = $this->appointment->medicalFacility->user_id;
         return [
-            new PrivateChannel('users.1'),
+            new PrivateChannel("users.$userId"),
             new Channel('boardcast-test'),
         ];
     }

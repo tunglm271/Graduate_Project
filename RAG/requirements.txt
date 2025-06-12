@@ -4,3 +4,5 @@ faiss-cpu
 sentence_transformers
 flask
 flask_cors
+gunicorn
+python-dotenv

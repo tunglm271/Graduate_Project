@@ -25,8 +25,7 @@ use App\Http\Controllers\ProfileMedicineLogController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\DiagnosisController;
-use App\Notifications\NewNotification;
-use App\Models\User;
+use App\Http\Controllers\NotificationController;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('user', [AuthController::class, 'getUser']);
@@ -37,6 +36,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('medical-facility/dashboard', [MedicalFacilityController::class, 'dashboard']);
     Route::apiResource('doctors', DoctorController::class);
     Route::get("doctor/schedule", [DoctorController::class, 'getDoctorSchedule']);
+    Route::post('doctor/schedule', [DoctorController::class, 'updateDoctorSchedule']);
     Route::apiResource('patients', PatientController::class)->except('store');
     Route::get('patient/doctor', [PatientController::class, 'indexByDoctor']);
     Route::apiResource('schedules', ScheduleController::class);
@@ -63,10 +63,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('indicator-types', [IndicatorController::class, 'getIndicatorTypes']);
     Route::apiResource('sales', SaleController::class)->except('show')->middleware('role:facility');
     Route::apiResource('appointments', AppointmentController::class)->except('update');
+    Route::get('appoinments-by-profile/{healthProfileId}', [AppointmentController::class, 'indexByHealthProfile']);
     Route::post('appointment/assign-doctor', [AppointmentController::class, 'assignDoctor']);
     Route::get('appointment/facility', [AppointmentController::class, 'indexByFacility']);
     Route::get('appointment/doctor', [AppointmentController::class, 'indexByDoctor']);
     Route::post('appointment/doctor-create', [AppointmentController::class, 'createByDoctor']);
+    Route::post('appointments/{appointment}/reject', [AppointmentController::class, 'cancel']);
     Route::get('vnpay_payment', [TransactionController::class, 'vnpay_payment']);
     Route::post('appointments/{appointmentId}/vnpay_verify_payment', [TransactionController::class, 'verifyPayment']);
     Route::get('appointments/{appointment}/bill', [TransactionController::class, 'showBill']);
@@ -74,12 +76,20 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('appointments/{appointment}/add-result', [AppointmentController::class, 'addResult']);
     Route::get('medical-records/{medicalRecord}', [MedicalRecordController::class, 'show']);
     Route::get('medical-records/{medicalRecord}/prescription-download', [MedicalRecordController::class, 'precriptionDownload']);
+    Route::get('prescriptions/{prescription}', [MedicalRecordController::class, 'loadPrescription']);
+    Route::get('prescriptions/{prescription}/medicines', [MedicalRecordController::class, 'getPrescriptionMedicines']);
     Route::get('admin/medical-facilities', [MedicalFacilityController::class, 'index']);
     Route::apiResource('articles', ArticleController::class);
     Route::get('articles/{article}/show-by-patient', [ArticleController::class, 'showByPatient']);
     Route::get('articles-homepage', [ArticleController::class, 'articleHomepage']);
     Route::post('articles/{article}/publish', [ArticleController::class, 'publish']);
     Route::post('articles/{article}/unpublish', [ArticleController::class, 'unpublish']);
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::delete('/{id}', [NotificationController::class, 'destroy']);
+        Route::delete('/', [NotificationController::class, 'clearAll']);
+    });
 
     Route::middleware('role:admin')->prefix('admin')->group(function () {
         Route::get('dashboard', DashboardController::class);
@@ -99,7 +109,5 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/login/google', [AuthController::class, 'loginWithGoogle']);
 Route::post('diagnosis', [DiagnosisController::class, 'query']);
-Route::get('test-socket', function (Request $request) {
-    $user = User::find(1);
-    $user->notify(new NewNotification('You have a new message!', $user));
-});
+Route::post('rag-diagnosis', [DiagnosisController::class, 'ragQuery']);
+

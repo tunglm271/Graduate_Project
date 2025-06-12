@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MedicalRecord;
+use App\Models\Prescription;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -20,9 +21,27 @@ class MedicalRecordController extends Controller
             },
             'examinations.indicators.indicatorType',
             'prescription.medicines',
+            'followUpAppointment'
         ]);
 
         return response()->json($data);
+    }
+
+    public function loadPrescription(Prescription $prescription)
+    {
+        $medicines = $prescription->medicines()->withPivot('usage', 'amount')->get();
+
+        return response()->json($medicines);
+    }
+
+    public function getPrescriptionMedicines(Prescription $prescription)
+    {
+        $medicines = $prescription->medicines()
+            ->with(['medicine:id,name,unit,description'])
+            ->withPivot('usage', 'amount')
+            ->get();
+
+        return response()->json($medicines);
     }
 
     public function precriptionDownload(MedicalRecord $medicalRecord)

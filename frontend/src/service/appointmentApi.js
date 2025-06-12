@@ -6,6 +6,10 @@ const appointmentApi = {
     getAll() {
         return api.get(resource);
     },
+
+    getByProfile(profileId) {
+        return api.get(`appoinments-by-profile/${profileId}`);
+    },
     
     getById(id) {
         return api.get(`${resource}/${id}`);
@@ -58,6 +62,14 @@ const appointmentApi = {
             },
         });
     },
+
+    reject(appointmentId, rejectReason) {
+        return api.post(`${resource}/${appointmentId}/reject`, {
+            "reason": rejectReason
+        })
+    }
+
+    
 };
 
 export default appointmentApi;

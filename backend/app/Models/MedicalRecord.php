@@ -53,4 +53,9 @@ class MedicalRecord extends Model
     {
         return $this->hasOne(Prescription::class);
     }
+
+    public function followUpAppointment()
+    {
+        return $this->belongsTo(Appointment::class, 'follow_up_appointment_id');
+    }
 }

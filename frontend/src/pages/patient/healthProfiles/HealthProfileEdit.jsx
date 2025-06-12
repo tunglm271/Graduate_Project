@@ -461,7 +461,7 @@ const HealthProfileEdit = () => {
                 <Box
                   component="li"
                   {...props}
-                  className="flex justify-between w-full"
+                  sx={{ display: "flex", justifyContent: "space-between" }}
                 >
                   <p className="mr-2.5 w-auto">{option.name}</p>
                   <p className="text-sm text-gray-500 line-clamp-1">
@@ -501,7 +501,7 @@ const HealthProfileEdit = () => {
                 <Box
                   component="li"
                   {...props}
-                  className="flex justify-between w-full"
+                  sx={{ display: "flex", justifyContent: "space-between" }}
                 >
                   <p className="mr-2.5">{option.name}</p>
                   <p className="text-sm text-gray-500">{option.description}</p>

@@ -48,7 +48,7 @@ const NewProfileCard = ({ profile, onDelete }) => {
                     }}
                 />
                 <p className='text-xl font-semibold'>{profile.name}</p>
-                <p className='text-sm'>#{t(`profile.relationship.${profile.relationship}`)}</p>
+                <p className='text-sm'>#{t(profile.relationship)}</p>
                 <IconButton 
                     component={Link} 
                     to={`/health-profile/${profile.id}`} 

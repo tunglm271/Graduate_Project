@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use App\Models\Bill;
+use App\Services\NotificationService;
 class TransactionController extends Controller
 {
 
@@ -24,7 +25,7 @@ class TransactionController extends Controller
         $vnp_TmnCode = "1B2XO33D";//Mã website tại VNPAY 
         $vnp_HashSecret = "Z22NW36OY0GGHH2TRL9P9XLRB7E9RNGD"; //Chuỗi bí mật
         
-        $vnp_TxnRef = "asdfasdfgsdfgsdf"; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
+        $vnp_TxnRef = $request->input('appointment_id'); //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_OrderInfo = "Thanh toán đơn khám";
         $vnp_OrderType = "billpayment";
         $vnp_Amount = $bill->total_amount  * 100;
@@ -87,7 +88,7 @@ class TransactionController extends Controller
         $data = $request->all();
         if(isset($data['vnp_ResponseCode']) && $data['vnp_ResponseCode'] == '00') {
             $bill = Bill::where('appointment_id', $appointmentId)->first();
-            if ($bill) {
+            if ($bill && $bill->status != 'paid') {
                 $bill->status = 'paid';
                 $bill->payment_date = now();
                 $bill->transaction_id = $data['vnp_TxnRef'];
@@ -97,6 +98,21 @@ class TransactionController extends Controller
                 $appointment = $bill->appointment;
                 $appointment->status = 'paid';
                 $appointment->save();
+
+
+                broadcast(new \App\Events\BillPaidEvent($appointment));
+
+                $userId = $appointment->medicalFacility->user_id;
+                $patientName = $appointment->healthProfile->name;
+                NotificationService::sendToUser($userId,[
+                    'type' => 'bill_paid',
+                    'title' => 'Yêu cầu khám mới',
+                    'message' => "Bệnh nhân $patientName đã thanh toán hóa đơn",
+                    'data' => [
+                        'appointment_id' => $appointment->id,
+                    ],
+                ]);
+
                 return response()->json(['message' => 'Payment successful'], 200);
             }
         }

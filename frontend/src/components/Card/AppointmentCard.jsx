@@ -151,13 +151,13 @@ const AppointmentCard = ({ appointment }) => {
 
 AppointmentCard.propTypes = {
   appointment: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     status: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
     start_time: PropTypes.string.isRequired,
     end_time: PropTypes.string.isRequired,
     medical_facility: PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
       facility_name: PropTypes.string.isRequired,
     }).isRequired,
     medical_service: PropTypes.shape({

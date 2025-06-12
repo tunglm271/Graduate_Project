@@ -1,22 +1,53 @@
 import StethoscopeIcon from "@icon/StethoscopeIcon";
-import { Stack, Button, Box } from "@mui/material";
+import { Stack, Button, Box, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import StaffDataGrid from "../../components/table/StaffDataGrid";
-import { useState, useEffect } from "react";
 import CreateDoctorDialog from "../../components/dialog/CreateDoctorDialog";
 import doctorApi from "../../service/DoctorApi";
+
 const StaffManage = () => {
+  const { t } = useTranslation();
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    doctorApi.getAll().then((res) => {
-      console.log(res.data);
-      setData(res.data);
-    });
+    setLoading(true);
+    doctorApi
+      .getAll()
+      .then((res) => {
+        setData(res.data);
+        setFilteredData(res.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
+
+  const handleSearch = useCallback(
+    (query) => {
+      setSearchQuery(query);
+      if (!query.trim()) {
+        setFilteredData(data);
+        return;
+      }
+
+      const searchLower = query.toLowerCase();
+      const filtered = data.filter((doctor) => {
+        return (
+          doctor.name?.toLowerCase().includes(searchLower) ||
+          doctor.phone?.toLowerCase().includes(searchLower) ||
+          doctor.email?.toLowerCase().includes(searchLower)
+        );
+      });
+      setFilteredData(filtered);
+    },
+    [data]
+  );
 
   return (
     <div>
@@ -36,31 +67,43 @@ const StaffManage = () => {
           </div>
           <p className="text-gray-500">
             <span className="font-bold text-xl text-black">
-              {data.length || 0}
+              {filteredData.length || 0}
             </span>{" "}
-            Bác sĩ
+            {t("staff.management.doctors")}
           </p>
         </div>
         <Stack direction={"row"} spacing={2}>
-          <Button
-            color="warning"
-            variant="outlined"
-            startIcon={<FilterListIcon />}
-          >
-            Lọc
-          </Button>
+          <TextField
+            size="small"
+            placeholder={t("staff.management.search_placeholder")}
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "rgb(209 213 219)",
+                },
+                "&:hover fieldset": {
+                  borderColor: "rgb(59 130 246)",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "rgb(59 130 246)",
+                },
+              },
+            }}
+          />
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             sx={{ boxShadow: "none" }}
             onClick={() => setOpen(true)}
           >
-            Thêm bác sĩ
+            {t("staff.management.add_doctor")}
           </Button>
         </Stack>
       </Box>
       <div style={{ padding: "1rem" }}>
-        <StaffDataGrid setData={setData} data={data} />
+        <StaffDataGrid data={filteredData} loading={loading} />
       </div>
       <CreateDoctorDialog open={open} onClose={() => setOpen(false)} />
     </div>
