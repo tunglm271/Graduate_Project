@@ -25,6 +25,7 @@ services:
       - /var/www/vendor
     environment:
       - APP_ENV=local
+      - APP_KEY=base64:TNY623rR9Ecy2PNdDu/WK7Nj0GuDZWeC1yrilMN6/68=
       - APP_DEBUG=true
       - DB_CONNECTION=pgsql
       - DB_HOST=db
@@ -35,6 +36,14 @@ services:
       - SESSION_DRIVER=database
       - SESSION_CONNECTION=pgsql
       - SESSION_LIFETIME=120
+      - REVERB_APP_ID=277947
+      - REVERB_APP_KEY=lv8mlkmwpdv5ohazsxhr
+      - REVERB_APP_SECRET=6dqrb7xbirvwdnxs5ltd
+      - REVERB_HOST=localhost
+      - REVERB_PORT=8080
+      - REVERB_SCHEME=http
+      - BROADCAST_DRIVER=reverb
+      - BROADCAST_CONNECTION=reverb
     depends_on:
       db:
         condition: service_healthy
