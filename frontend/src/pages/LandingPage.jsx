@@ -6,6 +6,9 @@ import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import ServiceCard from "../components/card/ServiceCard";
 import FacilityCard from "../components/card/FacilityCard";
+import api from "../service/api.js";
+import { Link } from "react-router-dom";
+import { Skeleton } from "@mui/material";
 
 const IntroSection = styled(Box)(({ theme }) => ({
   background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
@@ -98,6 +101,39 @@ const mockFacilities = [
 ];
 
 export default function LandingPage() {
+  const [services, setServices] = React.useState([]);
+  const [facilities, setFacilities] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    setLoading(true);
+    api
+      .get("landing-page")
+      .then((response) => {
+        console.log("Landing page data:", response.data);
+        // Safely handle the response data
+        if (response.data && Array.isArray(response.data.services)) {
+          setServices(response.data.services);
+        } else {
+          setServices(mockServices);
+        }
+
+        if (response.data && Array.isArray(response.data.facilities)) {
+          setFacilities(response.data.facilities);
+        } else {
+          setFacilities(mockFacilities);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching landing page data:", error);
+        // Use mock data as fallback
+        setServices(mockServices);
+        setFacilities(mockFacilities);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
   return (
     <div className="p-5">
       {/* Introduction Section */}
@@ -144,6 +180,8 @@ export default function LandingPage() {
                         backgroundColor: "rgba(255, 255, 255, 0.1)",
                       },
                     }}
+                    component={Link}
+                    to="/facility-register"
                   >
                     Đăng Ký Cơ Sở
                   </Button>
@@ -167,11 +205,33 @@ export default function LandingPage() {
         <p className="text-3xl font-bold mb-6">Dịch Vụ Nổi Bật</p>
         <CardContainer>
           <Grid container spacing={4}>
-            {mockServices.map((service) => (
-              <Grid item xs={12} sm={6} md={4} key={service.id}>
-                <ServiceCard service={service} />
-              </Grid>
-            ))}
+            {loading
+              ? // Show loading state
+                Array.from(new Array(3)).map((_, index) => (
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <Box
+                      sx={{
+                        p: 2,
+                        bgcolor: "white",
+                        borderRadius: 2,
+                        boxShadow: 1,
+                      }}
+                    >
+                      <Skeleton
+                        variant="rectangular"
+                        height={200}
+                        sx={{ mb: 2 }}
+                      />
+                      <Skeleton variant="text" width="60%" />
+                      <Skeleton variant="text" width="40%" />
+                    </Box>
+                  </Grid>
+                ))
+              : services.map((service) => (
+                  <Grid item xs={12} sm={6} md={4} key={service.id}>
+                    <ServiceCard service={service} />
+                  </Grid>
+                ))}
           </Grid>
         </CardContainer>
       </Container>
@@ -182,11 +242,33 @@ export default function LandingPage() {
           <p className="text-3xl font-bold mb-6">Cơ Sở Y Tế Uy Tín</p>
           <CardContainer>
             <Grid container spacing={4}>
-              {mockFacilities.map((facility) => (
-                <Grid item xs={12} sm={6} md={4} key={facility.id}>
-                  <FacilityCard facility={facility} />
-                </Grid>
-              ))}
+              {loading
+                ? // Show loading state
+                  Array.from(new Array(3)).map((_, index) => (
+                    <Grid item xs={12} sm={6} md={4} key={index}>
+                      <Box
+                        sx={{
+                          p: 2,
+                          bgcolor: "white",
+                          borderRadius: 2,
+                          boxShadow: 1,
+                        }}
+                      >
+                        <Skeleton
+                          variant="rectangular"
+                          height={200}
+                          sx={{ mb: 2 }}
+                        />
+                        <Skeleton variant="text" width="60%" />
+                        <Skeleton variant="text" width="40%" />
+                      </Box>
+                    </Grid>
+                  ))
+                : facilities.map((facility) => (
+                    <Grid item xs={12} sm={6} md={4} key={facility.id}>
+                      <FacilityCard facility={facility} />
+                    </Grid>
+                  ))}
             </Grid>
           </CardContainer>
         </Container>
