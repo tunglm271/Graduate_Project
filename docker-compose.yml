@@ -44,6 +44,7 @@ services:
       - REVERB_SCHEME=http
       - BROADCAST_DRIVER=reverb
       - BROADCAST_CONNECTION=reverb
+      - OPENAI_API_KEY=...
     depends_on:
       db:
         condition: service_healthy
