@@ -70,6 +70,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('appointment/doctor-create', [AppointmentController::class, 'createByDoctor']);
     Route::post('appointments/{appointment}/reject', [AppointmentController::class, 'cancel']);
     Route::get('vnpay_payment', [TransactionController::class, 'vnpay_payment']);
+    Route::post('bills', [TransactionController::class, 'createBill']);
     Route::post('appointments/{appointmentId}/vnpay_verify_payment', [TransactionController::class, 'verifyPayment']);
     Route::get('appointments/{appointment}/bill', [TransactionController::class, 'showBill']);
     Route::get('revenue-statistics', [TransactionController::class, 'getRevenueStats']);

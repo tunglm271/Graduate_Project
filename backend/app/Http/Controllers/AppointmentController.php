@@ -295,7 +295,7 @@ class AppointmentController extends Controller
                 $followupApppointment = $medicalRecord->followUpAppointment()->create([
                     'health_profile_id' => $appointment->healthProfile->id,
                     'doctor_id' => $request->user()->doctor->id,
-                    'medical_service_id' => $appointment->medicalService->id,
+                    'medical_service_id' => null,
                     'facility_id' => $appointment->medicalFacility->id,
                     'date' => $request->input('follow_up_date'),
                     'start_time' => $startTime,

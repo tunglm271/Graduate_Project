@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('weight')->default(0);
             $table->date('date_of_birth')->default(now());
             $table->string('medical_insurance_number')->nullable();
+            $table->string("ethnic_group")->nullable();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
 

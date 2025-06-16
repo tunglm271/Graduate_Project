@@ -16,7 +16,7 @@ return new class extends Migration
             $table->float('total_amount');
             $table->enum('status',['pending','paid','failed'])->default('pending');
             $table->foreignId('medical_facility_id')->constrained()->onDelete('cascade');
-            $table->foreignId('appointment_id')->constrained()->onDelete('cascade');
+            $table->foreignId('appointment_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('health_profile_id')->constrained()->onDelete('cascade');
             $table->date('payment_date')->nullable();
             $table->string('payment_method')->default('vnpay');

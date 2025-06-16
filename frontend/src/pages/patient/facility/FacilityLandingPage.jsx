@@ -149,10 +149,10 @@ const FacilityLandingPage = () => {
                       className="w-16 h-16 rounded-full object-cover"
                     />
                     <div>
-                      <p className="font-semibold">{doc.name}</p>
-                      <p className="text-sm text-gray-600">{doc.position}</p>
+                      <p className="font-semibold">BS. {doc.name}</p>
+                      <p className="text-sm text-gray-600">Chức danh: {doc.position}</p>
                       <p className="text-sm text-gray-600">
-                        Chuyên trị: {doc.specialization}
+                        Chuyên khoa: {doc.specialization}
                       </p>
                     </div>
                   </li>

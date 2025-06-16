@@ -28,6 +28,10 @@ class StoreHealthProfileRequest extends FormRequest
             'gender' => 'required|string|max:10',
             'height' => 'required|numeric',
             'weight' => 'required|numeric',
+            'medical_insurance_number' => 'nullable|string|max:255',
+            'ethnic_group' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
         ];
     }
 }

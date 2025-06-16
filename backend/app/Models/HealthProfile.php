@@ -22,6 +22,9 @@ class HealthProfile extends Model
         'date_of_birth',
         'patient_id',
         'medical_insurance_number',
+        'ethnic_group',
+        'phone',
+        'address',
     ];
 
     public function patient()

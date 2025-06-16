@@ -16,6 +16,7 @@ export { default as NewsList } from './patient/news/NewsList.jsx';
 export { default as NewDetail } from './patient/news/NewDetail.jsx';
 export { default as AllNews } from './patient/news/AllNews.jsx';
 export { default as AllExternalNews } from './patient/news/AllExternalNews.jsx';
+export { default as DoctorDetail } from './patient/doctor/DoctorDetail.jsx';
 
 export { default as FacilityDashboard } from './facility/FacilityDashboard.jsx';
 export { default as FacilityReservations } from './facility/FacilityReservations.jsx';

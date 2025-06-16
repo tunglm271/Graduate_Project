@@ -42,7 +42,7 @@
   "Normal": "Bình thường",
   "Abnormal": "Bất thường",
   "Needs monitoring": "Cần theo dõi",
-  "health-profiles-list": "Danh sách hồ sơ sức khỏe",
+  "health-profiles-list": "Hồ sơ sức khỏe gia đình",
   "ai-diagnosis": "Chẩn đoán với AI",
   "add-profile": "Thêm hồ sơ",
   "profile": {
@@ -189,6 +189,7 @@
         "fullName": "Họ tên: BS. {{name}}",
         "specialty": "Chuyên khoa: Nội tiết",
         "experience": "Kinh nghiệm: 5 năm",
+        "title": "Chức danh",
         "phone": "SĐT: 034124578"
       },
       "appointmentDate": "Ngày khám: {{date}}",
@@ -369,6 +370,43 @@
         "pending": "Đang chờ",
         "scheduled": "Đã lên lịch",
         "rescheduled": "Đã lên lịch lại"
+      }
+    },
+    "doctor_management": {
+      "add_new_doctor": "Thêm bác sĩ mới",
+      "basic_info": "Thông tin cơ bản",
+      "schedule": "Lịch làm việc",
+      "confirm": "Xác nhận",
+      "full_name": "Họ và tên",
+      "specialty": "Chuyên khoa",
+      "position": "Chức danh",
+      "email": "Email",
+      "phone_number": "Số điện thoại",
+      "back": "Quay lại",
+      "next": "Tiếp theo",
+      "doctor_created_success": "Tạo bác sĩ thành công",
+      "failed_to_create_doctor": "Tạo bác sĩ thất bại",
+      "monday": "Thứ Hai",
+      "tuesday": "Thứ Ba",
+      "wednesday": "Thứ Tư",
+      "thursday": "Thứ Năm",
+      "friday": "Thứ Sáu",
+      "saturday": "Thứ Bảy",
+      "sunday": "Chủ Nhật",
+      "specialties": {
+        "cardiology": "Tim mạch",
+        "neurology": "Thần kinh",
+        "orthopedics": "Chỉnh hình",
+        "pediatrics": "Nhi khoa"
+      },
+      "positions": {
+        "general_practitioner": "Bác sĩ đa khoa",
+        "specialist_level_1": "Bác sĩ chuyên khoa I",
+        "specialist_level_2": "Bác sĩ chuyên khoa 2",
+        "master_of_medicine": "Thạc sĩ Y học",
+        "doctorate": "Tiến sĩ",
+        "professor": "Giáo sư",
+        "associate_professor": "Phó giáo sư"
       }
     }
   },

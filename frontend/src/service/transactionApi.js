@@ -14,6 +14,10 @@ const transactionApi = {
 
     getRevenueStats(params) {
         return api.get('revenue-statistics', { params });
+    },
+
+    createBill(data) {
+        return api.post('bills', data);
     }
 }
 

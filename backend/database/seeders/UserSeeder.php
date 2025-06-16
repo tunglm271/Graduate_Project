@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Role\Doctor;
-use App\Models\Role\MedicalFacility;
 use App\Models\Role\Patient;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -43,6 +41,7 @@ class UserSeeder extends Seeder
                 $patientProfile->healthProfiles()->create([
                     'name' => $patientName,
                     'relationship' => 'Self',
+                    'phone' => vnfaker()->mobilephone(10),
                 ]);
             }
         });
@@ -61,8 +60,8 @@ class UserSeeder extends Seeder
                 'medical_facility_id' => 1,
                 'name' => $name,
                 'phone' => vnfaker()->mobilephone(10),
-                'position' => "Bác sĩ",
-                'specialization' => "Chuyên khoa",
+                'position' => "Bác sĩ chuyên khoa " . ($index + 1),
+                'specialization' => "Y học cổ truyền",
                 'about' => "Giới thiệu về bác sĩ",
             ]);
             $doctorProfile->schedule()->create([
@@ -86,6 +85,12 @@ class UserSeeder extends Seeder
             $doctorProfile->schedule()->create([
                 'doctor_id' => $doctorProfile->id,
                 'day_of_week' => "Thứ Năm",
+                'start_time' => '08:00',
+                'end_time' => '17:00',
+            ]);
+             $doctorProfile->schedule()->create([
+                'doctor_id' => $doctorProfile->id,
+                'day_of_week' => "Thứ Sáu",
                 'start_time' => '08:00',
                 'end_time' => '17:00',
             ]);

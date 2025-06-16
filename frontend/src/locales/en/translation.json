@@ -185,6 +185,7 @@
         "fullName": "Full name: Dr. {{name}}",
         "specialty": "Specialty: Endocrinology",
         "experience": "Experience: 5 years",
+        "title": "Title",
         "phone": "Phone: 034124578"
       },
       "appointmentDate": "Appointment Date: {{date}}",
@@ -362,6 +363,43 @@
         "pending": "Pending",
         "scheduled": "Scheduled",
         "rescheduled": "Rescheduled"
+      }
+    },
+    "doctor_management": {
+      "add_new_doctor": "Add New Doctor",
+      "basic_info": "Basic Info",
+      "schedule": "Schedule",
+      "confirm": "Confirm",
+      "full_name": "Full Name",
+      "specialty": "Specialty",
+      "position": "Position",
+      "email": "Email",
+      "phone_number": "Phone Number",
+      "back": "Back",
+      "next": "Next",
+      "doctor_created_success": "Doctor created successfully",
+      "failed_to_create_doctor": "Failed to create doctor",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "specialties": {
+        "cardiology": "Cardiology",
+        "neurology": "Neurology",
+        "orthopedics": "Orthopedics",
+        "pediatrics": "Pediatrics"
+      },
+      "positions": {
+        "general_practitioner": "General Practitioner",
+        "specialist_level_1": "Specialist Level 1",
+        "specialist_level_2": "Specialist Level 2",
+        "master_of_medicine": "Master of Medicine",
+        "doctorate": "Doctorate",
+        "professor": "Professor",
+        "associate_professor": "Associate Professor"
       }
     }
   },

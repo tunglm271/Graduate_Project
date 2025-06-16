@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -15,18 +15,20 @@ import {
 import doctorApi from "../../service/DoctorApi";
 import WorkSchedule from "../WorkSchedule";
 import useCustomSnackbar from "../../hooks/useCustomSnackbar";
-
-const specialties = ["Cardiology", "Neurology", "Orthopedics", "Pediatrics"];
+import PropTypes from "prop-types";
+import { useTranslation } from "react-i18next";
 
 const CreateDoctorDialog = ({ open, onClose }) => {
+  const { t } = useTranslation();
+
   const daysOfWeek = [
-    "Thứ Hai",
-    "Thứ Ba",
-    "Thứ Tư",
-    "Thứ Năm",
-    "Thứ Sáu",
-    "Thứ Bảy",
-    "Chủ Nhật",
+    t("admin.doctor_management.monday"),
+    t("admin.doctor_management.tuesday"),
+    t("admin.doctor_management.wednesday"),
+    t("admin.doctor_management.thursday"),
+    t("admin.doctor_management.friday"),
+    t("admin.doctor_management.saturday"),
+    t("admin.doctor_management.sunday"),
   ];
   const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
   const [activeStep, setActiveStep] = useState(0);
@@ -66,20 +68,27 @@ const CreateDoctorDialog = ({ open, onClose }) => {
     doctorApi
       .create(formData, weekSchedule)
       .then(() => {
-        showSuccessSnackbar("Doctor created successfully");
+        showSuccessSnackbar(
+          t("admin.doctor_management.doctor_created_success")
+        );
       })
       .catch((error) => {
-        showErrorSnackbar("Failed to create doctor");
+        console.error("Failed to create doctor:", error);
+        showErrorSnackbar(t("admin.doctor_management.failed_to_create_doctor"));
       });
     onClose();
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Add New Doctor</DialogTitle>
+      <DialogTitle>{t("admin.doctor_management.add_new_doctor")}</DialogTitle>
       <DialogContent>
         <Stepper activeStep={activeStep} alternativeLabel>
-          {["Basic Info", "Schedule", "Confirm"].map((label) => (
+          {[
+            t("admin.doctor_management.basic_info"),
+            t("admin.doctor_management.schedule"),
+            t("admin.doctor_management.confirm"),
+          ].map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
             </Step>
@@ -96,7 +105,7 @@ const CreateDoctorDialog = ({ open, onClose }) => {
             <div>
               <TextField
                 fullWidth
-                label="Full Name"
+                label={t("admin.doctor_management.full_name")}
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
@@ -105,13 +114,18 @@ const CreateDoctorDialog = ({ open, onClose }) => {
               <TextField
                 fullWidth
                 select
-                label="Specialty"
+                label={t("admin.doctor_management.specialty")}
                 name="specialization"
                 value={formData.specialization}
                 onChange={handleChange}
                 margin="normal"
               >
-                {specialties.map((option) => (
+                {[
+                  t("admin.doctor_management.specialties.cardiology"),
+                  t("admin.doctor_management.specialties.neurology"),
+                  t("admin.doctor_management.specialties.orthopedics"),
+                  t("admin.doctor_management.specialties.pediatrics"),
+                ].map((option) => (
                   <MenuItem key={option} value={option}>
                     {option}
                   </MenuItem>
@@ -119,15 +133,56 @@ const CreateDoctorDialog = ({ open, onClose }) => {
               </TextField>
               <TextField
                 fullWidth
-                label="Position"
+                select
+                label={t("admin.doctor_management.position")}
                 name="position"
                 value={formData.position}
                 onChange={handleChange}
                 margin="normal"
-              />
+              >
+                {[
+                  {
+                    textKey:
+                      "admin.doctor_management.positions.general_practitioner",
+                    value: "Bác sĩ đa khoa",
+                  },
+                  {
+                    textKey:
+                      "admin.doctor_management.positions.specialist_level_1",
+                    value: "Bác sĩ chuyên khoa I",
+                  },
+                  {
+                    textKey:
+                      "admin.doctor_management.positions.specialist_level_2",
+                    value: "bác sĩ chuyên khoa 2",
+                  },
+                  {
+                    textKey:
+                      "admin.doctor_management.positions.master_of_medicine",
+                    value: "Thạc sĩ Y học",
+                  },
+                  {
+                    textKey: "admin.doctor_management.positions.doctorate",
+                    value: "tiến sĩ",
+                  },
+                  {
+                    textKey: "admin.doctor_management.positions.professor",
+                    value: "giáo sư",
+                  },
+                  {
+                    textKey:
+                      "admin.doctor_management.positions.associate_professor",
+                    value: "phó giáo sư",
+                  },
+                ].map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {t(option.textKey)}
+                  </MenuItem>
+                ))}
+              </TextField>
               <TextField
                 fullWidth
-                label="Email"
+                label={t("admin.doctor_management.email")}
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
@@ -135,7 +190,7 @@ const CreateDoctorDialog = ({ open, onClose }) => {
               />
               <TextField
                 fullWidth
-                label="Phone Number"
+                label={t("admin.doctor_management.phone_number")}
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
@@ -174,22 +229,27 @@ const CreateDoctorDialog = ({ open, onClose }) => {
           >
             <div>
               <p>
-                <strong>Full Name:</strong> {formData.name}
+                <strong>{t("admin.doctor_management.full_name")}:</strong>{" "}
+                {formData.name}
               </p>
               <p>
-                <strong>Specialty:</strong> {formData.specialization}
+                <strong>{t("admin.doctor_management.specialty")}:</strong>{" "}
+                {formData.specialization}
               </p>
               <p>
-                <strong>Position:</strong> {formData.position}
+                <strong>{t("admin.doctor_management.position")}:</strong>{" "}
+                {formData.position}
               </p>
               <p>
-                <strong>Email:</strong> {formData.email}
+                <strong>{t("admin.doctor_management.email")}:</strong>{" "}
+                {formData.email}
               </p>
               <p>
-                <strong>Phone:</strong> {formData.phone}
+                <strong>{t("admin.doctor_management.phone_number")}:</strong>{" "}
+                {formData.phone}
               </p>
               <p>
-                <strong>Schedule:</strong>
+                <strong>{t("admin.doctor_management.schedule")}:</strong>
               </p>
               <ul>
                 {Object.entries(weekSchedule).map(
@@ -213,23 +273,32 @@ const CreateDoctorDialog = ({ open, onClose }) => {
         )}
       </DialogContent>
       <DialogActions>
-        {activeStep > 0 && <Button onClick={handleBack}>Back</Button>}
+        {activeStep > 0 && (
+          <Button onClick={handleBack}>
+            {t("admin.doctor_management.back")}
+          </Button>
+        )}
         {activeStep < 2 ? (
           <Button
             onClick={handleNext}
             variant="contained"
             disabled={formData.name === "" || formData.email === ""}
           >
-            Next
+            {t("admin.doctor_management.next")}
           </Button>
         ) : (
           <Button onClick={handleSubmit} variant="contained" color="primary">
-            Confirm
+            {t("admin.doctor_management.confirm")}
           </Button>
         )}
       </DialogActions>
     </Dialog>
   );
+};
+
+CreateDoctorDialog.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default CreateDoctorDialog;

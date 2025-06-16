@@ -173,4 +173,30 @@ class TransactionController extends Controller
             'top_services' => $topServices,
         ]);
     }
+
+    public function createBill(Request $request) {
+        $bill = new Bill();
+        $bill->appointment_id = null;
+        $bill->medical_facility_id = $request->user()->medicalFacility->id;
+        $bill->total_amount = $request->input('total_amount');
+        $bill->health_profile_id = $request->input('health_profile_id');
+        $bill->payment_method = $request->input('payment_method', 'vnpay');
+        if($request->input('payment_method') == 'pay_at_front_desk') {
+            $bill->status = 'paid';
+            $bill->payment_date = now();
+        } else {
+            $bill->status = 'pending';
+        }
+        $bill->save();
+
+        // Attach services to the bill
+        if ($request->has('services')) {
+            $services = $request->input('services');
+            foreach ($services as $serviceId) {
+                $bill->services()->attach($serviceId);
+            }
+        }
+
+        return response()->json($bill->load(['services', 'medicalFacility']));
+    }
 }

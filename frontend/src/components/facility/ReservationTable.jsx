@@ -50,7 +50,7 @@ export default function ReservationTable({
       field: "service",
       headerName: "Dịch Vụ Khám",
       width: 200,
-      renderCell: (params) => params.row.medical_service?.name || "N/A",
+      renderCell: (params) => params.row.medical_service?.name || "Đơn hẹn bác sĩ",
     },
     {
       field: "appointmentDate",

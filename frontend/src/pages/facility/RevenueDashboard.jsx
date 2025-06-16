@@ -18,6 +18,17 @@ import {
   MenuItem,
   TextField,
   InputAdornment,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  IconButton,
+  Autocomplete,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  FormLabel,
 } from "@mui/material";
 import {
   BarChart,
@@ -39,6 +50,10 @@ import "dayjs/locale/vi";
 import { Search as SearchIcon } from "@mui/icons-material";
 import transactionApi from "../../service/transactionApi";
 import useCustomSnackbar from "../../hooks/useCustomSnackbar";
+import { Plus } from "lucide-react";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import patientApi from "../../service/patientApi";
+import medicalServiceApi from "../../service/medicalServiceApi";
 
 const RevenueDashboard = () => {
   const [timeRange, setTimeRange] = useState("month"); // month, quarter, year
@@ -51,11 +66,24 @@ const RevenueDashboard = () => {
     top_services: [],
     bills: [],
   });
-  const { showErrorSnackbar } = useCustomSnackbar();
+  const { showErrorSnackbar, showSuccessSnackbar } = useCustomSnackbar();
+  const [openCreateBill, setOpenCreateBill] = useState(false);
+  const [patients, setPatients] = useState([]);
+  const [services, setServices] = useState([]);
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [billItems, setBillItems] = useState([{ service: null, quantity: 1 }]);
+  const [paymentMethod, setPaymentMethod] = useState("pay_at_front_desk"); // Default to pay_at_front_desk
 
   useEffect(() => {
     fetchRevenueData();
   }, [timeRange, startDate, endDate]);
+
+  useEffect(() => {
+    if (openCreateBill) {
+      fetchPatients();
+      fetchServices();
+    }
+  }, [openCreateBill]);
 
   const fetchRevenueData = async () => {
     try {
@@ -70,6 +98,26 @@ const RevenueDashboard = () => {
     } catch (error) {
       console.error("Error fetching revenue data:", error);
       showErrorSnackbar("Không thể tải dữ liệu doanh thu");
+    }
+  };
+
+  const fetchPatients = async () => {
+    try {
+      const response = await patientApi.getAll();
+      setPatients(response.data);
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+      showErrorSnackbar("Không thể tải danh sách bệnh nhân");
+    }
+  };
+
+  const fetchServices = async () => {
+    try {
+      const response = await medicalServiceApi.getByFacility();
+      setServices(response.data);
+    } catch (error) {
+      console.error("Error fetching services:", error);
+      showErrorSnackbar("Không thể tải danh sách dịch vụ");
     }
   };
 
@@ -113,6 +161,85 @@ const RevenueDashboard = () => {
         service.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
   );
+
+  const handleAddServiceRow = () => {
+    setBillItems([...billItems, { service: null, quantity: 1 }]);
+  };
+
+  const handleRemoveServiceRow = (index) => {
+    setBillItems(billItems.filter((_, i) => i !== index));
+  };
+
+  const handleServiceChange = (index, service) => {
+    const newBillItems = [...billItems];
+    newBillItems[index].service = service;
+    setBillItems(newBillItems);
+  };
+
+  const handleQuantityChange = (index, quantity) => {
+    const newBillItems = [...billItems];
+    newBillItems[index].quantity = Math.max(1, parseInt(quantity) || 1);
+    setBillItems(newBillItems);
+  };
+
+  const handleCreateBill = async () => {
+    if (!selectedPatient) {
+      showErrorSnackbar("Vui lòng chọn bệnh nhân");
+      return;
+    }
+
+    if (billItems.some((item) => !item.service)) {
+      showErrorSnackbar("Vui lòng chọn đầy đủ dịch vụ");
+      return;
+    }
+
+    try {
+      const totalAmount = calculateBillTotal();
+      const billData = {
+        health_profile_id: selectedPatient.id,
+        payment_method: paymentMethod,
+        total_amount: totalAmount,
+        services: billItems.map((item) => ({
+          service_id: item.service.id,
+          quantity: item.quantity,
+        })),
+      };
+
+      const response = await transactionApi.createBill(billData);
+
+      if (paymentMethod === "vnpay") {
+        // Handle VNPay payment flow
+        const vnpayResponse = await transactionApi.vnPayPayment(
+          response.data.id
+        );
+        // Redirect to VNPay payment URL
+        window.location.href = vnpayResponse.data.payment_url;
+      } else {
+        // For pay_at_front_desk, just show success message
+        showSuccessSnackbar("Tạo hóa đơn thành công");
+        setOpenCreateBill(false);
+        // Reset form
+        setSelectedPatient(null);
+        setBillItems([{ service: null, quantity: 1 }]);
+        setPaymentMethod("pay_at_front_desk");
+        fetchRevenueData(); // Refresh the revenue data
+      }
+    } catch (error) {
+      console.error("Error creating bill:", error);
+      showErrorSnackbar("Không thể tạo hóa đơn");
+    }
+  };
+
+  const calculateServiceTotal = (service, quantity) => {
+    if (!service) return 0;
+    return service.price * quantity;
+  };
+
+  const calculateBillTotal = () => {
+    return billItems.reduce((total, item) => {
+      return total + calculateServiceTotal(item.service, item.quantity);
+    }, 0);
+  };
 
   return (
     <Box sx={{ p: 3 }}>
@@ -256,9 +383,16 @@ const RevenueDashboard = () => {
       {/* Payment History Table */}
       <Paper sx={{ p: 2 }}>
         <Box sx={{ mb: 2 }}>
-          <Typography variant="h6" gutterBottom>
-            Lịch sử thanh toán
-          </Typography>
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-xl">Lịch sử giao dịch</p>
+            <button
+              onClick={() => setOpenCreateBill(true)}
+              className="flex items-center font-semibold rounded-md text-sm bg-blue-500 text-white px-2 py-1 hover:bg-blue-600 transition-colors cursor-pointer"
+            >
+              <Plus className="inline mr-1" />
+              Tạo hóa đơn
+            </button>
+          </div>
           <TextField
             fullWidth
             variant="outlined"
@@ -337,6 +471,199 @@ const RevenueDashboard = () => {
           </Table>
         </TableContainer>
       </Paper>
+
+      {/* Create Bill Dialog */}
+      <Dialog
+        open={openCreateBill}
+        onClose={() => {
+          setOpenCreateBill(false);
+          // Reset form when closing
+          setSelectedPatient(null);
+          setBillItems([{ service: null, quantity: 1 }]);
+          setPaymentMethod("pay_at_front_desk");
+        }}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>
+          <Typography variant="h6">Tạo hóa đơn mới</Typography>
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ mt: 2 }}>
+            <Autocomplete
+              options={patients}
+              getOptionLabel={(option) => `${option.name} - ${option.phone}`}
+              value={selectedPatient}
+              onChange={(_, newValue) => setSelectedPatient(newValue)}
+              renderInput={(params) => (
+                <TextField {...params} label="Chọn bệnh nhân" fullWidth />
+              )}
+              sx={{ mb: 3 }}
+            />
+
+            <FormControl component="fieldset" sx={{ mb: 3 }}>
+              <FormLabel component="legend">Hình thức thanh toán</FormLabel>
+              <RadioGroup
+                row
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              >
+                <FormControlLabel
+                  value="pay_at_front_desk"
+                  control={<Radio />}
+                  label="Thanh toán trực tiếp tại quầy"
+                />
+                <FormControlLabel
+                  value="vnpay"
+                  control={<Radio />}
+                  label="Chuyển khoản"
+                />
+              </RadioGroup>
+            </FormControl>
+
+            <div className="flex flex-col">
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 2,
+                  mb: 2,
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <Typography sx={{ flex: 1, fontWeight: "bold" }}>
+                  Dịch vụ
+                </Typography>
+                <Typography
+                  sx={{
+                    width: "80px",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  Số lượng
+                </Typography>
+                <Typography
+                  sx={{
+                    width: "120px",
+                    fontWeight: "bold",
+                    textAlign: "right",
+                  }}
+                >
+                  Đơn giá
+                </Typography>
+                <Typography
+                  sx={{
+                    width: "120px",
+                    fontWeight: "bold",
+                    textAlign: "right",
+                  }}
+                >
+                  Thành tiền
+                </Typography>
+                <Box sx={{ width: "40px" }}></Box>
+              </Box>
+
+              {billItems.map((item, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    gap: 2,
+                    mb: 2,
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <FormControl sx={{ flex: 1 }}>
+                    <Autocomplete
+                      options={services}
+                      getOptionLabel={(option) => option.name}
+                      value={item.service}
+                      onChange={(_, newValue) =>
+                        handleServiceChange(index, newValue)
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Chọn dịch vụ"
+                          variant="standard"
+                          fullWidth
+                        />
+                      )}
+                    />
+                  </FormControl>
+                  <TextField
+                    type="number"
+                    label="Số lượng"
+                    value={item.quantity}
+                    onChange={(e) =>
+                      handleQuantityChange(index, e.target.value)
+                    }
+                    sx={{ width: "80px" }}
+                    InputProps={{ inputProps: { min: 1 } }}
+                  />
+                  <Typography sx={{ width: "120px", textAlign: "right" }}>
+                    {item.service ? formatCurrency(item.service.price) : "0 ₫"}
+                  </Typography>
+                  <Typography sx={{ width: "120px", textAlign: "right" }}>
+                    {formatCurrency(
+                      calculateServiceTotal(item.service, item.quantity)
+                    )}
+                  </Typography>
+                  <IconButton
+                    onClick={() => handleRemoveServiceRow(index)}
+                    disabled={billItems.length === 1}
+                    sx={{ width: "40px" }}
+                  >
+                    <HighlightOffIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              ))}
+            </div>
+
+            <Button
+              startIcon={<Plus />}
+              onClick={handleAddServiceRow}
+              variant="outlined"
+              sx={{ mt: 1 }}
+            >
+              Thêm dịch vụ
+            </Button>
+
+            <Box
+              sx={{
+                mt: 3,
+                pt: 2,
+                borderTop: "1px solid #e0e0e0",
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                gap: 2,
+              }}
+            >
+              <Typography variant="h6">Tổng tiền:</Typography>
+              <Typography
+                variant="h6"
+                color="primary"
+                sx={{ fontWeight: "bold" }}
+              >
+                {formatCurrency(calculateBillTotal())}
+              </Typography>
+            </Box>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenCreateBill(false)}>Hủy</Button>
+          <Button
+            onClick={handleCreateBill}
+            variant="contained"
+            color="primary"
+          >
+            Tạo hóa đơn
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

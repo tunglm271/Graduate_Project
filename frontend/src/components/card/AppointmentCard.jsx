@@ -107,7 +107,7 @@ const AppointmentCard = ({ appointment }) => {
               {t("appointment.card.doctor.specialty")}
             </Typography>
             <Typography variant="body2">
-              {t("appointment.card.doctor.experience")}
+              {t("appointment.card.doctor.title")}: Bác sĩ chuyên khoa I
             </Typography>
             <Typography variant="body2">
               {t("appointment.card.doctor.phone")}
