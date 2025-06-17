@@ -71,6 +71,14 @@ services:
       timeout: 5s
       retries: 20
       start_period: 10s
+  rag:
+    build:
+      context: ./RAG
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    networks:
+      - app-network
 
 networks:
   app-network:
