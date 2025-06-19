@@ -53,7 +53,7 @@ import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 import { Plus } from "lucide-react";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import patientApi from "../../service/patientApi";
-import medicalServiceApi from "../../service/medicalServiceApi";
+import medicalServiceApi from "../../service/medicalServiceAPi";
 
 const RevenueDashboard = () => {
   const [timeRange, setTimeRange] = useState("month"); // month, quarter, year
