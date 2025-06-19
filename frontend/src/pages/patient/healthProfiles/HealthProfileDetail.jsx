@@ -20,7 +20,6 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HomeIcon from "@mui/icons-material/Home";
 import CallIcon from "@mui/icons-material/Call";
 import WcIcon from "@mui/icons-material/Wc";
-import AvatarFrame from "@images/avatar-frame.png";
 import HealthProfileHistory from "./HealthProfileHistory";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
