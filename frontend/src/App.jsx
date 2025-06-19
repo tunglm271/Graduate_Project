@@ -77,8 +77,6 @@ import {
 } from "./pages";
 import "./echo";
 
-const googleClientId =
-  "91407289131-f8lts1h15ppivupjb5e027806kk88s5o.apps.googleusercontent.com";
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -199,7 +197,7 @@ function App() {
           maxSnack={3}
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
         >
-          <GoogleOAuthProvider clientId={googleClientId}>
+          <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
             <RouterProvider router={router} />
             <NewChat />
           </GoogleOAuthProvider>
