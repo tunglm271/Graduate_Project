@@ -17,14 +17,20 @@ class HealthProfile extends Model
         'relationship',
         'avatar',
         'gender',
-        'height',
-        'weight',
         'date_of_birth',
         'patient_id',
         'medical_insurance_number',
         'ethnic_group',
         'phone',
         'address',
+        'email',
+        'otp',
+        'insurance_expiration_date',
+        'hometown_id',
+    ];
+
+    protected $appends = [
+        'home_town_name',
     ];
 
     public function patient()
@@ -61,5 +67,13 @@ class HealthProfile extends Model
     public function profileMedicineLogs()
     {
         return $this->hasMany(ProfileMedicineLog::class);
+    }
+
+    public function hometown() {
+        return $this->belongsTo(City::class, 'hometown_id');
+    }
+
+    public function getHomeTownNameAttribute() {
+        return $this->hometown ? $this->hometown->name : null;
     }
 }

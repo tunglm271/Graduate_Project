@@ -13,7 +13,9 @@ const VisuallyHiddenInput = styled("input")({
     width: 1,
 });
 
-const FileUploader = ({text, onChange}) => {
+const FileUploader = ({icon = <CameraAltIcon /> , text, onChange, accept= "image/*", multiple = true }) => {
+
+    console.log("FileUploader accept:", accept);
     return (
         <label>
             <Button 
@@ -28,13 +30,13 @@ const FileUploader = ({text, onChange}) => {
                     border: '1px dashed #007bff',
                 }}
             >
-                <CameraAltIcon />
+                {icon}
                 {text}
             </Button>
             <VisuallyHiddenInput
                 type="file"
-                accept="image/*"
-                multiple
+                accept={accept}
+                multiple={multiple}
                 onChange={onChange}
             />
         </label>

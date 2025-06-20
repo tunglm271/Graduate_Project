@@ -13,6 +13,10 @@ import {
   Typography,
   Box,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -24,6 +28,9 @@ import "slick-carousel/slick/slick-theme.css";
 import { getIndicatorTypes, getMedicines } from "../hooks/useCachedData";
 import appointmentApi from "../service/appointmentApi";
 import useCustomSnackbar from "../hooks/useCustomSnackbar";
+import DownloadIcon from "@mui/icons-material/Download";
+import { ChartBarDecreasing } from "lucide-react";
+import * as XLSX from "xlsx";
 
 const AddResultDrawer = ({ open, onClose, appointmentId, onSuccess }) => {
   // State management
@@ -46,6 +53,8 @@ const AddResultDrawer = ({ open, onClose, appointmentId, onSuccess }) => {
   const [imageTestSummary, setImageTestSummary] = useState("");
   const { data: indicatorTypes = [] } = getIndicatorTypes();
   const { data: medicinesData = [] } = getMedicines();
+  const [openNumerialUploadDialog, setOpenNumerialUploadDialog] =
+    useState(false);
 
   // Event handlers
   const handleAddNumerialResult = () => {
@@ -188,6 +197,49 @@ const AddResultDrawer = ({ open, onClose, appointmentId, onSuccess }) => {
     const month = String(today.getMonth() + 1).padStart(2, "0");
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
+  };
+
+  const handleNumerialUploadFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.name.endsWith(".xlsx")) {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const data = evt.target.result;
+        const workbook = XLSX.read(data, { type: "binary" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        // Bỏ qua dòng tiêu đề nếu có, lấy từ dòng 2 trở đi
+        const rows = jsonData.slice(1);
+        const results = rows
+          .map((row) => ({
+            indicator_type_id: row[0] || "",
+            value: row[1] || "",
+            evaluation: row[2] || "",
+          }))
+          .filter((item) => item.indicator_type_id && item.value);
+        if (results.length === 0) {
+          showErrorSnackbar("File không có dữ liệu hợp lệ.");
+        } else {
+          setNumerialResults(results);
+        }
+      };
+      reader.readAsBinaryString(file);
+      setOpenNumerialUploadDialog(false);
+      showSuccessSnackbar("Tải lên kết quả chỉ số thành công!");
+    } else {
+      showErrorSnackbar("Chỉ chấp nhận file .xlsx");
+    }
+  };
+
+  const handleDownloadTemplate = () => {
+    // Replace with your actual template file path or download logic
+    const link = document.createElement("a");
+    link.href = "/templates/numerial_result_template.xlsx";
+    link.download = "numerial_result_template.xlsx";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   // Render treatment plan section
@@ -398,16 +450,25 @@ const AddResultDrawer = ({ open, onClose, appointmentId, onSuccess }) => {
         <div className="flex flex-col gap-2">
           {toggleNumerialResult ? (
             <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center mb-2">
                 <p className="font-bold">Xét nghiệm chỉ số</p>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={() => setToggleNumerialResult(false)}
-                  disabled={isSubmitting}
-                >
-                  Xóa
-                </Button>
+                <div className="flex gap-2 items-center">
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => setOpenNumerialUploadDialog(true)}
+                  >
+                    Upload
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => setToggleNumerialResult(false)}
+                    disabled={isSubmitting}
+                  >
+                    Xóa
+                  </Button>
+                </div>
               </div>
 
               <div className="flex flex-col gap-3 bg-slate-50 border-gray-400 rounded border-[1px] p-3">
@@ -706,7 +767,7 @@ const AddResultDrawer = ({ open, onClose, appointmentId, onSuccess }) => {
       onClose={onClose}
       sx={{
         "& .MuiDrawer-paper": {
-          width: "700px",
+          width: "900px",
           padding: "20px",
         },
         zIndex: 1399,
@@ -724,6 +785,46 @@ const AddResultDrawer = ({ open, onClose, appointmentId, onSuccess }) => {
       >
         {treatmentPlan ? renderTreatmentPlan() : renderExaminationResults()}
       </Slide>
+      <Dialog
+        open={openNumerialUploadDialog}
+        onClose={() => setOpenNumerialUploadDialog(false)}
+        maxWidth="xs"
+        fullWidth
+        sx={{
+          zIndex: 1401,
+        }}
+      >
+        <DialogTitle>
+          <div className="flex justify-between items-center">
+            Tải lên kết quả chỉ số
+            <p
+              className="text-sm flex items-center text-blue-500 hover:underline cursor-pointer"
+              onClick={handleDownloadTemplate}
+            >
+              <DownloadIcon fontSize="14px" />
+              Tải template
+            </p>
+          </div>
+        </DialogTitle>
+        <DialogContent>
+          <FileUploader
+            icon={<ChartBarDecreasing />}
+            text={"Chọn file chỉ số xét nghiệm (.xlsx)"}
+            onChange={handleNumerialUploadFileChange}
+            accept=".xlsx, .xls"
+            multiple={false}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenNumerialUploadDialog(false)}
+            color="secondary"
+          >
+            Đóng
+          </Button>
+          {/* Add upload logic here if needed */}
+        </DialogActions>
+      </Dialog>
     </Drawer>
   );
 };

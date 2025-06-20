@@ -206,14 +206,15 @@ const RevenueDashboard = () => {
       };
 
       const response = await transactionApi.createBill(billData);
+      console.log("Bill created:", response.data);
 
       if (paymentMethod === "vnpay") {
         // Handle VNPay payment flow
-        const vnpayResponse = await transactionApi.vnPayPayment(
+        const vnpayResponse = await transactionApi.vnPayPaymentAtFrontDesk(
           response.data.id
         );
         // Redirect to VNPay payment URL
-        window.location.href = vnpayResponse.data.payment_url;
+        window.open(vnpayResponse.data.data, "_blank");
       } else {
         // For pay_at_front_desk, just show success message
         showSuccessSnackbar("Tạo hóa đơn thành công");
@@ -303,19 +304,10 @@ const RevenueDashboard = () => {
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom>
-                Số lượng dịch vụ đã thanh toán
+                Số lượng hóa đơn đã thanh toán
               </Typography>
               <Typography variant="h4">
-                {revenueData.bills.reduce(
-                  (total, bill) =>
-                    total +
-                    bill.services.reduce(
-                      (billTotal, service) =>
-                        billTotal + service.pivot.quantity,
-                      0
-                    ),
-                  0
-                )}
+                {revenueData.total_paid_appointments || 0}
               </Typography>
             </CardContent>
           </Card>

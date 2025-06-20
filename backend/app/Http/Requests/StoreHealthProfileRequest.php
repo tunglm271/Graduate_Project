@@ -26,12 +26,15 @@ class StoreHealthProfileRequest extends FormRequest
             'relationship' => 'required|string|max:255',
             'date_of_birth' => 'required|date',
             'gender' => 'required|string|max:10',
-            'height' => 'required|numeric',
-            'weight' => 'required|numeric',
             'medical_insurance_number' => 'nullable|string|max:255',
+            'healthInsuranceNumber' => 'nullable|string|max:255',
             'ethnic_group' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:255',
+            'insurance_expiration_date' => 'nullable|date',
+            'insuranceExpirationDate' => 'nullable|date',
+            'hometown_id' => 'nullable|exists:cities,id',
+            'hometown' => 'nullable|exists:cities,id',
         ];
     }
 }

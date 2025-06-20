@@ -40,6 +40,61 @@ import { getDiseases, getAllergies } from "../../../hooks/useCachedData.js";
 import dayjs from "dayjs";
 import AvatarEditor from "../../../components/AvatarEditor.jsx";
 import { Link } from "react-router-dom";
+import { getCities } from "../../../hooks/useCachedData";
+
+const ethnicGroups = [
+  "Kinh",
+  "Tày",
+  "Thái",
+  "Mường",
+  "Khmer",
+  "Hoa",
+  "Nùng",
+  "H'Mông",
+  "Dao",
+  "Gia Rai",
+  "Ê Đê",
+  "Ba Na",
+  "Sán Chay",
+  "Chăm",
+  "Xê Đăng",
+  "Sán Dìu",
+  "Hrê",
+  "Ra Glai",
+  "Mnông",
+  "Thổ",
+  "Stiêng",
+  "Khơ Mú",
+  "Bru - Vân Kiều",
+  "Cơ Ho",
+  "Chơ Ro",
+  "Giáy",
+  "Tà Ôi",
+  "Mạ",
+  "Co",
+  "Chứt",
+  "La Hủ",
+  "Kháng",
+  "Lào",
+  "La Chí",
+  "Phù Lá",
+  "La Ha",
+  "Pà Thẻn",
+  "Lự",
+  "Ngái",
+  "Chỉ",
+  "Lô Lô",
+  "Mảng",
+  "Cờ Lao",
+  "Bố Y",
+  "Cống",
+  "Si La",
+  "Pu Péo",
+  "Brâu",
+  "Ơ Đu",
+  "Rơ Măm",
+  "Khác",
+];
 
 const HealthProfileEdit = () => {
   const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
@@ -58,14 +113,17 @@ const HealthProfileEdit = () => {
     email: "",
     address: "",
     healthInsuranceNumber: "",
-    height: 0,
-    weight: 0,
+    insuranceExpirationDate: null,
+    hometown_id: "",
+    ethnic_group: "",
     allergies: [],
     diseases: [],
   });
   const isEditing = !!id;
   const { data: diseases = [] } = getDiseases();
   const { data: allergies = [] } = getAllergies();
+  const { data: cities = [] } = getCities();
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -75,20 +133,29 @@ const HealthProfileEdit = () => {
         .getById(id)
         .then((res) => {
           setProfileValues({
-            ...profileValues,
-            name: res.data.name,
-            relationship: res.data.relationship,
-            gender: res.data.gender,
-            email: res.data.email,
-            phone: res.data.phone,
-            height: res.data.height,
-            weight: res.data.weight,
-            allergies: res.data.allergies.map((a) => a.id),
-            diseases: res.data.diseases.map((d) => d.id),
-            dateOfBirth: dayjs(res.data.date_of_birth),
+            name: res.data.name || "",
+            relationship: res.data.relationship || "",
+            gender: res.data.gender || "male",
+            email: res.data.email || "",
+            phone: res.data.phone || "",
+            address: res.data.address || "",
+            healthInsuranceNumber: res.data.healthInsuranceNumber || "",
+            insuranceExpirationDate: res.data.insuranceExpirationDate
+              ? dayjs(res.data.insuranceExpirationDate)
+              : null,
+            hometown_id: res.data.hometown_id || "",
+            ethnic_group: res.data.ethnic_group || "",
+            allergies: Array.isArray(res.data.allergies)
+              ? res.data.allergies.map((a) => a.id)
+              : [],
+            diseases: Array.isArray(res.data.diseases)
+              ? res.data.diseases.map((d) => d.id)
+              : [],
+            dateOfBirth: res.data.date_of_birth
+              ? dayjs(res.data.date_of_birth)
+              : null,
           });
           setCroppedPreviewURL(res.data.avatar);
-          console.log(res.data);
         })
         .catch((error) => {
           showErrorSnackbar(error);
@@ -113,12 +180,21 @@ const HealthProfileEdit = () => {
     formData.append("phone", profileValues.phone);
     formData.append("gender", profileValues.gender);
     formData.append("email", profileValues.email);
-    formData.append("height", profileValues.height);
-    formData.append("weight", profileValues.weight);
+    formData.append("address", profileValues.address);
     formData.append(
-      "healthInsuranceNumber",
+      "medical_insurance_number",
       profileValues.healthInsuranceNumber
     );
+    if (profileValues.insuranceExpirationDate) {
+      formData.append(
+        "insurance_expiration_date",
+        new Date(profileValues.insuranceExpirationDate?.$d)
+          .toISOString()
+          .split("T")[0]
+      );
+    }
+    formData.append("hometown_id", profileValues.hometown_id);
+    formData.append("ethnic_group", profileValues.ethnic_group);
     formData.append("allergies", JSON.stringify(profileValues.allergies));
     formData.append("diseases", JSON.stringify(profileValues.diseases));
 
@@ -159,7 +235,11 @@ const HealthProfileEdit = () => {
         <Link to={"/health-profile"} className="hover:underline">
           {t("health-profiles-list")}
         </Link>
-        {isEditing && <p className="text-gray-900">{profileValues.name}</p>}
+        {isEditing && (
+          <Link className="hover:underline" to={`/health-profile/${id}`}>
+            {profileValues.name}
+          </Link>
+        )}
         <p className="text-gray-900">
           {isEditing ? t("profile.common.edit") : t("profile.common.create")}
         </p>
@@ -327,6 +407,74 @@ const HealthProfileEdit = () => {
             </DemoContainer>
           </LocalizationProvider>
 
+          <FormControl fullWidth>
+            <InputLabel id="ethic-select-label">
+              {t("profile.detail.ethic_group")}
+            </InputLabel>
+            <Select
+              labelId="ethic-select-label"
+              id="ethic-select"
+              value={profileValues.ethnic_group}
+              label={t("profile.detail.ethic_group")}
+              onChange={(e) =>
+                setProfileValues({
+                  ...profileValues,
+                  ethnic_group: e.target.value,
+                })
+              }
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 300, // Giới hạn chiều cao dropdown
+                  },
+                },
+              }}
+            >
+              {ethnicGroups.map((group) => (
+                <MenuItem key={group} value={group}>
+                  {group}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <InputLabel id="hometown-select-label">
+              {t("profile.detail.hometown")}
+            </InputLabel>
+            <Select
+              labelId="hometown-select-label"
+              id="hometown-select"
+              value={profileValues.hometown_id}
+              label={t("profile.detail.hometown")}
+              onChange={(e) =>
+                setProfileValues({ ...profileValues, hometown_id: e.target.value })
+              }
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 300,
+                  },
+                },
+              }}
+            >
+              {cities.map((city) => (
+                <MenuItem key={city.id} value={city.id}>
+                  {city.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <TextField
+            label={t("address")}
+            fullWidth
+            value={profileValues.address}
+            onChange={(e) =>
+              setProfileValues({ ...profileValues, address: e.target.value })
+            }
+          />
+
           <TextField
             label="Email"
             value={profileValues.email}
@@ -345,44 +493,6 @@ const HealthProfileEdit = () => {
               },
             }}
           />
-          <div className="flex flex-col md:flex-row gap-4 w-full">
-            <TextField
-              label={`${t("profile.height")} (cm)`}
-              type="number"
-              value={profileValues.height}
-              onChange={(e) =>
-                setProfileValues({ ...profileValues, height: e.target.value })
-              }
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AccessibilityIcon />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-              className="w-full md:w-1/2"
-            />
-            <TextField
-              label={`${t("profile.weight")} (kg)`}
-              type="number"
-              value={profileValues.weight}
-              onChange={(e) =>
-                setProfileValues({ ...profileValues, weight: e.target.value })
-              }
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <ScaleIcon />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-              className="w-full md:w-1/2"
-            />
-          </div>
         </div>
         <div style={{ padding: isMobile ? "10px" : "20px" }}>
           <Box
@@ -394,42 +504,36 @@ const HealthProfileEdit = () => {
             }}
           >
             <p className="text-lg font-semibold w-full md:w-1/5 mb-2 md:mb-0">
-              {t("address")}
-            </p>
-            <TextField
-              label={t("address")}
-              fullWidth
-              sx={{ width: { xs: "100%", md: "80%" } }}
-              value={profileValues.address}
-              onChange={(e) =>
-                setProfileValues({ ...profileValues, address: e.target.value })
-              }
-            />
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column", md: "row" },
-              gap: 2,
-              mb: 2,
-            }}
-          >
-            <p className="text-lg font-semibold w-full md:w-1/5 mb-2 md:mb-0">
               {t("profile.detail.insurance-code")}
             </p>
-            <TextField
-              label={t("profile.detail.insurance-code")}
-              fullWidth
-              sx={{ width: { xs: "100%", md: "80%" } }}
-              value={profileValues.healthInsuranceNumber}
-              onChange={(e) =>
-                setProfileValues({
-                  ...profileValues,
-                  healthInsuranceNumber: e.target.value,
-                })
-              }
-            />
+            <div className="flex-1">
+              <TextField
+                label={t("profile.detail.insurance-code")}
+                fullWidth
+                value={profileValues.healthInsuranceNumber}
+                onChange={(e) =>
+                  setProfileValues({
+                    ...profileValues,
+                    healthInsuranceNumber: e.target.value,
+                  })
+                }
+              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={["DatePicker"]} sx={{ m: "auto 0" }}>
+                  <DatePicker
+                    label={t("profile.detail.insurance-expiration-date")}
+                    sx={{ width: "100%" }}
+                    value={profileValues.insuranceExpirationDate}
+                    onChange={(date) =>
+                      setProfileValues({
+                        ...profileValues,
+                        insuranceExpirationDate: date,
+                      })
+                    }
+                  />
+                </DemoContainer>
+              </LocalizationProvider>
+            </div>
           </Box>
 
           <Box

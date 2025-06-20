@@ -177,7 +177,25 @@ const PatientDetail = () => {
               <div className="text-gray-500 text-sm">
                 Email
                 <p className="text-black text-base">
-                  {loading ? <Skeleton /> : patient.email}
+                  {loading ? <Skeleton /> : patient.email || "Không có"}
+                </p>
+              </div>
+               <div className="text-gray-500 text-sm">
+                Dân tộc
+                <p className="text-black text-base">
+                  {loading ? <Skeleton /> : patient.ethnic_group || "Không có"}
+                </p>
+              </div>
+               <div className="text-gray-500 text-sm">
+                Quê quán
+                <p className="text-black text-base">
+                  {loading ? <Skeleton /> : patient.home_town_name || "Không có"}
+                </p>
+              </div>
+               <div className="text-gray-500 text-sm">
+                Địa chỉ
+                <p className="text-black text-base">
+                  {loading ? <Skeleton /> : patient.address || "Không có"}
                 </p>
               </div>
               <div className="text-gray-500 text-sm">
@@ -190,6 +208,12 @@ const PatientDetail = () => {
                   )}
                 </p>
               </div>
+                <div className="text-gray-500 text-sm">
+                Ngày hết hạn BHYT
+                <p className="text-black text-base">
+                  {loading ? <Skeleton /> : patient.insurance_expiration_date || "Không có"}
+                </p>
+              </div>
             </div>
 
             <p className="uppercase text-lg font-semibold border-l-2 border-gray-500 pl-3 mt-6">
@@ -199,13 +223,13 @@ const PatientDetail = () => {
               <div className="text-gray-500 text-sm">
                 Chiều cao
                 <p className="text-black text-base">
-                  {loading ? <Skeleton /> : `${patient.height} cm`}
+                  {loading ? <Skeleton /> : `${patient.height || 0} cm`}
                 </p>
               </div>
               <div className="text-gray-500 text-sm">
                 Cân nặng
                 <p className="text-black text-base">
-                  {loading ? <Skeleton /> : `${patient.weight} kg`}
+                  {loading ? <Skeleton /> : `${patient.weight || 0} kg`}
                 </p>
               </div>
             </div>
@@ -235,7 +259,7 @@ const PatientDetail = () => {
             </div>
 
             <p className="uppercase text-lg font-semibold border-l-2 border-gray-500 pl-3 mt-6">
-              Bệnh mãn tính
+              Bệnh tiển sử
             </p>
             <div className="mt-4">
               {loading ? (

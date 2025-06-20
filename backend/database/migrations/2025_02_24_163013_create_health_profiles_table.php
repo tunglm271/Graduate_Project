@@ -18,13 +18,15 @@ return new class extends Migration
             $table->string('relationship');
             $table->string('avatar')->nullable();
             $table->enum('gender',['male','female', 'other'])->default('other');
-            $table->integer('height')->default(0);
-            $table->integer('weight')->default(0);
             $table->date('date_of_birth')->default(now());
             $table->string('medical_insurance_number')->nullable();
-            $table->string("ethnic_group")->nullable();
+            $table->string("ethnic_group")->default('Kinh')->nullable();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
+            $table->string('email')->nullable();
+            $table->string('otp')->nullable();
+            $table->date('insurance_expiration_date')->nullable();
+            $table->foreignId('hometown_id')->nullable()->constrained('cities')->nullOnDelete();
 
             $table->foreignId('patient_id')->constrained()->onDelete('cascade');
         });

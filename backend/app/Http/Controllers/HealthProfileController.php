@@ -74,6 +74,13 @@ class HealthProfileController extends Controller
     public function update(UpdateHealthProfileRequest $request, HealthProfile $healthProfile)
     {
         $validatedData = $request->validated();
+
+        // Map frontend fields to backend fields
+        $validatedData['medical_insurance_number'] = $request->input('healthInsuranceNumber', $validatedData['medical_insurance_number'] ?? null);
+        $validatedData['ethnic_group'] = $request->input('ethnicGroups', $validatedData['ethnic_group'] ?? null);
+        $validatedData['insurance_expiration_date'] = $request->input('insuranceExpirationDate', $validatedData['insurance_expiration_date'] ?? null);
+        $validatedData['hometown_id'] = $request->input('hometown', $validatedData['hometown_id'] ?? null);
+
         $healthProfile->update($validatedData);
 
         if ($request->hasFile('avatar')) {

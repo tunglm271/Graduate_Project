@@ -210,7 +210,7 @@ const PatientDetail = () => {
                       )}
                       :
                     </strong>{" "}
-                    {selectedProfile?.height}
+                    {selectedProfile?.height || 0}
                   </p>
                   <p>
                     <strong>
@@ -219,7 +219,7 @@ const PatientDetail = () => {
                       )}
                       :
                     </strong>{" "}
-                    {selectedProfile?.weight}
+                    {selectedProfile?.weight || 0}
                   </p>
                 </div>
               </div>

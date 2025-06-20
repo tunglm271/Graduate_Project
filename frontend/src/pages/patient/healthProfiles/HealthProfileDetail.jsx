@@ -10,11 +10,9 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Stack,
   Button,
   Skeleton,
   CircularProgress,
-  Grid,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HomeIcon from "@mui/icons-material/Home";
@@ -176,16 +174,18 @@ const HealthProfileDetail = () => {
         </div>
         <div className="basic-infor-section">
           <div className="infor-item">
-            <Box className="avatar-container">
+            <div className="w-36 h-36 rounded-full overflow-hidden mb-4 mx-auto">
               <Avatar
                 src={profile.avatar}
                 alt={profile.name}
                 sx={{
                   width: "100%",
                   height: "100%",
+                  mx: "auto",
+                  objectFit: "cover",
                 }}
               />
-            </Box>
+            </div>
 
             <Typography variant="h6" textAlign={"center"} sx={{ mt: 2, mb: 2 }}>
               {t("profile.detail.basic-info")}
@@ -232,7 +232,8 @@ const HealthProfileDetail = () => {
             <Box sx={{ mt: 3 }}>
               <Button
                 variant="outlined"
-                href={`/health-profile/${id}/edit`}
+                component={Link}
+                to={`/health-profile/${id}/edit`}
                 fullWidth
                 sx={{ mb: 1 }}
               >

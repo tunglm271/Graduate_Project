@@ -10,6 +10,7 @@ import RecentActorsIcon from '@mui/icons-material/RecentActors';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HiddenText from './HiddenText';
 import healthProfileApi from "../service/healthProfileApi";
+import { UsersRound, House } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const NewProfileCard = ({ profile, onDelete }) => {
@@ -65,14 +66,14 @@ const NewProfileCard = ({ profile, onDelete }) => {
             <div className='grid grid-cols-2 gap-2' style={{ padding: '10px' }}>
                 <ProfileDetail icon={<CakeIcon />} primaryText={calculateAge(profile.date_of_birth)} secondaryText={t("profile.age")} />
                 <ProfileDetail icon={<WcIcon />} primaryText={t(`profile.gender.${profile.gender}`)} secondaryText={t("profile.genderLabel")} />
-                <ProfileDetail icon={<AccessibilityIcon />} primaryText={`${profile.height} cm`} secondaryText={t("profile.height")} />
-                <ProfileDetail icon={<ScaleIcon />} primaryText={`${profile.weight} kg`} secondaryText={t("profile.weight")} />
+                <ProfileDetail icon={<UsersRound />} primaryText={profile.ethnic_group} secondaryText={t("profile.ethnic_group")} />
+                <ProfileDetail icon={<House />} primaryText={profile.home_town_name} secondaryText={t("profile.hometown")} />
                 <ProfileInfo label={t("profile.allergies")} info={getAllergiesText()} />
                 <ProfileInfo label={t("profile.diseases")} info={getDiseasesText()} />
                 <div className='flex text-xs items-center gap-1 col-span-2 font-semibold' style={{ marginTop: '15px' }}>
                     <RecentActorsIcon sx={{ minWidth: 30, color: 'gray' }} />
                     {t("profile.insurance")}
-                    <HiddenText />
+                    <HiddenText text={profile.medical_insurance_number} />
                 </div>
                 <div className='col-span-2' style={{ marginTop: '10px' }}>
                     <Button 

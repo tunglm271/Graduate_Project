@@ -6,6 +6,8 @@ use App\Models\Appointment;
 use Illuminate\Http\Request;
 use App\Models\Bill;
 use App\Services\NotificationService;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 class TransactionController extends Controller
 {
 
@@ -18,17 +20,24 @@ class TransactionController extends Controller
     }
 
     public function vnpay_payment(Request $request) {
-        $appointmentId = $request->input('appointment_id');
-        $bill = Bill::where('appointment_id', $appointmentId)->first();
+        if($request->has('appointment_id')) {
+            $appointmentId = $request->input('appointment_id');
+            $bill = Bill::where('appointment_id', $appointmentId)->first();
+            $vnp_Returnurl = "http://localhost:5173/appointments/{$appointmentId}/bill/payment-result";
+            $vnp_Amount = $bill->total_amount  * 100;
+        } else {
+            $billId = $request->input('bill_id');
+            $bill = Bill::find($billId);
+            $vnp_Amount = $bill->total_amount;
+            $vnp_Returnurl = "http://localhost:5173/facility/revenue";
+        }
+
+        $vnp_TxnRef = Str::random(16);
+        $vnp_TmnCode = "1B2XO33D";
+        $vnp_HashSecret = "Z22NW36OY0GGHH2TRL9P9XLRB7E9RNGD"; 
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        $vnp_Returnurl = "http://localhost:5173/appointments/{$appointmentId}/bill/payment-result";
-        $vnp_TmnCode = "1B2XO33D";//Mã website tại VNPAY 
-        $vnp_HashSecret = "Z22NW36OY0GGHH2TRL9P9XLRB7E9RNGD"; //Chuỗi bí mật
-        
-        $vnp_TxnRef = $request->input('appointment_id'); //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_OrderInfo = "Thanh toán đơn khám";
         $vnp_OrderType = "billpayment";
-        $vnp_Amount = $bill->total_amount  * 100;
         $vnp_Locale = 'vn';
         $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
         $inputData = array(
@@ -121,10 +130,10 @@ class TransactionController extends Controller
 
     public function getRevenueStats(Request $request) {
         $facility = $request->user()->medicalFacility;
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
+        $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
         $bills = Bill::where('medical_facility_id', $facility->id)
-            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->get();
         $totalRevenue = $bills->sum('total_amount');
         $totalPaid = $bills->where('status', 'paid')->sum('total_amount');
@@ -136,7 +145,7 @@ class TransactionController extends Controller
         // Calculate daily revenue in array format for chart
         $dailyRevenue = $bills->where('status', 'paid')
             ->groupBy(function($bill) {
-                return \Carbon\Carbon::parse($bill->payment_date)->format('Y-m-d');
+                return Carbon::parse($bill->payment_date)->format('Y-m-d');
             })
             ->map(function($group, $date) {
                 return [

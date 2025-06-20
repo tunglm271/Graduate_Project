@@ -18,6 +18,7 @@ const HealthProfiles = () => {
 
     useEffect(() => {
         healthProfileApi.getAll().then(res => {
+            console.log(res.data);
             setHealthProfiles(res.data);
         }).finally(() => {
             setLoading(false);
