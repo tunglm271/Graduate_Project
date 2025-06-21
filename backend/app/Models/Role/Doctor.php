@@ -25,7 +25,7 @@ class Doctor extends Model
         'about',
     ];
 
-    protected $appends = ['email', 'status'];
+    protected $appends = ['email', 'status', 'avatar'];
     
     public function user()
     {
@@ -64,5 +64,10 @@ class Doctor extends Model
     public function getStatusAttribute()
     {
         return $this->user->active ? 'active' : 'inactive';
+    }
+
+    public function getAvatarAttribute()
+    {
+        return $this->user->avatar ?? null;
     }
 }

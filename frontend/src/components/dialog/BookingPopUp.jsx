@@ -2,7 +2,6 @@ import { useState, forwardRef, useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import Stepper from "@mui/material/Stepper";
@@ -33,6 +32,8 @@ import medicalServiceApi from "../../service/medicalServiceAPi";
 import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 import appointmentApi from "../../service/appointmentApi";
 import { useTranslation } from "react-i18next";
+import PropTypes from "prop-types";
+import doctorDefaultImg from "../../assets/images/doctor.png";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -50,7 +51,14 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-export default function BookingPopUp({ open, onClose, facility, id }) {
+export default function BookingPopUp({
+  open,
+  onClose,
+  facility,
+  doctor,
+  id,
+  bookingType = "service",
+}) {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -93,8 +101,8 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
   };
 
   useEffect(() => {
-    if (activeStep === 1) {
-      setLoading(true);
+    setLoading(true);
+    if(bookingType == "service") {
       medicalServiceApi
         .getValiableSlots(id, date.format("YYYY-MM-DD"))
         .then((res) => {
@@ -106,8 +114,20 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
         .catch((err) => {
           console.log(err);
         });
+    } else {
+      medicalServiceApi
+        .getDoctorSlots(date.format("YYYY-MM-DD"), doctor.id)
+        .then((res) => {
+          setSelectedSection(null);
+          setSectionList(res.data);
+          console.log(res.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
-  }, [date]);
+  }, [date, doctor]);
 
   const steps = ["Nhập thông tin khám", "Chọn ngày khám", "Tài liệu đính kèm"];
 
@@ -132,7 +152,11 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
     setIsSubmitting(true);
     const formData = new FormData();
     formData.append("health_profile_id", chosenProfile.id);
-    formData.append("medical_service_id", id);
+    if (bookingType === "service") {
+      formData.append("medical_service_id", id);
+    } else {
+      formData.append("doctor_id", doctor.id);
+    }
     formData.append("date", date.format("YYYY-MM-DD"));
     formData.append("start_time", selectedSection.start_time);
     formData.append("end_time", selectedSection.end_time);
@@ -152,7 +176,7 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
         showSuccessSnackbar("Đặt lịch khám thành công!");
         setPostedFiles([]);
         setActiveStep(0);
-        setChosenProfile();
+        setChosenProfile(null);
         setReason("");
         setDate(dayjs());
         setMonth(new Date());
@@ -216,6 +240,31 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
               </div>
             </div>
 
+            {bookingType === "doctor" && doctor && (
+              <div className="doctor-info bg-white flex items-center gap-4 mb-4">
+                <img
+                  src={doctor.avatar || doctorDefaultImg}
+                  alt={doctor.name}
+                  className="w-16 h-16 rounded-full object-cover border"
+                />
+                <div>
+                  <h4 className="text-lg font-bold text-blue-700 mb-1">
+                    BS. {doctor.name}
+                  </h4>
+                  <p className="text-gray-600 mb-1">
+                    Chuyên khoa:{" "}
+                    <span className="font-medium">
+                      {doctor.specialization || "-"}
+                    </span>
+                  </p>
+                  <div className="flex gap-3">
+                    <p className="text-gray-600 mb-1">{doctor.phone || "-"}</p>
+                    <p className="text-gray-600">{doctor.email || "-"}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <Autocomplete
               id="profile-select"
               sx={{
@@ -234,6 +283,7 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
               renderInput={(params) => (
                 <TextField {...params} label="Chọn người khám" />
               )}
+              value={chosenProfile}
               renderOption={(props, option) => (
                 <li {...props} style={{ display: "flex", gap: "10px" }}>
                   <div>{option.name}</div>
@@ -243,7 +293,6 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
                 </li>
               )}
               onChange={(event, value) => setChosenProfile(value)}
-              defaultValue={profileOption[0]}
             />
 
             {chosenProfile && (
@@ -452,3 +501,12 @@ export default function BookingPopUp({ open, onClose, facility, id }) {
     </Dialog>
   );
 }
+
+BookingPopUp.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  facility: PropTypes.object,
+  doctor: PropTypes.object,
+  id: PropTypes.any,
+  bookingType: PropTypes.string,
+};

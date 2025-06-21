@@ -22,7 +22,8 @@ class StoreAppointmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'medical_service_id' => 'required|exists:medical_services,id',
+            'medical_service_id' => 'nullable|exists:medical_services,id',
+            'doctor_id' => 'nullable|exists:doctors,id',
             'health_profile_id' => 'required|exists:health_profiles,id',
             'date' => 'required|date_format:Y-m-d',
             'start_time' => 'required|date_format:H:i:s',

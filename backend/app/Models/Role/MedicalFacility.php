@@ -11,6 +11,7 @@ use App\Models\FacilityType;
 use App\Models\HealthProfile;
 use App\Models\City;
 use App\Models\Sale;
+use App\Models\Specialty;
 
 class MedicalFacility extends Model
 {
@@ -84,6 +85,11 @@ class MedicalFacility extends Model
     public function facilityType()
     {
         return $this->belongsTo(FacilityType::class);
+    }
+
+    public function specialties()
+    {
+        return $this->hasMany(Specialty::class);
     }
 
     public function getEmailAttribute()

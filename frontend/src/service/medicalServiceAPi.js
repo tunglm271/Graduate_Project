@@ -47,7 +47,10 @@ const medicalServiceApi = {
     return api.get(`service/valiable-slots?id=${serviceId}&date=${date}`);
   },
 
-  getDoctorSlots(date) {
+  getDoctorSlots(date, doctorId) {
+    if (doctorId) {
+      return api.get(`service/doctor-slots?date=${date}&doctor_id=${doctorId}`);
+    }
     return api.get(`service/doctor-slots?date=${date}`);
   },
 

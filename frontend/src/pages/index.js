@@ -55,3 +55,5 @@ export { default as FacilityRegister } from './auth/FaciltyRegister.jsx';
 export { default as NotFound } from './NotFound.jsx';
 export { default as LandingPage } from './LandingPage.jsx';
 export { default as MessagePage } from './MessagePage.jsx';
+
+export { default as FacilitySpecialties } from './facility/Specialties.jsx';

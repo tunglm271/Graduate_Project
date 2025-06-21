@@ -54,7 +54,7 @@
         <strong>Bệnh nhân:</strong> {{ $patient->name }}<br>
         <strong>Ngày sinh:</strong> {{ $patient->date_of_birth ?? '...' }}<br>
         <strong>Ngày khám:</strong> {{ \Carbon\Carbon::now()->format('d/m/Y') }} <br>
-        <strong>Chuẩn đoán:</strong> {{ $medicalRecord->diagnosis }}<br>
+        <strong>Chẩn đoán:</strong> {{ $medicalRecord->diagnosis }}<br>
     </div>
 
     <table>

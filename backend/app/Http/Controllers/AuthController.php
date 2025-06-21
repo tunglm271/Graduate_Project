@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Google_Client;
+use App\Services\SmsService;
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -237,5 +238,15 @@ class AuthController extends Controller
         } else {
             return response()->json(['error' => 'Invalid Google token'], 401);
         }
+    }
+
+    public function testSendSms()
+    {
+        $phone = '0336717168'; // Số người nhận
+        $code = '2803';         // Mã OTP
+
+        $result = SmsService::sendOtpViaEsms($phone, $code);
+
+        return response()->json($result);
     }
 }

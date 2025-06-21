@@ -325,7 +325,7 @@ const AppointmentDetail = () => {
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <p className="font-semibold text-lg">Chuẩn đoán</p>
+                <p className="font-semibold text-lg">Chẩn đoán</p>
                 <p className="mb-5">{appointment.medical_record.diagnosis}</p>
               </AccordionDetails>
             </Accordion>

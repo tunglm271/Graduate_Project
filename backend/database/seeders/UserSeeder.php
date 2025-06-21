@@ -42,6 +42,9 @@ class UserSeeder extends Seeder
                     'name' => $patientName,
                     'relationship' => 'Self',
                     'phone' => vnfaker()->mobilephone(10),
+                    'ethnic_group' => 'Kinh',
+                    'hometown_id' => 1,
+                    'address' => vnfaker()->address(),
                 ]);
             }
         });
@@ -54,6 +57,7 @@ class UserSeeder extends Seeder
             'password' => bcrypt('12345678'),
             'role_id' => 3,
             'last_activity' => now(),
+            'avatar' => 'https://res.cloudinary.com/dftiye2et/image/upload/v1740473611/doctor-' . $index + 1
             ]);
             $doctorProfile = Doctor::create([
                 'user_id' => $doctor->id,

@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import HouseIcon from "@mui/icons-material/House";
-import serviceImg from "@images/service.png";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import { useTranslation } from "react-i18next";
@@ -70,11 +69,17 @@ const AppointmentCard = ({ appointment }) => {
           <HouseIcon /> {appointment.medical_facility.facility_name}
         </Link>
         <div className="booked-service">
-          <img src={serviceImg} alt="" />
+          <img
+            src={
+              appointment.medical_service?.thumbnail ||
+              appointment.doctor?.avatar
+            }
+            alt=""
+          />
           <div className="ml-2.5">
-            <Typography variant="h6" className="font-semibold">
-              {appointment.medical_service.name}
-            </Typography>
+            <p className="text-lg font-semibold">
+              {appointment.medical_service?.name || "Hẹn với bác sĩ"}
+            </p>
             <Typography variant="body1">
               {t("appointment.card.appointmentDate", {
                 date: new Date(appointment.date).toLocaleDateString("vi"),

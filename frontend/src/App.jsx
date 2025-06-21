@@ -74,6 +74,7 @@ import {
   LandingPage,
   BlogDetail,
   MessagePage,
+  FacilitySpecialties,
 } from "./pages";
 import "./echo";
 
@@ -141,6 +142,7 @@ const router = createBrowserRouter([
       { path: "sales", element: <SalesManage /> },
       { path: "revenue", element: <RevenueDashboard /> },
       { path: "messages", element: <MessagePage /> },
+      { path: "specialties", element: <FacilitySpecialties /> },
     ],
   },
   {

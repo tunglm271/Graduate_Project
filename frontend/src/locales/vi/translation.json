@@ -40,10 +40,11 @@
   "self": "Bản thân",
   "Self": "Bản thân",
   "Normal": "Bình thường",
+  "normal": "Bình thường",
   "Abnormal": "Bất thường",
   "Needs monitoring": "Cần theo dõi",
   "health-profiles-list": "Hồ sơ sức khỏe gia đình",
-  "ai-diagnosis": "Chẩn đoán với AI",
+  "ai-diagnosis": "tư vấn với AI",
   "add-profile": "Thêm hồ sơ",
   "profile": {
     "none": "Không có",
@@ -188,7 +189,7 @@
       "appointmentCode": "Mã đơn khám: APPOINTMENT001",
       "viewDetails": "Xem chi tiết",
       "contactClinic": "Liên hệ phòng khám",
-      "doctorInformation": "Thông tin bác sĩ chỉ định",
+      "doctorInformation": "Thông tin bác sĩ",
       "notAssigned": "Chưa có bác sĩ được chỉ định",
       "doctor": {
         "fullName": "Họ tên: BS. {{name}}",

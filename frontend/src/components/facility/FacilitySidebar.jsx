@@ -14,6 +14,7 @@ import HeadsetMicIcon from "@mui/icons-material/HeadsetMic";
 import InpatientIcon from "@icon/service-category/InpatientIcon";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ApartmentIcon from "@mui/icons-material/Apartment";
 import {
   Divider,
   ListItem,
@@ -75,7 +76,7 @@ const FacilitySidebar = () => {
           to={"/facility/dashboard"}
         />
         <p className="text-gray-500 text-sm" style={{ margin: "10px 0" }}>
-          Quản lý phòng khám
+          Quản lý cơ sở y tế
         </p>
         <ul>
           <li>
@@ -104,6 +105,13 @@ const FacilitySidebar = () => {
               icon={<GroupIcon />}
               text={"Danh sách nhân viên"}
               to={"/facility/staffs"}
+            />
+          </li>
+          <li>
+            <FacilityNavLink
+              icon={<ApartmentIcon />}
+              text={"Chuyên khoa"}
+              to={"/facility/specialties"}
             />
           </li>
         </ul>

@@ -62,7 +62,10 @@ const DiagnosisPage = () => {
 
   return (
     <Container sx={{ py: 4, minHeight: "65vh" }}>
-      <p className="mb-5 text-2xl font-semibold">Gợi ý dịch vụ cùng AI</p>
+      <p className="text-2xl font-semibold">Gợi ý dịch vụ cùng AI</p>
+      <p className="text-gray-600 mb-5 text-sm w-5/6">
+        Vui lòng nhập các triệu chứng bạn đang gặp phải vào ô bên dưới. Hệ thống sẽ phân tích và đề xuất các dịch vụ y tế phù hợp, kèm theo giải thích chi tiết để hỗ trợ bạn lựa chọn giải pháp chăm sóc sức khỏe tốt nhất.
+      </p>
 
       <Box sx={{ mb: 3 }}>
         <textarea
@@ -83,7 +86,7 @@ const DiagnosisPage = () => {
             borderRadius: "20px",
           }}
         >
-          {loading ? "Đang xử lý..." : "Chuẩn đoán"}
+          {loading ? "Đang xử lý..." : "Chẩn đoán"}
         </Button>
       </Box>
 

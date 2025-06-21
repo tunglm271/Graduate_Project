@@ -6,16 +6,19 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import { useState, useEffect } from "react";
 import "./facility-booking.css";
-import BookingPopUp from "../../../components/dialog/BookingPopUp";
 import facilityApi from "../../../service/FacilityApi";
 import { formatCurrency } from "../../../utlis/caculateFun";
+import doctorDefaultImg from "../../../assets/images/doctor.png";
+import BookingPopUp from "../../../components/dialog/BookingPopUp";
 
 const FacilityBooking = () => {
-  const { facilityId } = useParams();
   const [loading, setLoading] = useState(true);
+  const { facilityId } = useParams();
   const [facility, setFacility] = useState({});
-  const [toogleBookingPopUp, setToogleBookingPopUp] = useState(false);
   const [bookingType, setBookingType] = useState("");
+  const [toogleBookingPopUp, setToogleBookingPopUp] = useState(false);
+  const [doctor, setDoctor] = useState([]);
+  const [selectedService, setSelectedService] = useState(null);
 
   useEffect(() => {
     facilityApi.getById(facilityId).then((res) => {
@@ -125,53 +128,137 @@ const FacilityBooking = () => {
                 </tr>
               </thead>
               <tbody>
-                {
-                facility.services.length > 0 ?
-                facility.services.map((service, index) => (
-                  <tr key={service.id} className="border-b">
-                    <td className="w-[50px]" style={{ padding: "30px 10px" }}>
-                      {index + 1}
-                    </td>
-                    <td className="w-1/2 text-left">
-                      <p className="font-bold">{service.name}</p>
-                      <p className="italic">
-                        Thời gian: {service.duration} phút
-                      </p>
-                    </td>
-                    <td className="w-[100px] whitespace-normal break-words">
-                      {service.price
-                        ? `${formatCurrency(service.price)}`
-                        : "Thanh toán trực tiếp"}
-                    </td>
-                    <td>
-                      <div
-                        className="flex flex-col sm:flex-row gap-2"
-                        style={{ paddingLeft: "8px" }}
-                      >
-                        <Link
-                          to={`/services/${service.id}`}
-                          className="bg-[#ecf5ff] rounded-lg text-blue-400 font-semibold hover:bg-white text-center"
-                          style={{ padding: "8px" }}
+                {facility.services.length > 0 ? (
+                  facility.services.map((service, index) => (
+                    <tr key={service.id} className="border-b">
+                      <td className="w-[50px]" style={{ padding: "30px 10px" }}>
+                        {index + 1}
+                      </td>
+                      <td className="w-1/2 text-left">
+                        <p className="font-bold">{service.name}</p>
+                        <p className="italic">
+                          Thời gian: {service.duration} phút
+                        </p>
+                      </td>
+                      <td className="w-[100px] whitespace-normal break-words">
+                        {service.price
+                          ? `${formatCurrency(service.price)}`
+                          : "Thanh toán trực tiếp"}
+                      </td>
+                      <td>
+                        <div
+                          className="flex flex-col sm:flex-row gap-2"
+                          style={{ paddingLeft: "8px" }}
                         >
-                          Chi tiết
-                        </Link>
+                          <Link
+                            to={`/services/${service.id}`}
+                            className="bg-[#ecf5ff] rounded-lg text-blue-400 font-bold hover:bg-white text-center"
+                            style={{ padding: "8px" }}
+                          >
+                            Chi tiết
+                          </Link>
+                          <button
+                            onClick={() => {
+                              setSelectedService(service.id);
+                              setToogleBookingPopUp(true);
+                            }}
+                            className="register-btn"
+                          >
+                            Đặt khám ngay
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="text-center">
+                      <p>Không có dịch vụ khám nào</p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          <button
+            onClick={() => {
+              setBookingType("");
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="flex gap-2 items-center cursor-pointer rounded-lg justify-start hover:bg-slate-200 w-fit"
+            style={{ padding: "7px 10px" }}
+          >
+            Quay lại
+            <KeyboardReturnIcon />
+          </button>
+        </div>
+
+        {/* Doctor List Section */}
+        <div
+          className={`w-full lg:w-2/3 flex flex-col gap-2 ${
+            bookingType === "doctor" ? "fade-in" : "fade-out"
+          }`}
+        >
+          <div className="text-center">
+            <h2>Chọn bác sĩ khám</h2>
+          </div>
+          <div className="option-list overflow-x-auto">
+            <table className="text-left w-full border-collapse text-[#003553]">
+              <thead>
+                <tr className="border-b">
+                  <th className="w-[50px]" style={{ padding: "30px 10px" }}>
+                    #
+                  </th>
+                  <th className="w-1/3">Bác sĩ</th>
+                  <th className="w-1/4 text-center">Số điện thoại</th>
+                  <th className="w-1/4">Chuyên khoa</th>
+                  <th className="w-1/4 text-center">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {facility.doctors && facility.doctors.length > 0 ? (
+                  facility.doctors.map((doctor, index) => (
+                    <tr key={doctor.id} className="border-b">
+                      <td className="w-[50px]" style={{ padding: "30px 10px" }}>
+                        {index + 1}
+                      </td>
+                      <td className="w-1/3 text-left">
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={doctor.avatar || doctorDefaultImg}
+                            alt={doctor.name}
+                            className="w-12 h-12 rounded-full object-cover border"
+                          />
+                          <div>
+                            <p className="font-bold">{doctor.name}</p>
+                            <p>{doctor.email}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="w-1/4 text-center">
+                        {doctor.phone || "-"}
+                      </td>
+                      <td className="w-1/4">{doctor.specialization || "-"}</td>
+                      <td className="w-1/4 text-center">
                         <button
                           className="register-btn"
-                          onClick={() => setToogleBookingPopUp(true)}
+                          onClick={() => {
+                            setDoctor(doctor);
+                            setToogleBookingPopUp(true);
+                          }}
                         >
                           Đặt lịch ngay
                         </button>
-                      </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="text-center">
+                      <p>Không có bác sĩ khám nào</p>
                     </td>
                   </tr>
-                ))
-                :
-                <tr>
-                  <td colSpan="4" className="text-center">
-                    <p>Không có dịch vụ khám nào</p>
-                  </td>
-                </tr>
-                }
+                )}
               </tbody>
             </table>
           </div>
@@ -188,6 +275,10 @@ const FacilityBooking = () => {
       <BookingPopUp
         open={toogleBookingPopUp}
         onClose={() => setToogleBookingPopUp(false)}
+        facility={facility}
+        bookingType={bookingType}
+        doctor={doctor}
+        id={selectedService}
       />
     </div>
   );

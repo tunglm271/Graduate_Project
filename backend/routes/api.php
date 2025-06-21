@@ -26,6 +26,7 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\DiagnosisController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SpecialtyController;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('user', [AuthController::class, 'getUser']);
@@ -41,6 +42,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('patient/doctor', [PatientController::class, 'indexByDoctor']);
     Route::apiResource('schedules', ScheduleController::class);
     Route::apiResource('medical-services', MedicalServiceController::class);
+    Route::apiResource('specialties', SpecialtyController::class)->except(['show']);
     Route::get('patient/medical-services/{medicalService}', [MedicalServiceController::class, 'showByPatient']);
     Route::get('doctor-medical-services', [MedicalServiceController::class, 'indexByDoctor']);
     Route::get('service/valiable-slots', [MedicalServiceController::class, 'getAvaliableSlots']);
@@ -113,3 +115,4 @@ Route::post('diagnosis', [DiagnosisController::class, 'query']);
 Route::post('rag-diagnosis', [DiagnosisController::class, 'ragQuery']);
 Route::get('landing-page', [PatientController::class, 'landingPage']);
 
+Route::get('sms', [AuthController::class, 'testSendSms']);

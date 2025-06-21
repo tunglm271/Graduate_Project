@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
   Breadcrumbs,
@@ -21,7 +21,6 @@ import RelationshipIcon from "@icon/RelationshipIcon";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import MaleIcon from "@mui/icons-material/Male";
 import FemaleIcon from "@mui/icons-material/Female";
-import EditIcon from "@mui/icons-material/Edit";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -29,8 +28,6 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useTranslation } from "react-i18next";
 import relationshipKeys from "../../../utlis/RelationshipData.jsx";
 import MultiSelectAutocomplete from "../../../components/MultiSelectAutocomplete.jsx";
-import AccessibilityIcon from "@mui/icons-material/Accessibility";
-import ScaleIcon from "@mui/icons-material/Scale";
 import EmailIcon from "@mui/icons-material/Email";
 import useCustomSnackbar from "../../../hooks/useCustomSnackbar.jsx";
 import healthProfileApi from "../../../service/healthProfileApi";
@@ -312,160 +309,164 @@ const HealthProfileEdit = () => {
               },
             }}
           />
-          <Autocomplete
+          <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
             }}
-            options={relationshipKeys}
-            getOptionLabel={(option) => t(option)}
-            value={profileValues.relationship}
-            onChange={(e, value) =>
-              setProfileValues({ ...profileValues, relationship: value })
-            }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label={t("profile.detail.relationship")}
-                InputProps={{
-                  ...params.InputProps, // Ensures Autocomplete functionalities work
+          >
+            <Autocomplete
+              sx={{ display: "flex", alignItems: "center" }}
+              options={relationshipKeys}
+              getOptionLabel={(option) => t(option)}
+              value={profileValues.relationship}
+              onChange={(e, value) =>
+                setProfileValues({ ...profileValues, relationship: value })
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t("profile.detail.relationship")}
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <RelationshipIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+            />
+            <TextField
+              label={t("profile.detail.phone")}
+              value={profileValues.phone}
+              onChange={(e) =>
+                setProfileValues({ ...profileValues, phone: e.target.value })
+              }
+              fullWidth
+              margin="normal"
+              slotProps={{
+                input: {
                   startAdornment: (
                     <InputAdornment position="start">
-                      <RelationshipIcon />
+                      <LocalPhoneIcon />
                     </InputAdornment>
                   ),
-                }}
-              />
-            )}
-          />
-          <TextField
-            label={t("profile.detail.phone")}
-            value={profileValues.phone}
-            onChange={(e) =>
-              setProfileValues({ ...profileValues, phone: e.target.value })
-            }
-            fullWidth
-            margin="normal"
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LocalPhoneIcon />
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="gender-select-label">{t("gender")}</InputLabel>
-            <Select
-              labelId="gender-select-label"
-              id="gender-simple-select"
-              value={profileValues.gender}
-              onChange={(e) =>
-                setProfileValues({ ...profileValues, gender: e.target.value })
-              }
-              label={t("profile.detail.gender")}
-              renderValue={(selected) => (
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  {selected === "male" ? (
-                    <MaleIcon sx={{ marginRight: 1 }} />
-                  ) : (
-                    <FemaleIcon sx={{ marginRight: 1 }} />
-                  )}
-                  {selected === "male"
-                    ? t("profile.gender.male")
-                    : t("profile.gender.female")}
-                </Box>
-              )}
-            >
-              <MenuItem value="male">
-                <ListItemIcon>
-                  <MaleIcon />
-                </ListItemIcon>
-                <ListItemText primary={t("profile.gender.male")} />
-              </MenuItem>
-              <MenuItem value="female">
-                <ListItemIcon>
-                  <FemaleIcon />
-                </ListItemIcon>
-                <ListItemText primary={t("profile.gender.female")} />
-              </MenuItem>
-            </Select>
-          </FormControl>
-
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={["DatePicker"]} sx={{ m: "auto 0" }}>
-              <DatePicker
-                label={t("profile.detail.date-of-birth")}
-                sx={{ width: "100%" }}
-                value={profileValues.dateOfBirth}
-                onChange={(date) =>
-                  setProfileValues({ ...profileValues, dateOfBirth: date })
+                },
+              }}
+            />
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="gender-select-label">{t("gender")}</InputLabel>
+              <Select
+                labelId="gender-select-label"
+                id="gender-simple-select"
+                value={profileValues.gender}
+                onChange={(e) =>
+                  setProfileValues({ ...profileValues, gender: e.target.value })
                 }
-              />
-            </DemoContainer>
-          </LocalizationProvider>
-
-          <FormControl fullWidth>
-            <InputLabel id="ethic-select-label">
-              {t("profile.detail.ethic_group")}
-            </InputLabel>
-            <Select
-              labelId="ethic-select-label"
-              id="ethic-select"
-              value={profileValues.ethnic_group}
-              label={t("profile.detail.ethic_group")}
-              onChange={(e) =>
-                setProfileValues({
-                  ...profileValues,
-                  ethnic_group: e.target.value,
-                })
-              }
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: 300, // Giới hạn chiều cao dropdown
-                  },
-                },
-              }}
-            >
-              {ethnicGroups.map((group) => (
-                <MenuItem key={group} value={group}>
-                  {group}
+                label={t("profile.detail.gender")}
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    {selected === "male" ? (
+                      <MaleIcon sx={{ marginRight: 1 }} />
+                    ) : (
+                      <FemaleIcon sx={{ marginRight: 1 }} />
+                    )}
+                    {selected === "male"
+                      ? t("profile.gender.male")
+                      : t("profile.gender.female")}
+                  </Box>
+                )}
+              >
+                <MenuItem value="male">
+                  <ListItemIcon>
+                    <MaleIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={t("profile.gender.male")} />
                 </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth>
-            <InputLabel id="hometown-select-label">
-              {t("profile.detail.hometown")}
-            </InputLabel>
-            <Select
-              labelId="hometown-select-label"
-              id="hometown-select"
-              value={profileValues.hometown_id}
-              label={t("profile.detail.hometown")}
-              onChange={(e) =>
-                setProfileValues({ ...profileValues, hometown_id: e.target.value })
-              }
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: 300,
-                  },
-                },
-              }}
-            >
-              {cities.map((city) => (
-                <MenuItem key={city.id} value={city.id}>
-                  {city.name}
+                <MenuItem value="female">
+                  <ListItemIcon>
+                    <FemaleIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={t("profile.gender.female")} />
                 </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
+              </Select>
+            </FormControl>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={["DatePicker"]} sx={{ m: "auto 0" }}>
+                <DatePicker
+                  label={t("profile.detail.date-of-birth")}
+                  sx={{ width: "100%" }}
+                  value={profileValues.dateOfBirth}
+                  onChange={(date) =>
+                    setProfileValues({ ...profileValues, dateOfBirth: date })
+                  }
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+            <FormControl fullWidth>
+              <InputLabel id="ethic-select-label">
+                {t("profile.detail.ethic_group")}
+              </InputLabel>
+              <Select
+                labelId="ethic-select-label"
+                id="ethic-select"
+                value={profileValues.ethnic_group}
+                label={t("profile.detail.ethic_group")}
+                onChange={(e) =>
+                  setProfileValues({
+                    ...profileValues,
+                    ethnic_group: e.target.value,
+                  })
+                }
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 300, // Giới hạn chiều cao dropdown
+                    },
+                  },
+                }}
+              >
+                {ethnicGroups.map((group) => (
+                  <MenuItem key={group} value={group}>
+                    {group}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth>
+              <InputLabel id="hometown-select-label">
+                {t("profile.detail.hometown")}
+              </InputLabel>
+              <Select
+                labelId="hometown-select-label"
+                id="hometown-select"
+                value={profileValues.hometown_id}
+                label={t("profile.detail.hometown")}
+                onChange={(e) =>
+                  setProfileValues({
+                    ...profileValues,
+                    hometown_id: e.target.value,
+                  })
+                }
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 300,
+                    },
+                  },
+                }}
+              >
+                {cities.map((city) => (
+                  <MenuItem key={city.id} value={city.id}>
+                    {city.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
           <TextField
             label={t("address")}
             fullWidth
@@ -474,7 +475,6 @@ const HealthProfileEdit = () => {
               setProfileValues({ ...profileValues, address: e.target.value })
             }
           />
-
           <TextField
             label="Email"
             value={profileValues.email}

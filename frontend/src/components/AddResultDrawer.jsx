@@ -607,6 +607,10 @@ const AddResultDrawer = ({ open, onClose, appointmentId, onSuccess }) => {
                   label="Đánh giá tổng quát"
                   variant="outlined"
                   placeholder="Nhập đánh giá tổng quát"
+                  value={indicatorTestSummary}
+                  onChange={(e) =>
+                    setIndicatorTestSummary(e.target.value)
+                  }
                   required
                   multiline
                   rows={2}
@@ -689,7 +693,7 @@ const AddResultDrawer = ({ open, onClose, appointmentId, onSuccess }) => {
             </Button>
           )}
 
-          <p className="font-bold">Chuẩn đoán</p>
+          <p className="font-bold">Chẩn đoán</p>
           <TextField
             id="result"
             label="Kết quả khám"

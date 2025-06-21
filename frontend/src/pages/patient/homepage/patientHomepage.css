@@ -79,6 +79,7 @@
   box-shadow: 0 2px 4px rgba(173, 216, 230, 0.3);
   padding: 5px;
   border-radius: 20px;
+  height: 125px;
   display: flex;
   gap: 10px;
   cursor: pointer;
@@ -287,7 +288,7 @@
 .facility-card {
   background-color: white;
   border-radius: 5px;
-  height: auto;
+  height: 125px;
 
   box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
   display: flex;

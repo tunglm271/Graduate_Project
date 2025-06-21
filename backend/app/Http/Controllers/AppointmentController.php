@@ -7,6 +7,7 @@ use App\Http\Requests\StoreAppointmentRequest;
 use App\Http\Requests\UpdateAppointmentRequest;
 use App\Models\Bill;
 use App\Models\MedicalService;
+use App\Models\Role\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Events\DoctorAssignedEvent;
@@ -87,20 +88,72 @@ class AppointmentController extends Controller
                 DB::rollBack();
                 return response()->json(['message' => 'User not allowed to book for this profile.'], 404);
             }
-            
-            $medicalService = MedicalService::find($fields['medical_service_id']);
-            $facility =  $medicalService->medicalFacility;
-            
-            $appointment = Appointment::create([
-                'medical_service_id' =>  $medicalService->id,
-                'health_profile_id' => $fields['health_profile_id'],
-                'facility_id' => $facility->id,
-                'date' => $fields['date'],
-                'start_time' => $fields['start_time'],
-                'end_time' => $fields['end_time'],
-                'reason' => $fields['reason'] ?? null,
-                'status' => "pending",
-            ]);
+            if(isset($fields['medical_service_id'])) {
+                $medicalService = MedicalService::find($fields['medical_service_id']);
+                $facility =  $medicalService->medicalFacility;
+                
+                $appointment = Appointment::create([
+                    'medical_service_id' =>  $medicalService->id,
+                    'health_profile_id' => $fields['health_profile_id'],
+                    'facility_id' => $facility->id,
+                    'date' => $fields['date'],
+                    'start_time' => $fields['start_time'],
+                    'end_time' => $fields['end_time'],
+                    'reason' => $fields['reason'] ?? null,
+                    'status' => "pending",
+                ]);
+
+                $bill = Bill::create([
+                    'health_profile_id' => $fields['health_profile_id'],
+                    'medical_facility_id' => $facility->id,
+                    'appointment_id' => $appointment->id,
+                    'status' => 'pending',
+                    'payment_method' => 'vnpay',
+                    'total_amount' => $medicalService->price,
+                ]);
+                $bill->services()->attach($fields['medical_service_id'], ['quantity' => 1]);
+                
+                broadcast(new \App\Events\AppointmentBookedEvent($appointment));
+
+                $facilityUserId = $facility->user_id;
+
+                NotificationService::sendToUser($facilityUserId, [
+                    'type' => 'appointment_booked',
+                    'title' => 'Yêu cầu khám mới',
+                    'message' => "Có một cuộc hẹn mới cho dịch vụ {$medicalService->name}.",
+                    'data' => [
+                        'appointment_id' => $appointment->id,
+                        'health_profile_id' => $fields['health_profile_id'],
+                    ],
+                ]);
+            } else if($fields['doctor_id']) {
+                $doctor = Doctor::find($fields['doctor_id']);
+                $facility = $doctor->medicalFacility;
+
+                $appointment = Appointment::create([
+                    'medical_service_id' => null,
+                    'health_profile_id' => $fields['health_profile_id'],
+                    'doctor_id' => $fields['doctor_id'],
+                    'facility_id' => $facility->id,
+                    'date' => $fields['date'],
+                    'start_time' => $fields['start_time'],
+                    'end_time' => $fields['end_time'],
+                    'reason' => $fields['reason'] ?? null,
+                    'status' => "assigned",
+                ]);
+
+                   $bill = Bill::create([
+                    'health_profile_id' => $fields['health_profile_id'],
+                    'medical_facility_id' => $facility->id,
+                    'appointment_id' => $appointment->id,
+                    'status' => 'pending',
+                    'payment_method' => 'vnpay',
+                    'total_amount' => 150000,
+                ]);
+            } else {
+                DB::rollBack();
+                return response()->json(['message' => 'Medical service or doctor must be provided'], 400);
+            }
 
             // Handle file uploads
             if($request->hasFile('files')) {
@@ -113,12 +166,12 @@ class AppointmentController extends Controller
                 foreach ($files as $index => $file) {
                     // Validate file type
                     if (!in_array($file->getMimeType(), $allowedMimeTypes)) {
-                        throw new \Exception('Invalid file type. Allowed types: JPG, PNG, GIF, PDF, DOC, DOCX');
+                        throw new Exception('Invalid file type. Allowed types: JPG, PNG, GIF, PDF, DOC, DOCX');
                     }
                     
                     // Validate file size
                     if ($file->getSize() > $maxFileSize) {
-                        throw new \Exception('File size exceeds 10MB limit');
+                        throw new Exception('File size exceeds 10MB limit');
                     }
                     
                     try {
@@ -130,35 +183,12 @@ class AppointmentController extends Controller
                             'file_size' => $file->getSize(),
                             'file_extension' => $file->getClientOriginalExtension(),
                         ]);
-                    } catch (\Exception $e) {
-                        throw new \Exception('Failed to upload file: ' . $e->getMessage());
+                    } catch (Exception $e) {
+                        throw new Exception('Failed to upload file: ' . $e->getMessage());
                     }
                 }
             }
 
-            $bill = Bill::create([
-                'health_profile_id' => $fields['health_profile_id'],
-                'medical_facility_id' => $facility->id,
-                'appointment_id' => $appointment->id,
-                'status' => 'pending',
-                'payment_method' => 'vnpay',
-                'total_amount' => $medicalService->price,
-            ]);
-            $bill->services()->attach($fields['medical_service_id'], ['quantity' => 1]);
-
-            broadcast(new \App\Events\AppointmentBookedEvent($appointment));
-
-            $facilityUserId = $facility->user_id;
-
-            NotificationService::sendToUser($facilityUserId, [
-                'type' => 'appointment_booked',
-                'title' => 'Yêu cầu khám mới',
-                'message' => "Có một cuộc hẹn mới cho dịch vụ {$medicalService->name}.",
-                'data' => [
-                    'appointment_id' => $appointment->id,
-                    'health_profile_id' => $fields['health_profile_id'],
-                ],
-            ]);
 
             DB::commit();
 
@@ -167,9 +197,9 @@ class AppointmentController extends Controller
                 'appointment' => $appointment->load('attachments')
             ], 201);
             
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
-            \Log::error('Appointment creation failed: ' . $e->getMessage());
+            Log::error('Appointment creation failed: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Failed to create appointment: ' . $e->getMessage()
             ], 500);

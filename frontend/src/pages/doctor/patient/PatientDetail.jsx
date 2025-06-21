@@ -404,7 +404,7 @@ const PatientDetail = () => {
               <div className="space-y-6">
                 {/* Diagnosis Section */}
                 <div>
-                  <h4 className="text-lg font-semibold mb-2">Chuẩn đoán</h4>
+                  <h4 className="text-lg font-semibold mb-2">Chẩn đoán</h4>
                   <p className="text-gray-700">{medicalRecord.diagnosis}</p>
                 </div>
 
