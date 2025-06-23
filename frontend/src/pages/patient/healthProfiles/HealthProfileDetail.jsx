@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "./healthProfiles.css";
 import {
   Breadcrumbs,
@@ -28,6 +28,15 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import healthProfileApi from "../../../service/healthProfileApi";
 import { Link } from "react-router-dom";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
 
 const LoadingSkeleton = () => (
   <div className="health-profile-detail">
@@ -105,6 +114,16 @@ const HealthProfileDetail = () => {
   const [selectedIndicator, setSelectedIndicator] = useState(null);
   const [indicatorHistory, setIndicatorHistory] = useState([]);
   const [indicatorHistoryLoading, setIndicatorHistoryLoading] = useState(false);
+  const [historyView, setHistoryView] = useState("list");
+
+  const chartData = useMemo(
+    () =>
+      indicatorHistory.reverse().map((item) => ({
+        value: item.value,
+        measured_at: new Date(item.measured_at).toLocaleString(),
+      })),
+    [indicatorHistory]
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,7 +149,10 @@ const HealthProfileDetail = () => {
     setIndicatorDialogOpen(true);
     setIndicatorHistoryLoading(true);
     try {
-      const res = await healthProfileApi.getIndicatorHistory(id, indicator.indicator_type_id);
+      const res = await healthProfileApi.getIndicatorHistory(
+        id,
+        indicator.indicator_type_id
+      );
       setIndicatorHistory(res.data);
     } catch {
       setIndicatorHistory([]);
@@ -208,7 +230,9 @@ const HealthProfileDetail = () => {
                   Object.entries(latestIndicators).map(
                     ([group, indicators]) => (
                       <Box key={group} sx={{ mb: 3, textAlign: "left" }}>
-                        <p className="font-bold text-xl pl-2 border-l-2 text-gray-700 border-gray-700">{group}</p>
+                        <p className="font-bold text-xl pl-2 border-l-2 text-gray-700 border-gray-700">
+                          {group}
+                        </p>
                         <Grid container spacing={2} sx={{ pl: 2 }}>
                           {indicators.map((indicator, idx) => (
                             <Grid item xs={12} sm={6} key={idx}>
@@ -336,6 +360,25 @@ const HealthProfileDetail = () => {
           {selectedIndicator ? selectedIndicator.name : ""}
         </DialogTitle>
         <DialogContent>
+          {indicatorHistory.length > 1 && (
+            <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+              <Button
+                variant={historyView === "list" ? "contained" : "outlined"}
+                size="small"
+                sx={{ mr: 1 }}
+                onClick={() => setHistoryView("list")}
+              >
+                Danh sách
+              </Button>
+              <Button
+                variant={historyView === "chart" ? "contained" : "outlined"}
+                size="small"
+                onClick={() => setHistoryView("chart")}
+              >
+                Biểu đồ
+              </Button>
+            </Box>
+          )}
           {indicatorHistoryLoading ? (
             <Box
               sx={{
@@ -351,6 +394,26 @@ const HealthProfileDetail = () => {
             <Typography color="text.secondary" align="center">
               Không có lịch sử đo cho chỉ số này.
             </Typography>
+          ) : historyView === "chart" && indicatorHistory.length > 1 ? (
+            <Box sx={{ width: "100%", height: 300 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={chartData}
+                  margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="measured_at"
+                    tick={{ fontSize: 12 }}
+                    textAnchor="end"
+                    height={60}
+                  />
+                  <YAxis domain={["dataMin", "dataMax"]} />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="value" stroke="#1976d2" dot />
+                </LineChart>
+              </ResponsiveContainer>
+            </Box>
           ) : (
             <Box>
               {indicatorHistory.map((item, idx) => (
@@ -375,7 +438,7 @@ const HealthProfileDetail = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>
-            {t("admin.medical_articles.delete.cancel", "Đóng")}
+            {t("close", "Đóng")}
           </Button>
         </DialogActions>
       </Dialog>
