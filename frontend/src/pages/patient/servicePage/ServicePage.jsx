@@ -4,18 +4,22 @@ import { Link, useParams } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import { useMediaQuery, useTheme } from "@mui/material";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
 import BookingPopUp from "../../../components/dialog/BookingPopUp";
 import { useEffect, useState } from "react";
 import medicalServiceApi from "../../../service/medicalServiceAPi";
 import ServiceCard from "../../../components/card/ServiceCard";
 import { useTranslation } from "react-i18next";
+import { formatCurrency } from "../../../utlis/caculateFun";
 const ServicePage = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [service, setService] = useState({});
   const [recommendations, setRecommendations] = useState([]);
   const [toogleBookingPopUp, setToogleBookingPopUp] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -80,30 +84,34 @@ const ServicePage = () => {
             ) : (
               <>
                 <img src={service?.thumbnail} alt="" />
-                <div className="service-title">
-                  <h3>{service?.name}</h3>
-                  <h2
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "20px",
-                      marginTop: "10px",
-                    }}
-                  >
-                    {service?.price} đ{" "}
-                    <span
-                      style={{
-                        background: "red",
-                        color: "white",
-                        fontSize: "14px",
-                        padding: "3px",
-                        borderRadius: "15px",
-                      }}
-                    >
-                      -9%
-                    </span>
-                  </h2>
-                  <h4>{service?.price} đ</h4>
+                <div className="mt-5 justify-between flex items-center">
+                  <div>
+                    <p className="font-bold text-2xl">{service?.name}</p>
+                    <p className="flex items-center gap-3 mt-2 text-lg">
+                      <span className="line-through">{formatCurrency(service?.price)}</span>
+                      <span className="bg-red-500 text-white text-xs p-1 rounded-full font-semibold">
+                        -9%
+                      </span>
+                    </p>
+                    <p className="mt-1 text-xl font-bold">{formatCurrency(service?.price * 0.9)}</p>
+                  </div>
+                  {
+                    !isMobile &&
+                    <div className="flex items-center gap-2">     
+                      <button
+                        onClick={() => window.open(`tel:${service?.medical_facility?.phone}`, "_blank")}
+                        className="py-2 px-9 text-[#ff9d3d] rounded-full font-semibold cursor-pointer border-[0.5px] border-[#ff9d3d] hover:bg-orange-200"
+                      >
+                        Liên hệ
+                      </button>
+                      <button
+                        onClick={() => setToogleBookingPopUp(true)}
+                        className="bg-[#007bff] py-2 px-9 text-white rounded-full font-semibold cursor-pointer border-[0.5px] hover:bg-white hover:text-[#007bff]"
+                      >
+                          Đặt lịch
+                      </button>
+                    </div>
+                  }
                 </div>
               </>
             )}
@@ -321,13 +329,16 @@ const ServicePage = () => {
           )}
         </div>
       </div>
-
-      <div id="book-action">
-        <button id="book-btn" onClick={() => setToogleBookingPopUp(true)}>
-          Đặt lịch ngay
-        </button>
-        <button id="advise-btn">Tư vấn ngay</button>
-      </div>
+      {
+        isMobile && (
+          <div id="book-action">
+            <button id="book-btn" onClick={() => setToogleBookingPopUp(true)}>
+              Đặt lịch ngay
+            </button>
+            <button id="advise-btn" onClick={() => window.open(`tel:${service?.medical_facility?.phone}`, "_blank")}>Tư vấn ngay</button>
+          </div>
+        )
+      }
 
       <BookingPopUp
         open={toogleBookingPopUp}

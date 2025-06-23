@@ -56,15 +56,36 @@ class HealthProfileController extends Controller
      */
     public function show(HealthProfile $healthProfile)
     {
-        return $healthProfile->load([
+        $healthProfile->load([
             'diseases',
             'allergies',
             'appointments' => function($query) {
-                $query->whereNotNull('result_release_date')->with(['medicalFacility','medicalRecord']);
+                $query->whereNotNull('result_release_date')
+                    ->with(['medicalFacility','medicalRecord']);
             },
             'appointments.medicalService',
             'appointments.doctor',
             'appointments.medicalFacility',
+        ]);
+        $latestIndicators = $healthProfile->latestIndicators();
+
+        // Group indicators by indicator group
+        $groupedIndicators = [];
+        foreach ($latestIndicators as $indicator) {
+            $indicatorType = $indicator->indicatorType;
+            $group = $indicatorType && $indicatorType->indicatorGroup ? $indicatorType->indicatorGroup->name : 'Other';
+            $groupedIndicators[$group][] = [
+                'name' => $indicatorType ? $indicatorType->name : '',
+                'value' => $indicator->value,
+                'unit' => $indicatorType ? $indicatorType->unit : '',
+                'measured_at' => $indicator->created_at,
+                'indicator_type_id' => $indicatorType->id
+            ];
+        }
+
+        return response()->json([
+            'health_profile' => $healthProfile,
+            'latest_indicators' => $groupedIndicators,
         ]);
     }
 
@@ -122,5 +143,16 @@ class HealthProfileController extends Controller
     public function getMedicalRecords(HealthProfile $healthProfile)
     {
         return $healthProfile->medicalRecords()->with(['doctor','examinations'])->get();
+    }
+
+    public function getIndicatorHistory(HealthProfile $profile, $indicatorType)
+    {
+        $history = $profile->indicatorHistory($indicatorType)->get()->map(function($item) {
+            return [
+                'value' => $item->value,
+                'measured_at' => $item->created_at,
+            ];
+        });
+        return response()->json($history);
     }
 }

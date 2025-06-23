@@ -98,6 +98,10 @@
       "none": "Không có",
       "save": "Lưu thông tin",
       "loading": "Đang tải..."
+    },
+    "indicators": {
+      "measured_at": "Lần cuối đo",
+      "empty": "Không có chỉ số sức khỏe nào."
     }
   },
   "header": {

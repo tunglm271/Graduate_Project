@@ -100,6 +100,7 @@
   text-align: center;
   font-weight: 600;
   box-shadow: 0 4px 8px rgba(173, 216, 230, 0.5);
+  cursor: pointer;
 }
 
 #labtest-section {

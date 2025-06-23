@@ -50,6 +50,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('service/doctors', [MedicalServiceController::class, 'getDoctorsForAppointment']);
     Route::get('my-medical-services', [MedicalServiceController::class, 'indexByFacility']);
     Route::apiResource('health-profiles', HealthProfileController::class);
+    Route::get('health-profiles/{profile}/indicators/{indicatorType}', [HealthProfileController::class, 'getIndicatorHistory']);
     Route::get('health-profiles/{healthProfile}/medical-records', [HealthProfileController::class, 'getMedicalRecords']);
     Route::prefix('health-profiles/{healthProfile}')->group(function () {
         Route::get('/medicines', [ProfileMedicineController::class, 'index']);

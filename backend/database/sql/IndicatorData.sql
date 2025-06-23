@@ -1,6 +1,6 @@
 -- Insert Indicator Groups
 INSERT INTO indicator_groups (id, name) VALUES
-(1, 'Huyết học'),
+(1, 'Chỉ số huyết học'),
 (2, 'Sinh hóa máu'),
 (3, 'Nước tiểu'),
 (4, 'Chức năng gan'),

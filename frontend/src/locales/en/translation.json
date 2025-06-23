@@ -91,6 +91,10 @@
       "none": "None",
       "save": "Save Information",
       "loading": "Loading..."
+    },
+    "indicators": {
+      "measured_at": "Measured at",
+      "empty": "No health indicators found."
     }
   },
   "header": {

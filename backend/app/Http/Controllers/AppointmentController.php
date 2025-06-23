@@ -14,6 +14,7 @@ use App\Events\DoctorAssignedEvent;
 use Exception;
 use App\Services\NotificationService;
 use Carbon\Carbon;
+use App\Models\HealthProfileIndicator;
 
 class AppointmentController extends Controller
 {
@@ -315,6 +316,17 @@ class AppointmentController extends Controller
                     'conclusion' => $request->input('indicatorTestSummary') ?? 'No conclusion provided',
                 ]);
                 $examination->indicators()->createMany(json_decode($request->input('indicators'),true));
+
+                $indicators = json_decode($request->input('indicators'), true);
+
+                foreach ($indicators as $indicator) {
+                    HealthProfileIndicator::create([
+                        'health_profile_id' => $appointment->healthProfile->id,
+                        'indicator_id' => $indicator['indicator_type_id'],
+                        'appointment_id' => $appointment->id,
+                        'value' => $indicator['value'],
+                    ]);
+                }
             }
 
             if($request->input('follow_up_date') != null) {

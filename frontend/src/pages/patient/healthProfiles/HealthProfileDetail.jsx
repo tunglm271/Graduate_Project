@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./healthProfiles.css";
 import {
   Breadcrumbs,
@@ -13,6 +13,11 @@ import {
   Button,
   Skeleton,
   CircularProgress,
+  Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HomeIcon from "@mui/icons-material/Home";
@@ -95,14 +100,21 @@ const HealthProfileDetail = () => {
   const [profile, setProfile] = useState(null);
   const [medicalRecords, setMedicalRecords] = useState([]);
   const [tabValue, setTabValue] = useState(0);
+  const [latestIndicators, setLatestIndicators] = useState({});
+  const [indicatorDialogOpen, setIndicatorDialogOpen] = useState(false);
+  const [selectedIndicator, setSelectedIndicator] = useState(null);
+  const [indicatorHistory, setIndicatorHistory] = useState([]);
+  const [indicatorHistoryLoading, setIndicatorHistoryLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         const response = await healthProfileApi.getById(id);
-        setProfile(response.data);
-        setMedicalRecords(response.data.appointments || []);
+        console.log("Profile data:", response.data);
+        setProfile(response.data.health_profile);
+        setMedicalRecords(response.data.health_profile.appointments || []);
+        setLatestIndicators(response.data.latest_indicators || {});
       } catch (error) {
         console.error("Error fetching profile:", error);
         // You might want to show an error message to the user here
@@ -112,6 +124,26 @@ const HealthProfileDetail = () => {
     };
     fetchData();
   }, [id]);
+
+  const handleIndicatorClick = async (indicator) => {
+    setSelectedIndicator(indicator);
+    setIndicatorDialogOpen(true);
+    setIndicatorHistoryLoading(true);
+    try {
+      const res = await healthProfileApi.getIndicatorHistory(id, indicator.indicator_type_id);
+      setIndicatorHistory(res.data);
+    } catch {
+      setIndicatorHistory([]);
+    } finally {
+      setIndicatorHistoryLoading(false);
+    }
+  };
+
+  const handleDialogClose = () => {
+    setIndicatorDialogOpen(false);
+    setSelectedIndicator(null);
+    setIndicatorHistory([]);
+  };
 
   if (loading) {
     return <LoadingSkeleton />;
@@ -164,10 +196,58 @@ const HealthProfileDetail = () => {
               </div>
             )}
             {tabValue === 1 && (
-              <Box sx={{ p: 3, textAlign: "center" }}>
-                <Typography color="text.secondary">
-                  {t("profile.indicators.coming-soon")}
-                </Typography>
+              <Box sx={{ p: 3 }}>
+                {Object.keys(latestIndicators).length === 0 ? (
+                  <Typography color="text.secondary">
+                    {t(
+                      "profile.indicators.empty",
+                      "No health indicators found."
+                    )}
+                  </Typography>
+                ) : (
+                  Object.entries(latestIndicators).map(
+                    ([group, indicators]) => (
+                      <Box key={group} sx={{ mb: 3, textAlign: "left" }}>
+                        <p className="font-bold text-xl pl-2 border-l-2 text-gray-700 border-gray-700">{group}</p>
+                        <Grid container spacing={2} sx={{ pl: 2 }}>
+                          {indicators.map((indicator, idx) => (
+                            <Grid item xs={12} sm={6} key={idx}>
+                              <ListItem
+                                alignItems="flex-start"
+                                sx={{ px: 0, cursor: "pointer" }}
+                                onClick={() => handleIndicatorClick(indicator)}
+                              >
+                                <ListItemText
+                                  primary={
+                                    <span>
+                                      <span className="font-bold hover:underline">
+                                        {indicator.name}
+                                      </span>
+                                      {": "}
+                                      <span>
+                                        {indicator.value} {indicator.unit}
+                                      </span>
+                                    </span>
+                                  }
+                                  secondary={
+                                    t(
+                                      "profile.indicators.measured_at",
+                                      "Measured at"
+                                    ) +
+                                    ": " +
+                                    new Date(
+                                      indicator.measured_at
+                                    ).toLocaleString()
+                                  }
+                                />
+                              </ListItem>
+                            </Grid>
+                          ))}
+                        </Grid>
+                      </Box>
+                    )
+                  )
+                )}
               </Box>
             )}
           </Box>
@@ -246,6 +326,59 @@ const HealthProfileDetail = () => {
           </div>
         </div>
       </div>
+      <Dialog
+        open={indicatorDialogOpen}
+        onClose={handleDialogClose}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          {selectedIndicator ? selectedIndicator.name : ""}
+        </DialogTitle>
+        <DialogContent>
+          {indicatorHistoryLoading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: 120,
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : indicatorHistory.length === 0 ? (
+            <Typography color="text.secondary" align="center">
+              Không có lịch sử đo cho chỉ số này.
+            </Typography>
+          ) : (
+            <Box>
+              {indicatorHistory.map((item, idx) => (
+                <Box
+                  key={idx}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 1,
+                  }}
+                >
+                  <Typography>
+                    {new Date(item.measured_at).toLocaleString()}
+                  </Typography>
+                  <Typography fontWeight={500}>
+                    {item.value} {selectedIndicator.unit}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>
+            {t("admin.medical_articles.delete.cancel", "Đóng")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

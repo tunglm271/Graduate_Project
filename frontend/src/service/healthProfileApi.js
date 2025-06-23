@@ -29,6 +29,10 @@ const healthProfileApi = {
   delete(id) {
     return api.delete(`${resource}/${id}`);
   },
+
+  getIndicatorHistory(profileId, indicatorTypeId) {
+    return api.get(`${resource}/${profileId}/indicators/${indicatorTypeId}`);
+  },
 };
 
 export default healthProfileApi;

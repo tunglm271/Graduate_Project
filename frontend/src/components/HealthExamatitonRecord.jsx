@@ -48,7 +48,7 @@ const HealthExamatitonRecord = ({ record }) => {
         />
       </ListItem>
       <Link
-        className="no-underline text-white bg-blue-500 px-4 py-2 rounded-full w-full md:w-[140px] text-center shadow-md hover:bg-blue-600 transition-colors"
+        className="no-underline text-white bg-blue-500 px-4 py-2 text-sm rounded-full w-full md:w-[140px] text-center shadow-md hover:bg-blue-600 transition-colors"
         to={`record/${record.medical_record.id}`}
       >
         Xem kết quả
