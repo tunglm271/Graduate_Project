@@ -634,7 +634,7 @@ const HealthProfileEdit = () => {
             onClick={() => handleSubmit()}
             disabled={loading}
           >
-            {loading ? t("common.loading") : t("profile.common.save")}
+            {loading ? t("profile.common.loading") : t("profile.common.save")}
           </Button>
         </Box>
       </div>

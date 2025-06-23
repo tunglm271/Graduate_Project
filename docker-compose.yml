@@ -45,6 +45,10 @@ services:
       - BROADCAST_DRIVER=reverb
       - BROADCAST_CONNECTION=reverb
       - OPENAI_API_KEY=...
+      - REDIS_CLIENT=predis
+      - REDIS_HOST=redis
+      - CACHE_STORE=redis
+      - REDIS_PORT=6379
     depends_on:
       db:
         condition: service_healthy
@@ -71,6 +75,14 @@ services:
       timeout: 5s
       retries: 20
       start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    
   rag:
     build:
       context: ./RAG
