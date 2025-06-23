@@ -3,6 +3,9 @@ import React from 'react';
 import { deepOrange, deepPurple } from '@mui/material/colors';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 const Appoinment = ({ appoinment }) => {
+
+    console.log(appoinment);
+
     const formatDate = (date) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(date).toLocaleDateString('vi-VN', options);
@@ -17,7 +20,7 @@ const Appoinment = ({ appoinment }) => {
         }}>
             <Avatar src={appoinment.medical_facility.logo} />
             <div className='appoinment-info'>
-                <h4>{appoinment.medical_service.name}</h4>
+                <h4>{appoinment.medical_service?.name || `Hẹn với bác sĩ ${appoinment.doctor?.name}`}</h4>
                 <div className='row'>
                     <p>{formatDate(appoinment.date)}   |   {appoinment.start_time.substring(0, 5)} - {appoinment.end_time.substring(0, 5)} </p>
                     

@@ -166,12 +166,14 @@ const MedicineCabinet = ({ medicines, healthProfileId, onMedicinesAdded }) => {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>Thêm thuốc mới</DialogTitle>
+        <DialogTitle>{t("medicine.add-medicine")}</DialogTitle>
         <DialogContent>
           {medicinesList.map((medicine, index) => (
             <div key={index} className="mb-6 border-b pb-4">
               <div className="flex justify-between items-center mb-2">
-                <Typography variant="h6">Thuốc {index + 1}</Typography>
+                <Typography variant="h6">
+                  {t("medicine.medicine-name")} {index + 1}
+                </Typography>
                 {index > 0 && (
                   <IconButton
                     color="error"
@@ -193,7 +195,7 @@ const MedicineCabinet = ({ medicines, healthProfileId, onMedicinesAdded }) => {
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        label="Tên thuốc"
+                        label={t("medicine.medicine-name")}
                         variant="standard"
                         required
                       />
@@ -239,7 +241,7 @@ const MedicineCabinet = ({ medicines, healthProfileId, onMedicinesAdded }) => {
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Thời gian uống"
+                    label={t("medicine.time-of-day", "Thời gian uống")}
                     name="time_of_day"
                     value={medicine.time_of_day}
                     onChange={(e) =>
@@ -251,7 +253,10 @@ const MedicineCabinet = ({ medicines, healthProfileId, onMedicinesAdded }) => {
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Số lần uống trong ngày"
+                    label={t(
+                      "medicine.times-per-day",
+                      "Số lần uống trong ngày"
+                    )}
                     name="times_per_day"
                     value={medicine.times_per_day}
                     onChange={(e) =>
@@ -264,7 +269,7 @@ const MedicineCabinet = ({ medicines, healthProfileId, onMedicinesAdded }) => {
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Liều lượng mỗi lần"
+                    label={t("medicine.dosage-per-time", "Liều lượng mỗi lần")}
                     name="dosage_per_time"
                     value={medicine.dosage_per_time}
                     onChange={(e) =>
@@ -280,7 +285,7 @@ const MedicineCabinet = ({ medicines, healthProfileId, onMedicinesAdded }) => {
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Tổng số lượng"
+                    label={t("medicine.medicine-quantity", "Tổng số lượng")}
                     name="total_quantity"
                     value={medicine.total_quantity}
                     onChange={(e) =>
@@ -293,7 +298,7 @@ const MedicineCabinet = ({ medicines, healthProfileId, onMedicinesAdded }) => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Ghi chú"
+                    label={t("medicine.notes", "Ghi chú")}
                     name="notes"
                     value={medicine.notes}
                     onChange={(e) =>
@@ -312,13 +317,15 @@ const MedicineCabinet = ({ medicines, healthProfileId, onMedicinesAdded }) => {
             onClick={handleAddMedicine}
             sx={{ mt: 2 }}
           >
-            Thêm thuốc khác
+            {t("medicine.add-medicine")}
           </Button>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Hủy</Button>
+          <Button onClick={handleCloseDialog}>
+            {t("admin.medical_articles.delete.cancel", "Hủy")}
+          </Button>
           <Button onClick={handleSubmit} variant="contained" color="primary">
-            Thêm thuốc
+            {t("medicine.add-medicine")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -393,26 +400,36 @@ const MedicineCabinet = ({ medicines, healthProfileId, onMedicinesAdded }) => {
                 <div className="bg-gray-50 p-4 border-t">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-gray-500">Thời gian uống</p>
+                      <p className="text-sm text-gray-500">
+                        {t("medicine.time-of-day", "Thời gian uống")}
+                      </p>
                       <p>{med.time_of_day}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Liều lượng</p>
+                      <p className="text-sm text-gray-500">
+                        {t("medicine.dosage-per-time", "Liều lượng")}
+                      </p>
                       <p>
                         {med.times_per_day} {med.medicine.unit}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Ngày bắt đầu</p>
+                      <p className="text-sm text-gray-500">
+                        {t("medicine.start-date", "Ngày bắt đầu")}
+                      </p>
                       <p>{new Date(med.start_date).toLocaleDateString()}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Hướng dẫn</p>
+                      <p className="text-sm text-gray-500">
+                        {t("medicine.notes", "Hướng dẫn")}
+                      </p>
                       <p>{med.notes}</p>
                     </div>
                     {med.endDate && (
                       <div>
-                        <p className="text-sm text-gray-500">End date</p>
+                        <p className="text-sm text-gray-500">
+                          {t("medicine.end-date", "End date")}
+                        </p>
                         <p>{med.endDate.toLocaleDateString()}</p>
                       </div>
                     )}
@@ -424,7 +441,12 @@ const MedicineCabinet = ({ medicines, healthProfileId, onMedicinesAdded }) => {
         </div>
       ) : (
         <div className="bg-gray-50 rounded-lg p-6 text-center">
-          <p className="text-gray-500">No {activeTab} medications found</p>
+          <p className="text-gray-500">
+            {t(
+              `medicine.no-medicine-schedule`,
+              `No ${activeTab} medications found`
+            )}
+          </p>
         </div>
       )}
     </div>

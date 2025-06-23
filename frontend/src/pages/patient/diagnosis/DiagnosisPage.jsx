@@ -17,7 +17,7 @@ const TypingText = ({ text }) => {
       const timeout = setTimeout(() => {
         setDisplayedText((prev) => prev + text[currentIndex]);
         setCurrentIndex((prev) => prev + 1);
-      }, 20);
+      }, 10);
 
       return () => clearTimeout(timeout);
     } else {

@@ -391,10 +391,7 @@ class AppointmentController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
-            
-            // Log the error for debugging
-            \Log::error('Error adding result: ' . $e->getMessage());
-            \Log::error($e->getTraceAsString());
+        
 
             return response()->json([
                 'message' => 'Failed to add result. Please try again.',

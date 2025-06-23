@@ -9,12 +9,14 @@ import BookingPopUp from "../../../components/dialog/BookingPopUp";
 import { useEffect, useState } from "react";
 import medicalServiceApi from "../../../service/medicalServiceAPi";
 import ServiceCard from "../../../components/card/ServiceCard";
+import { useTranslation } from "react-i18next";
 const ServicePage = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [service, setService] = useState({});
   const [recommendations, setRecommendations] = useState([]);
   const [toogleBookingPopUp, setToogleBookingPopUp] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     medicalServiceApi
@@ -122,7 +124,7 @@ const ServicePage = () => {
               <ul>
                 <li>
                   <span>Hình thức thực hiện</span>
-                  <span>Tại nhà, tại viện</span>
+                  <span>Tại cơ sở y tế</span>
                 </li>
                 <li>
                   <span>Thời gian thực hiện</span>
@@ -134,7 +136,7 @@ const ServicePage = () => {
                 </li>
                 <li>
                   <span>Giới tính</span>
-                  <span>{service?.service_audience_gender}</span>
+                  <span>{t(service?.service_audience_gender)}</span>
                 </li>
                 <li>
                   <span>Độ tuổi</span>

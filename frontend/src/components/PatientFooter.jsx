@@ -75,7 +75,7 @@ const PatientFooter = () => {
                             {t('footer.subscribe.title')}
                         </Typography>
                         <div id='footer-subscribe'>
-                            <input type="text" placeholder={t('footer.subscribe.placeholder')} />
+                            <input type="text" className='text-black text-sm' placeholder={t('footer.subscribe.placeholder')} />
                             <button>{t('footer.subscribe.button')}</button>
                         </div>
                         <p style={{marginTop: '20px', fontSize: '12px'}}>

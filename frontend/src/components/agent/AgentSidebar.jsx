@@ -4,12 +4,12 @@ import { ListItem, ListItemIcon, ListItemText, Typography } from "@mui/material"
 import ColorLogo from "../../assets/color-logo.png";
 import InpatientIcon from '@icon/service-category/InpatientIcon';
 
-const AgentSidebar = ({children}) => {
+const AgentSidebar = ({children, title = "Docify Clinic"}) => {
     return (
         <div className="facility-sidebar">
             <Link className="flex gap-1 items-center" to="/facility/dashboard">
                 <img src={ColorLogo} alt="" className="object-cover w-12 h-12" />
-                <span className="font-semibold text-xl">Docify Clinic</span>
+                <span className="font-semibold text-xl">{title}</span>
             </Link>
 
             <ListItem component={Link} to={"/facility/profile"} sx={{

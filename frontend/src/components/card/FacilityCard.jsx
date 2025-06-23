@@ -25,10 +25,17 @@ const FacilityCard = ({ facility }) => {
           >
             Liên hệ
           </Button>
-          <Button variant="contained" sx={{
-            boxShadow: 'none',
-            padding: '3px 10px',
-          }}>Đặt lịch</Button>
+          <Button 
+            variant="contained" 
+            sx={{
+              boxShadow: 'none',
+              padding: '3px 10px',
+            }}
+            component={Link}
+            to={`/booking/${facility.id}`}
+          >
+            Đặt lịch
+          </Button>
         </div>
       </div>
     </div>

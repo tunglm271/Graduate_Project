@@ -9,7 +9,7 @@ import { Outlet } from "react-router-dom";
 const DoctorLayout = () => {
     return (
         <div>
-            <AgentSidebar>
+            <AgentSidebar title="Docify Doctor">
                 <FacilityNavLink to="/doctor" icon={<CalendarTodayIcon />} text="Working Schedule" />
                 <FacilityNavLink to="/doctor/reservations" icon={<ListIcon />} text="Quản lý đơn khám" />
                 <FacilityNavLink to="/doctor/service-assignment" icon={<MedicalServicesIcon />} text="Chỉ định dịch vụ" />

@@ -23,7 +23,7 @@ const ServiceCard = ({ service }) => {
         <Link to={`/services/${service?.id || 1}`} className="service-card">
             <div style={{ position: 'relative' }}>
                 <img src={service.thumbnail} alt={service?.name || 'Service'} />
-                <span>90%</span>
+                <span>-9%</span>
             </div>
 
             <div className="p-2 flex-grow flex flex-col">

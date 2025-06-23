@@ -408,7 +408,7 @@
   },
   "medicine": {
     "my-medicines": "My Medicines",
-    "no-medicine-schedule": "No medicine schedule",
+    "no-medicine-schedule": "No medicines found",
     "cabinet": {
       "title": "Medicine Cabinet",
       "tabs": {
@@ -417,7 +417,15 @@
       }
     },
     "add-medicine": "Add Medicine",
-    "medicine-name": "Medicine Name"
+    "medicine-name": "Medicine Name",
+    "medicine-quantity": "Total Quantity",
+    "medicine-expiry": "Expiry Date",
+    "time-of-day": "Time of Day",
+    "times-per-day": "Times per Day",
+    "dosage-per-time": "Dosage per Time",
+    "notes": "Notes",
+    "start-date": "Start Date",
+    "end-date": "End Date"
   },
   "news": {
     "news": "News",
