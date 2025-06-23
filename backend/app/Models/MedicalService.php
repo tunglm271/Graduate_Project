@@ -70,7 +70,7 @@ class MedicalService extends Model
 
     public function scopeGender($query, $gender = null)
     {
-        if ($gender !== null) {
+        if ($gender === "male" || $gender === "female") {
             return $query->where('service_audience_gender', $gender);
         }
     

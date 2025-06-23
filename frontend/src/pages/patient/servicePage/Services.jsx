@@ -169,6 +169,9 @@ const Services = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 px-3 py-2 border-none focus:outline-none"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") submitSearch();
+          }}
         />
         <IconButton
           onClick={submitSearch}

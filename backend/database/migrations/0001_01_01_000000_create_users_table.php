@@ -6,10 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    private $defaultAvatar = "https://res.cloudinary.com/dftiye2et/image/upload/v1740473611/samples/man-portrait";
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -18,7 +14,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
-            $table->string('avatar')->default($this->defaultAvatar);
+            $table->string('avatar')->nullable();
             $table->integer('role_id')->default(0);
             $table->boolean('active')->default(true);
             $table->timestamp('last_activity')->nullable();

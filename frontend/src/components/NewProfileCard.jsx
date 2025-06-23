@@ -45,12 +45,11 @@ const NewProfileCard = ({ profile, onDelete }) => {
                         marginX: 'auto',
                         width: 80,
                         height: 80,
-                        border: '3px solid white',
+                        border: `3px solid ${profile.relationship == "Self" ? "#FFB433" : "white"}`,
                     }}
                 />
                 <p className='text-xl font-semibold'>{profile.name}</p>
                 <p className='text-sm'>#{t(profile.relationship)}</p>
-                {profile.relationship == "Self" && <p>Hồ sơ sức khỏe cá nhân</p>}
                 <IconButton 
                     component={Link} 
                     to={`/health-profile/${profile.id}`} 

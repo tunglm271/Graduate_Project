@@ -2,7 +2,7 @@ import { Dialog, DialogActions, DialogTitle, Button, Select, MenuItem, FormContr
 import { useState } from 'react';
 const FilterPopUp = ({open, onClose, handleFilter}) => {
     const [maxPrice, setMaxPrice] = useState(100);
-    const [gender, setGender] = useState("other");
+    const [gender, setGender] = useState("all");
     const marks = [
         {
             value: 0,
@@ -78,7 +78,7 @@ const FilterPopUp = ({open, onClose, handleFilter}) => {
                     value={gender}
                     onChange={(event) => setGender(event.target.value)}
                 >
-                    <FormControlLabel value="other" control={<Radio />} label="Tất cả" />
+                    <FormControlLabel value="all" control={<Radio />} label="Tất cả" />
                     <FormControlLabel value="female" control={<Radio />} label="Nam" />
                     <FormControlLabel value="male" control={<Radio />} label="Nữ" />
                 </RadioGroup>
