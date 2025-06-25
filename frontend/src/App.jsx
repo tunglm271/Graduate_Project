@@ -20,7 +20,6 @@ import {
   FacilityLayout,
   DoctorLayout,
   AdminLayout,
-  GuestLayout,
 } from "./layouts";
 import {
   PatientHomePage,

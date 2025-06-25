@@ -7,8 +7,9 @@ import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import ServiceCard from "../components/card/ServiceCard";
 import FacilityCard from "../components/card/FacilityCard";
 import api from "../service/api.js";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Skeleton } from "@mui/material";
+import Cookies from "js-cookie";
 
 const IntroSection = styled(Box)(({ theme }) => ({
   background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
@@ -104,6 +105,11 @@ export default function LandingPage() {
   const [services, setServices] = React.useState([]);
   const [facilities, setFacilities] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const isAuthenticated = !!Cookies.get("token");
+
+  if(isAuthenticated) {
+    return <Navigate to="/home" />;
+  }
 
   React.useEffect(() => {
     setLoading(true);
@@ -134,6 +140,8 @@ export default function LandingPage() {
         setLoading(false);
       });
   }, []);
+
+
   return (
     <div className="p-5">
       {/* Introduction Section */}

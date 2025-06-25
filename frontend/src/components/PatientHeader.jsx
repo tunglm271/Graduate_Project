@@ -51,7 +51,7 @@ const PatientHeader = () => {
   const handleLogout = async () => {
     logoutRequest().then((res) => {
       console.log(res);
-      navigate("/auth/login");
+      navigate("/");
       showSuccessSnackbar(t("msg.log-out-success"));
     });
   };
