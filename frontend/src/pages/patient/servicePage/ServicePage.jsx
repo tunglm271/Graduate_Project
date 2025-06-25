@@ -1,6 +1,6 @@
 import "./service.css";
 import { Breadcrumbs, Divider, Skeleton } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
@@ -12,6 +12,7 @@ import medicalServiceApi from "../../../service/medicalServiceAPi";
 import ServiceCard from "../../../components/card/ServiceCard";
 import { useTranslation } from "react-i18next";
 import { formatCurrency } from "../../../utlis/caculateFun";
+import Cookies from "js-cookie";
 const ServicePage = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
@@ -21,6 +22,8 @@ const ServicePage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const isAuthenticated = !!Cookies.get("token");
 
   useEffect(() => {
     medicalServiceApi
@@ -105,7 +108,14 @@ const ServicePage = () => {
                         Liên hệ
                       </button>
                       <button
-                        onClick={() => setToogleBookingPopUp(true)}
+                        onClick={() => {
+                            if(!isAuthenticated) {
+                              navigate("/auth/login?auth=unauthenticated");
+                              return;
+                            }
+                            setToogleBookingPopUp(true)
+                          }
+                        }
                         className="bg-[#007bff] py-2 px-9 text-white rounded-full font-semibold cursor-pointer border-[0.5px] hover:bg-white hover:text-[#007bff]"
                       >
                           Đặt lịch
@@ -339,13 +349,15 @@ const ServicePage = () => {
           </div>
         )
       }
-
-      <BookingPopUp
-        open={toogleBookingPopUp}
-        onClose={() => setToogleBookingPopUp(false)}
-        facility={service?.medical_facility}
-        id={id}
-      />
+      {
+        Boolean(toogleBookingPopUp) &&
+        <BookingPopUp
+          open={toogleBookingPopUp}
+          onClose={() => setToogleBookingPopUp(false)}
+          facility={service?.medical_facility}
+          id={id}
+        />
+      }
     </div>
   );
 };

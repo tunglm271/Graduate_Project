@@ -30,7 +30,9 @@ const PatientMainLayout = () => {
             }}
           >
             <PatientHeader />
-            <Outlet />
+            <div className="min-h-[65vh]">
+              <Outlet />
+            </div>
             <PatientFooter />
           </main>
           {isMobile && <PatientSidebar />}

@@ -109,8 +109,8 @@ const ProfileDetail = ({ icon, primaryText, secondaryText }) => (
 );
 
 const ProfileInfo = ({ label, info }) => (
-    <div className='flex text-xs items-start gap-1 col-span-2' style={{ padding: "0 5px", marginTop: '10px' }}>
-        <p className='font-semibold text-sm' style={{ maxWidth: "80px", minWidth: "80px" }}>{label}</p>
+    <div className='flex text-xs items-start gap-1 col-span-2 py-2 mt-2.5'>
+        <p className='font-semibold text-sm w-28'>{label}</p>
         <p className='italic line-clamp-3'>{info}</p>
     </div>
 );

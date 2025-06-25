@@ -16,10 +16,11 @@ import MedicalService from "@icon/MedicalService";
 import PillIcon from "@icon/PillIcon";
 import { useTranslation } from "react-i18next";
 import { useContext } from "react";
-import { Newspaper, Hospital } from "lucide-react";
+import { Newspaper, Hospital, Info, Headset  } from "lucide-react";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import MenuIcon from "@mui/icons-material/Menu";
 import { PatientLayoutContext } from "../context/PateintLayoutProvider";
+import Cookies from "js-cookie";
 
 const PatientSidebar = () => {
   const { t } = useTranslation();
@@ -27,6 +28,7 @@ const PatientSidebar = () => {
     useContext(PatientLayoutContext);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isAuthenticated = !!Cookies.get("token");
 
   const sidebarContent = (
     <>
@@ -47,18 +49,49 @@ const PatientSidebar = () => {
       </Link>
 
       <div id="nav-bar">
-        <NavLink
-          to="/home"
-          icon={<HomeIcon size={26} />}
-          text={t("homepage")}
-          collapse={sidebarCollapse}
-        />
-        <NavLink
-          to="/appointments"
-          icon={<CalendarIcon size={24} />}
-          text={t("booking")}
-          collapse={sidebarCollapse}
-        />
+        {
+          !isAuthenticated ?
+          <NavLink
+            to="/"
+            icon={<Info />}
+            text={t("about")}
+            collapse={sidebarCollapse}
+          />
+          :
+          <NavLink
+            to="/home"
+            icon={<HomeIcon size={26} />}
+            text={t("homepage")}
+            collapse={sidebarCollapse}
+          />
+        }
+        {
+          isAuthenticated &&
+          <NavLink
+            to="/appointments"
+            icon={<CalendarIcon size={24} />}
+            text={t("booking")}
+            collapse={sidebarCollapse}
+          />
+        }
+        {
+          isAuthenticated && 
+          <NavLink
+            to="/health-profile"
+            icon={<PeopleOutlineIcon />}
+            text={t("health-profile")}
+            collapse={sidebarCollapse}
+          />
+        }
+        {
+          isAuthenticated &&
+          <NavLink
+            to="/medicines"
+            icon={<PillIcon size={24} />}
+            text={t("medicine-management")}
+            collapse={sidebarCollapse}
+          />
+        }
         <NavLink
           to="/services"
           icon={<MedicalService size={24} />}
@@ -69,18 +102,6 @@ const PatientSidebar = () => {
           to="/clinics"
           icon={<Hospital size={20} />}
           text={t("facility")}
-          collapse={sidebarCollapse}
-        />
-        <NavLink
-          to="/health-profile"
-          icon={<PeopleOutlineIcon />}
-          text={t("health-profile")}
-          collapse={sidebarCollapse}
-        />
-        <NavLink
-          to="/medicines"
-          icon={<PillIcon size={24} />}
-          text={t("medicine-management")}
           collapse={sidebarCollapse}
         />
         <NavLink
@@ -96,6 +117,18 @@ const PatientSidebar = () => {
           collapse={sidebarCollapse}
         />
       </div>
+        <div className={`flex items-center space-x-1 justify-center`}>
+          {
+            sidebarCollapse &&
+            <>
+              <Headset className="text-white w-8 h-8"/>
+              <div className="text-white text-left">
+                  <p className="nav-link-text mb-0 font-semibold text-sm">Hỗ trợ đặt khám</p>
+                  <p className="nav-link-text text-[#ffb54a] font-semibold text-lg">1900 1234</p>
+              </div>
+            </>
+          }
+        </div>
     </>
   );
 
@@ -107,7 +140,7 @@ const PatientSidebar = () => {
           sx={{
             position: "fixed",
             left: 16,
-            top: 16,
+            top: 8,
             zIndex: 1200,
             color: "primary.main",
             backgroundColor: "white",

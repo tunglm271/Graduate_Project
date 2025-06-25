@@ -6,7 +6,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate  } from "react-router-dom";
 import "./facility-landing-page.css";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -18,6 +18,8 @@ import { useContext, useEffect, useState } from "react";
 import facilityApi from "../../../service/FacilityApi";
 import Map from "../../../components/Map";
 import ParagraphSkeleton from "../../../components/loading/ParagraphSkeleton";
+import Cookies from "js-cookie";
+
 
 const doctorDefaultImg =
   "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png";
@@ -29,6 +31,8 @@ const FacilityLandingPage = () => {
   const [facility, setFacility] = useState({});
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isAuthenticated = !!Cookies.get("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     facilityApi.getById(facilityId).then((res) => {
@@ -118,10 +122,18 @@ const FacilityLandingPage = () => {
                   textTransform: "none",
                 }}
                 onClick={() =>
-                  setChatbox({
-                    contactId: facility.user_id?.toString(),
-                    contactName: facility.facility_name,
-                  })
+                {
+                  if (isAuthenticated) {
+                    setChatbox({
+                      contactId: facility.user_id?.toString(),
+                      contactName: facility.facility_name,
+                    })
+                  } else {
+                    navigate("/auth/login", {
+                      state: { from: `/clinic/${facilityId}` },
+                    });
+                  }
+                }
                 }
               >
                 Liên hệ

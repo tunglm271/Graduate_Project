@@ -26,6 +26,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import medicalServiceApi from "../../../service/medicalServiceAPi";
 import SearchResult from "./SearchResult";
+import { use } from "react";
 
 const Services = () => {
   const theme = useTheme();
@@ -60,6 +61,22 @@ const Services = () => {
       setLoading(false);
     });
   };
+
+  useEffect(() => {
+    setSearchResult(true);
+    setLoading(true);
+    medicalServiceApi.getAll({ q: search, ...filterData }).then((res) => {
+      setFacilityList(res.data.facilities);
+      setServiceList(res.data.services);
+      setLoading(false);
+    });
+  }, [filterData]);
+
+  useEffect(() => {
+    if (search === "") {
+      setSearchResult(false);
+    }
+  }, [search]);
 
   const settings = {
     dots: true,

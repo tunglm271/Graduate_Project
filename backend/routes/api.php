@@ -32,7 +32,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('user', [AuthController::class, 'getUser']);
     Route::post('user/update', [AuthController::class, 'updateUser']);
     Route::get('homepage', [PatientController::class, 'homePage']);
-    Route::apiResource('medical-facilities', MedicalFacilityController::class)->except('store');
+    Route::apiResource('medical-facilities', MedicalFacilityController::class)->except('store','index', 'show');
     Route::get('my-facility', [MedicalFacilityController::class, 'detail']);
     Route::get('medical-facility/dashboard', [MedicalFacilityController::class, 'dashboard']);
     Route::apiResource('doctors', DoctorController::class);
@@ -41,9 +41,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('patients', PatientController::class)->except('store');
     Route::get('patient/doctor', [PatientController::class, 'indexByDoctor']);
     Route::apiResource('schedules', ScheduleController::class);
-    Route::apiResource('medical-services', MedicalServiceController::class);
+    Route::apiResource('medical-services', MedicalServiceController::class)->except(['index']);
     Route::apiResource('specialties', SpecialtyController::class)->except(['show']);
-    Route::get('patient/medical-services/{medicalService}', [MedicalServiceController::class, 'showByPatient']);
     Route::get('doctor-medical-services', [MedicalServiceController::class, 'indexByDoctor']);
     Route::get('service/valiable-slots', [MedicalServiceController::class, 'getAvaliableSlots']);
     Route::get('service/doctor-slots', [MedicalServiceController::class, 'getAvaliableSlotsForDoctor']);
@@ -62,7 +61,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('diseases', [DiseaseController::class, 'index']);
     Route::get('allergies', [AllergyController::class, 'index']);
     Route::get('medicines', [MedicineController::class, 'index']);
-    Route::get('cities', CityController::class);
     Route::get('indicator-types', [IndicatorController::class, 'getIndicatorTypes']);
     Route::apiResource('sales', SaleController::class)->except('show')->middleware('role:facility');
     Route::apiResource('appointments', AppointmentController::class)->except('update');
@@ -84,8 +82,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('prescriptions/{prescription}/medicines', [MedicalRecordController::class, 'getPrescriptionMedicines']);
     Route::get('admin/medical-facilities', [MedicalFacilityController::class, 'index']);
     Route::apiResource('articles', ArticleController::class);
-    Route::get('articles/{article}/show-by-patient', [ArticleController::class, 'showByPatient']);
-    Route::get('articles-homepage', [ArticleController::class, 'articleHomepage']);
     Route::post('articles/{article}/publish', [ArticleController::class, 'publish']);
     Route::post('articles/{article}/unpublish', [ArticleController::class, 'unpublish']);
     Route::prefix('notifications')->group(function () {
@@ -115,5 +111,12 @@ Route::post('/login/google', [AuthController::class, 'loginWithGoogle']);
 Route::post('diagnosis', [DiagnosisController::class, 'query']);
 Route::post('rag-diagnosis', [DiagnosisController::class, 'ragQuery']);
 Route::get('landing-page', [PatientController::class, 'landingPage']);
+Route::get('articles-homepage', [ArticleController::class, 'articleHomepage']);
+Route::get('articles/{article}/show-by-patient', [ArticleController::class, 'showByPatient']);
+Route::get('medical-facilities', [MedicalFacilityController::class, 'index']);
+Route::get('medical-facilities/{medicalFacility}', [MedicalFacilityController::class, 'show']);
+Route::get('patient/medical-services/{medicalService}', [MedicalServiceController::class, 'showByPatient']);
+Route::get('medical-services', [MedicalServiceController::class, 'index']);
+Route::get('cities', CityController::class);
 
 Route::get('sms', [AuthController::class, 'testSendSms']);

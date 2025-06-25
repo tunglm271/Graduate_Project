@@ -1,5 +1,5 @@
 import { Breadcrumbs, Typography, CircularProgress } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import InpatientIcon from "@icon/service-category/InpatientIcon";
 import StethoscopeIcon from "@icon/StethoscopeIcon";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -10,6 +10,7 @@ import facilityApi from "../../../service/FacilityApi";
 import { formatCurrency } from "../../../utlis/caculateFun";
 import doctorDefaultImg from "../../../assets/images/doctor.png";
 import BookingPopUp from "../../../components/dialog/BookingPopUp";
+import Cookies from "js-cookie";
 
 const FacilityBooking = () => {
   const [loading, setLoading] = useState(true);
@@ -19,6 +20,8 @@ const FacilityBooking = () => {
   const [toogleBookingPopUp, setToogleBookingPopUp] = useState(false);
   const [doctor, setDoctor] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
+  const isAuthenticated = !!Cookies.get("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     facilityApi.getById(facilityId).then((res) => {
@@ -50,7 +53,7 @@ const FacilityBooking = () => {
         </Link>
         <Typography color="text.primary">Đặt lịch khám</Typography>
       </Breadcrumbs>
-      <div className="flex flex-col lg:flex-row justify-center gap-4 lg:gap-7 mb-5">
+      <div className="flex flex-col lg:flex-row justify-center gap-4 lg:gap-7 mt-7">
         <div
           className="w-full lg:w-1/4 bg-white rounded-lg h-fit"
           style={{
@@ -159,6 +162,12 @@ const FacilityBooking = () => {
                           </Link>
                           <button
                             onClick={() => {
+                              if (!isAuthenticated) {
+                                navigate("/auth/login?auth=unauthenticated", {
+                                  state: { from: `/clinic/${facilityId}` },
+                                });
+                                return;
+                              }
                               setSelectedService(service.id);
                               setToogleBookingPopUp(true);
                             }}
@@ -243,6 +252,12 @@ const FacilityBooking = () => {
                         <button
                           className="register-btn"
                           onClick={() => {
+                            if(!isAuthenticated) {
+                              navigate("/auth/login?auth=unauthenticated", {
+                                state: { from: `/clinic/${facilityId}` },
+                              });
+                              return;
+                            }
                             setDoctor(doctor);
                             setToogleBookingPopUp(true);
                           }}
@@ -272,14 +287,17 @@ const FacilityBooking = () => {
           </button>
         </div>
       </div>
-      <BookingPopUp
-        open={toogleBookingPopUp}
-        onClose={() => setToogleBookingPopUp(false)}
-        facility={facility}
-        bookingType={bookingType}
-        doctor={doctor}
-        id={selectedService}
-      />
+      {
+        Boolean(toogleBookingPopUp) &&
+        <BookingPopUp
+          open={toogleBookingPopUp}
+          onClose={() => setToogleBookingPopUp(false)}
+          facility={facility}
+          bookingType={bookingType}
+          doctor={doctor}
+          id={selectedService}
+        />
+      }
     </div>
   );
 };

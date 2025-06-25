@@ -181,7 +181,7 @@ export default function LandingPage() {
                       },
                     }}
                     component={Link}
-                    to="/facility-register"
+                    to="/auth/facility-register"
                   >
                     Đăng Ký Cơ Sở
                   </Button>

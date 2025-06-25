@@ -218,7 +218,7 @@ const NewsDetail = () => {
                     className="w-full h-24 sm:h-32 object-cover rounded-lg mb-3"
                   />
                   <h4 className="font-medium">{service.name}</h4>
-                  <p className="text-sm text-gray-500 mb-2">
+                  <p className="text-sm text-gray-500 mb-2 line-clamp-2">
                     {service.description}
                   </p>
                   <p className="text-blue-500 font-medium">{formatCurrency(service.price)}</p>

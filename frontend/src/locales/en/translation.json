@@ -3,6 +3,7 @@
   "service-management": "Service Management",
   "dashboard": "Dashboard",
   "homepage": "Home",
+  "about": "About",
   "booking": "Booking",
   "service-search": "Service Search",
   "health-profile": "Health Profile",
@@ -106,6 +107,7 @@
       "profile": "Profile",
       "log-out": "Log out"
     },
+    "login": "Login",
     "doctor": "Doctor",
     "facility": "Facility"
   },

@@ -20,6 +20,7 @@ import {
   FacilityLayout,
   DoctorLayout,
   AdminLayout,
+  GuestLayout,
 } from "./layouts";
 import {
   PatientHomePage,
@@ -83,20 +84,31 @@ const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <ProtectedRoute role={2} element={<PatientMainLayout />} />,
+    element: <PatientMainLayout />,
     children: [
       { path: "", element: <LandingPage /> },
+      { path: "ai-diagnosis", element: <DiagnosisPage /> },
+      { path: "news", element: <NewsList /> },
+      { path: "news/:id", element: <NewDetail /> },
+      { path: "news-all", element: <AllNews /> },
+      { path: "news-external", element: <AllExternalNews /> },
+      { path: "clinics", element: <Facilities /> },
+      { path: "booking/:facilityId", element: <FacilityBooking /> },
+      { path: "clinic/:facilityId", element: <FacilityLandingPage /> },
+      { path: "services", element: <Services /> },
+      { path: "services/:id", element: <ServicePage /> },
+    ]
+  },
+  {
+    path: "/",
+    element: <ProtectedRoute role={2} element={<PatientMainLayout />} />,
+    children: [
       { path: "home", element: <PatientHomePage /> },
       { path: "messages", element: <MessagePage /> },
       { path: "appointments", element: <AppointmentPage /> },
       { path: "appointments/:id", element: <AppointmentDetail /> },
       { path: "medicines", element: <MedicinePage /> },
-      { path: "booking/:facilityId", element: <FacilityBooking /> },
-      { path: "clinics", element: <Facilities /> },
-      { path: "clinic/:facilityId", element: <FacilityLandingPage /> },
       { path: "doctor-page/:doctorId", element: <DoctorDetail /> },
-      { path: "services", element: <Services /> },
-      { path: "services/:id", element: <ServicePage /> },
       { path: "health-profile", element: <HealthProfilePage /> },
       { path: "health-profile/:id", element: <HealthProfileDetail /> },
       { path: "health-profile/:id/edit", element: <HealthProfileEdit /> },
@@ -115,11 +127,6 @@ const router = createBrowserRouter([
         element: <ConversationList onSelectConversation={null} />,
       },
       { path: "settings", element: <SettingPage /> },
-      { path: "news", element: <NewsList /> },
-      { path: "news/:id", element: <NewDetail /> },
-      { path: "news-all", element: <AllNews /> },
-      { path: "news-external", element: <AllExternalNews /> },
-      { path: "ai-diagnosis", element: <DiagnosisPage /> },
     ],
   },
   {

@@ -106,7 +106,7 @@ const FilterDialog = ({ open, onClose, onApply, initialFilters = {} }) => {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Hủy</Button>
+        <Button color="error" onClick={onClose}>Hủy</Button>
         <Button onClick={handleApply} variant="contained">
           Áp dụng
         </Button>

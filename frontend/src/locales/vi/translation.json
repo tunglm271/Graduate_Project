@@ -2,6 +2,7 @@
   "facility-header": " Docify - Quản lý cơ sở y tế",
   "service-management": "Quản lý dịch vụ",
   "dashboard": "Bảng điều khiển",
+  "about": "Giới thiệu",
   "facility": "Cơ sở y tế",
   "homepage": "Trang chủ",
   "booking": "Đặt lịch hẹn",
@@ -113,6 +114,7 @@
       "log-out": "Đăng xuất",
       "profile": "Hồ sơ"
     },
+    "login": "Đăng nhập",
     "doctor": "Bác sĩ",
     "facility": "Cơ sở y tế"
   },

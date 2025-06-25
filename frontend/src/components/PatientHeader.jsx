@@ -26,6 +26,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import PersonIcon from "@mui/icons-material/Person";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const PatientHeader = () => {
   const { t } = useTranslation();
@@ -36,6 +37,8 @@ const PatientHeader = () => {
   const header = useRef(null);
   const { sidebarCollapse, setSidebarCollapse, user } =
     useContext(PatientLayoutContext);
+
+  const isAuthenticated = !!Cookies.get("token");
 
   const userMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -108,100 +111,115 @@ const PatientHeader = () => {
 
         <LanguageSelect color="black" />
 
-        <NotificationList />
 
-        <ConversationList />
+      {isAuthenticated ? (
+          <>
+            <NotificationList />
 
-        <Button
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "3px",
-            textTransform: "none",
-            color: "black",
-          }}
-          id="user-menu-btn"
-          onClick={userMenuClick}
-        >
-          <AvatarWithStatus avatar={user.avatar} />
-          <Typography
-            display={{
-              xs: "none",
-              sm: "none",
-              md: "none",
-              lg: "block",
-            }}
-          >
-            {user.name}
-          </Typography>
-          <ArrowDropDownIcon
-            sx={{
-              transition: "transform 0.3s ease-in-out",
-              transform: open ? "rotate(180deg)" : "rotate(0deg)",
-              display: {
-                xs: "none",
-                sm: "block",
-                md: "block",
-                lg: "block",
-              },
-            }}
-          />
-        </Button>
+            <ConversationList />
 
-        <Menu
-          id="user-menu-btn"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          slotProps={{ paper: { sx: { width: 250, marginTop: 2 } } }}
-        >
-          <Stack
-            direction="row"
-            spacing={2}
-            sx={{ padding: "10px", alignItems: "center" }}
-          >
-            <AvatarWithStatus avatar={user.avatar} />
-            <Stack>
-              <Typography fontWeight="bold">{user.name}</Typography>
-              <Typography color="gray" variant="caption">
-                {t("header.patient.patient-account")}
-              </Typography>
-            </Stack>
-          </Stack>
-
-          <Divider />
-
-          <MenuList>
-            <MenuItem onClick={handleClose}>
-              <ListItemIcon>
-                <PersonIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>{t("header.patient.profile")}</ListItemText>
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                navigate("/settings");
+            <Button
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "3px",
+                textTransform: "none",
+                color: "black",
               }}
+              id="user-menu-btn"
+              onClick={userMenuClick}
             >
-              <ListItemIcon>
-                <SettingsIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>{t("header.patient.setting")}</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={handleLogout}>
-              <ListItemIcon>
-                <LogoutIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>{t("header.patient.log-out")}</ListItemText>
-            </MenuItem>
-          </MenuList>
-        </Menu>
+              <AvatarWithStatus avatar={user.avatar} />
+              <Typography
+                display={{
+                  xs: "none",
+                  sm: "none",
+                  md: "none",
+                  lg: "block",
+                }}
+              >
+                {user.name}
+              </Typography>
+              <ArrowDropDownIcon
+                sx={{
+                  transition: "transform 0.3s ease-in-out",
+                  transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                  display: {
+                    xs: "none",
+                    sm: "block",
+                    md: "block",
+                    lg: "block",
+                  },
+                }}
+              />
+            </Button>
+
+            <Menu
+              id="user-menu-btn"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+              slotProps={{ paper: { sx: { width: 250, marginTop: 2 } } }}
+            >
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{ padding: "10px", alignItems: "center" }}
+              >
+                <AvatarWithStatus avatar={user.avatar} />
+                <Stack>
+                  <Typography fontWeight="bold">{user.name}</Typography>
+                  <Typography color="gray" variant="caption">
+                    {t("header.patient.patient-account")}
+                  </Typography>
+                </Stack>
+              </Stack>
+
+              <Divider />
+
+              <MenuList>
+                <MenuItem onClick={handleClose}>
+                  <ListItemIcon>
+                    <PersonIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>{t("header.patient.profile")}</ListItemText>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleClose();
+                    navigate("/settings");
+                  }}
+                >
+                  <ListItemIcon>
+                    <SettingsIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>{t("header.patient.setting")}</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  <ListItemIcon>
+                    <LogoutIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>{t("header.patient.log-out")}</ListItemText>
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </>
+        ) : (
+          <Button
+            variant="outlined"
+            color="primary"
+            component={Link}
+            to="/auth/login"
+            startIcon={<PersonIcon />}
+          >
+            {t("header.login")}
+          </Button>
+        )}
       </Stack>
     </div>
   );
