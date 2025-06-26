@@ -8,19 +8,17 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Appointment;
 
-class DoctorMail extends Mailable
+class AppointmentSlipMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public $data;
+    public Appointment $appointment;
 
-    public function __construct($data)
+    public function __construct(Appointment $appointment)
     {
-        $this->data = $data;
+        $this->appointment = $appointment;
     }
 
     /**
@@ -29,7 +27,7 @@ class DoctorMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Thông tin tài khoản Docify Doctor',
+            subject: 'Appointment Slip Mail',
         );
     }
 
@@ -39,8 +37,10 @@ class DoctorMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'account',
-            with: ['data' => $this->data],
+            view: 'appointment_slip',
+            with: [
+                'appointment' => $this->appointment
+            ]
         );
     }
 

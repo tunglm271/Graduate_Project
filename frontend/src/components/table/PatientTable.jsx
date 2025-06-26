@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getUser } from "../../utlis/auth";
 import PropTypes from "prop-types";
+import { formatDateTime } from "../../utlis/DateFun";
 
 const PatientTable = ({ loading, patients }) => {
   const { t } = useTranslation();
@@ -88,7 +89,7 @@ const PatientTable = ({ loading, patients }) => {
             justifyContent: "center",
           }}
         >
-          {params.value}
+          {formatDateTime(params.value, "vi", "long") || t("patient.table.unknown")}
         </Box>
       ),
     },

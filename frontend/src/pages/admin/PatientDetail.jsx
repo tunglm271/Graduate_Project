@@ -11,6 +11,7 @@ import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import adminPatientAccountApi from "../../service/admin/adminPatientAccountApi";
+import { formatDateTime } from "../../utlis/DateFun";
 
 const PatientDetail = () => {
   const { t } = useTranslation();
@@ -194,7 +195,7 @@ const PatientDetail = () => {
                     )}
                     :
                   </strong>{" "}
-                  {selectedProfile?.date_of_birth}
+                  {formatDateTime(selectedProfile?.date_of_birth)}
                 </p>
                 <p>
                   <strong>

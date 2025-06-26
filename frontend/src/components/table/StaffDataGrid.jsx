@@ -21,10 +21,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
+import doctorApi from "../../service/DoctorApi";
+import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 
-const ActionCell = ({ id }) => {
+const ActionCell = ({ id, onDeleted }) => {
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
+  const { showInfoSnackbar } = useCustomSnackbar();
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
@@ -35,8 +38,21 @@ const ActionCell = ({ id }) => {
     setAnchorEl(null);
   };
 
-  const handleDelete = () => {
-    handleClose();
+  const handleDelete = (id) => {
+    doctorApi
+      .delete(id)
+      .then(() => {
+        showInfoSnackbar(t("staff.delete_success"));
+        if (onDeleted) onDeleted();
+        handleClose();
+      })
+      .catch((error) => {
+        showInfoSnackbar(
+          t("staff.delete_error", { error: error.message }),
+          "error"
+        );
+        handleClose();
+      });
   };
 
   return (
@@ -60,7 +76,7 @@ const ActionCell = ({ id }) => {
         <MoreVertIcon />
       </IconButton>
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-        <MenuItem onClick={handleDelete}>
+        <MenuItem onClick={() => handleDelete(id)}>
           <ListItemIcon>
             <DeleteIcon fontSize="small" />
           </ListItemIcon>
@@ -73,9 +89,10 @@ const ActionCell = ({ id }) => {
 
 ActionCell.propTypes = {
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  onDeleted: PropTypes.func,
 };
 
-const StaffDataGrid = ({ data, loading }) => {
+const StaffDataGrid = ({ data, loading, onDeleted }) => {
   const { t } = useTranslation();
   const columns = [
     {
@@ -119,7 +136,7 @@ const StaffDataGrid = ({ data, loading }) => {
       field: "workingDays",
       headerName: t("staff.working_days"),
       width: 300,
-      renderCell: (params) => (
+      renderCell: () => (
         <Box
           display="flex"
           justifyContent="flex-start"
@@ -239,12 +256,14 @@ const StaffDataGrid = ({ data, loading }) => {
       sortable: false,
       filterable: false,
       renderHeader: () => <span></span>,
-      renderCell: (params) => <ActionCell id={params.row.id} />,
+      renderCell: (params) => (
+        <ActionCell id={params.row.id} onDeleted={onDeleted} />
+      ),
     },
   ];
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <div style={{ width: "100%" }}>
       <DataGrid
         rows={data}
         loading={loading}
@@ -318,6 +337,7 @@ StaffDataGrid.propTypes = {
     })
   ).isRequired,
   loading: PropTypes.bool.isRequired,
+  onDeleted: PropTypes.func,
 };
 
 export default StaffDataGrid;

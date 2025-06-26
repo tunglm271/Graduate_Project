@@ -484,7 +484,8 @@
       "add_doctor": "Add Doctor",
       "doctors": "Doctors"
     },
-    "no_doctors": "No doctors found"
+    "no_doctors": "No doctors found",
+    "delete_success": "Doctor deleted successfully"
   },
   "patient": {
     "table": {

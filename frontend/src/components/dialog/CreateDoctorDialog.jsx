@@ -18,7 +18,7 @@ import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 
-const CreateDoctorDialog = ({ open, onClose }) => {
+const CreateDoctorDialog = ({ open, onClose, onCreated }) => {
   const { t } = useTranslation();
 
   const daysOfWeek = [
@@ -33,16 +33,26 @@ const CreateDoctorDialog = ({ open, onClose }) => {
   const { showSuccessSnackbar, showErrorSnackbar } = useCustomSnackbar();
   const [activeStep, setActiveStep] = useState(0);
   const [preStep, setPreStep] = useState(0);
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     name: "",
     specialization: "",
     position: "",
     email: "",
     phone: "",
-  });
-  const [weekSchedule, setWeekSchedule] = useState(
-    daysOfWeek.reduce((acc, day) => ({ ...acc, [day]: [] }), {})
+  };
+  const [formData, setFormData] = useState(initialFormData);
+  const initialWeekSchedule = daysOfWeek.reduce(
+    (acc, day) => ({ ...acc, [day]: [] }),
+    {}
   );
+  const [weekSchedule, setWeekSchedule] = useState(initialWeekSchedule);
+
+  const resetForm = () => {
+    setActiveStep(0);
+    setPreStep(0);
+    setFormData(initialFormData);
+    setWeekSchedule(initialWeekSchedule);
+  };
 
   const updateShifts = (day, shifts) => {
     setWeekSchedule({ ...weekSchedule, [day]: shifts });
@@ -71,12 +81,14 @@ const CreateDoctorDialog = ({ open, onClose }) => {
         showSuccessSnackbar(
           t("admin.doctor_management.doctor_created_success")
         );
+        if (onCreated) onCreated();
+        resetForm();
+        onClose();
       })
       .catch((error) => {
         console.error("Failed to create doctor:", error);
         showErrorSnackbar(t("admin.doctor_management.failed_to_create_doctor"));
       });
-    onClose();
   };
 
   return (
@@ -228,46 +240,92 @@ const CreateDoctorDialog = ({ open, onClose }) => {
             timeout={400}
           >
             <div>
-              <p>
-                <strong>{t("admin.doctor_management.full_name")}:</strong>{" "}
-                {formData.name}
-              </p>
-              <p>
-                <strong>{t("admin.doctor_management.specialty")}:</strong>{" "}
-                {formData.specialization}
-              </p>
-              <p>
-                <strong>{t("admin.doctor_management.position")}:</strong>{" "}
-                {formData.position}
-              </p>
-              <p>
-                <strong>{t("admin.doctor_management.email")}:</strong>{" "}
-                {formData.email}
-              </p>
-              <p>
-                <strong>{t("admin.doctor_management.phone_number")}:</strong>{" "}
-                {formData.phone}
-              </p>
-              <p>
-                <strong>{t("admin.doctor_management.schedule")}:</strong>
-              </p>
-              <ul>
-                {Object.entries(weekSchedule).map(
-                  ([day, shifts]) =>
-                    shifts.length > 0 && (
-                      <li key={day}>
-                        <strong>{day}</strong>
-                        <ul>
-                          {shifts.map((shift, index) => (
-                            <li key={index}>
-                              {shift.start} - {shift.end}
-                            </li>
-                          ))}
-                        </ul>
-                      </li>
-                    )
-                )}
-              </ul>
+              <table
+                style={{
+                  width: "100%",
+                  borderCollapse: "separate",
+                  borderSpacing: "0 8px",
+                }}
+              >
+                <tbody>
+                  <tr>
+                    <td
+                      style={{
+                        fontWeight: "bold",
+                        width: "40%",
+                        verticalAlign: "top",
+                      }}
+                    >
+                      {t("admin.doctor_management.full_name")}
+                    </td>
+                    <td style={{ textAlign: "right" }}>{formData.name}</td>
+                  </tr>
+                  <tr>
+                    <td style={{ fontWeight: "bold", verticalAlign: "top" }}>
+                      {t("admin.doctor_management.specialty")}
+                    </td>
+                    <td style={{ textAlign: "right" }}>
+                      {formData.specialization}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ fontWeight: "bold", verticalAlign: "top" }}>
+                      {t("admin.doctor_management.position")}
+                    </td>
+                    <td style={{ textAlign: "right" }}>{formData.position}</td>
+                  </tr>
+                  <tr>
+                    <td style={{ fontWeight: "bold", verticalAlign: "top" }}>
+                      {t("admin.doctor_management.email")}
+                    </td>
+                    <td style={{ textAlign: "right" }}>{formData.email}</td>
+                  </tr>
+                  <tr>
+                    <td style={{ fontWeight: "bold", verticalAlign: "top" }}>
+                      {t("admin.doctor_management.phone_number")}
+                    </td>
+                    <td style={{ textAlign: "right" }}>{formData.phone}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style={{ marginTop: 16 }}>
+                <div style={{ fontWeight: "bold", marginBottom: 4 }}>
+                  {t("admin.doctor_management.schedule")}:
+                </div>
+                <table
+                  style={{
+                    width: "100%",
+                    borderCollapse: "separate",
+                    borderSpacing: "0 4px",
+                  }}
+                >
+                  <tbody>
+                    {Object.entries(weekSchedule).map(
+                      ([day, shifts]) =>
+                        shifts.length > 0 && (
+                          <tr key={day}>
+                            <td
+                              style={{
+                                fontWeight: "bold",
+                                verticalAlign: "top",
+                                width: "40%",
+                              }}
+                            >
+                              {day}
+                            </td>
+                            <td style={{ textAlign: "right" }}>
+                              {shifts.map((shift, index) => (
+                                <div key={index}>
+                                  {shift.start} - {shift.end}
+                                </div>
+                              ))}
+                            </td>
+                          </tr>
+                        )
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </Slide>
         )}
@@ -299,6 +357,7 @@ const CreateDoctorDialog = ({ open, onClose }) => {
 CreateDoctorDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  onCreated: PropTypes.func,
 };
 
 export default CreateDoctorDialog;

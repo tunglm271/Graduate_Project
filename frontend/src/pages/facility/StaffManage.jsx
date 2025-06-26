@@ -15,7 +15,7 @@ const StaffManage = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchDoctors = useCallback(() => {
     setLoading(true);
     doctorApi
       .getAll()
@@ -27,6 +27,10 @@ const StaffManage = () => {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    fetchDoctors();
+  }, [fetchDoctors]);
 
   const handleSearch = useCallback(
     (query) => {
@@ -103,9 +107,17 @@ const StaffManage = () => {
         </Stack>
       </Box>
       <div style={{ padding: "1rem" }}>
-        <StaffDataGrid data={filteredData} loading={loading} />
+        <StaffDataGrid
+          data={filteredData}
+          loading={loading}
+          onDeleted={fetchDoctors}
+        />
       </div>
-      <CreateDoctorDialog open={open} onClose={() => setOpen(false)} />
+      <CreateDoctorDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onCreated={fetchDoctors}
+      />
     </div>
   );
 };

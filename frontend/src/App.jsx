@@ -197,7 +197,6 @@ function App() {
   const [chatbox, setChatbox] = useState(null);
   const [user, setUser] = useState(getUser());
 
-  console.log(import.meta.env);
   return (
     <AppContext.Provider value={{ chatbox, setChatbox, user, setUser }}>
       <QueryClientProvider client={queryClient}>

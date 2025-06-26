@@ -34,6 +34,7 @@ import appointmentApi from "../../service/appointmentApi";
 import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 import doctorDefaultImg from "../../assets/images/doctor.png";
+import { formatDateTime } from "../../utlis/DateFun";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -330,7 +331,7 @@ export default function BookingPopUp({
                   </li>
                   <li>
                     <span>Ngày sinh </span>
-                    <span>{chosenProfile.date_of_birth}</span>
+                    <span>{formatDateTime(chosenProfile.date_of_birth, "vi", "long")}</span>
                   </li>
                   <li>
                     <span>Giới tính </span>

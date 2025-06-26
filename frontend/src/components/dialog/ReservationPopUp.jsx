@@ -28,6 +28,7 @@ import { getUser } from "../../utlis/auth";
 import { Link } from "react-router-dom";
 import useCustomSnackbar from "../../hooks/useCustomSnackbar";
 import PropTypes from "prop-types";
+import { formatDateTime } from "../../utlis/DateFun";
 
 const ReservationPopUp = ({
   open,
@@ -244,7 +245,7 @@ const ReservationPopUp = ({
                   Ngày khám
                 </p>
                 <p className="text-sm">
-                  {new Date(reservation?.date).toLocaleDateString("vi-VN")}
+                  {formatDateTime(reservation?.date, "vi", "long")}
                 </p>
               </div>
             </div>
@@ -275,7 +276,7 @@ const ReservationPopUp = ({
               <div>
                 <p className="text-xs uppercase text-gray-500">Ngày sinh</p>
                 <p className="text-sm font-semibold text-gray-800">
-                  {reservation?.health_profile.date_of_birth}
+                  {formatDateTime(reservation?.health_profile.date_of_birth, "vi", "long")}
                 </p>
               </div>
               <div>

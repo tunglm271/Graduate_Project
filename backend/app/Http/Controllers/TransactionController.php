@@ -8,6 +8,7 @@ use App\Models\Bill;
 use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Mail;
 class TransactionController extends Controller
 {
 
@@ -121,6 +122,9 @@ class TransactionController extends Controller
                         'appointment_id' => $appointment->id,
                     ],
                 ]);
+                $user = $appointment->healthProfile->patient->user;
+                Mail::to($user->email)
+                    ->queue(new \App\Mail\AppointmentSlipMail($appointment));
 
                 return response()->json(['message' => 'Payment successful'], 200);
             }

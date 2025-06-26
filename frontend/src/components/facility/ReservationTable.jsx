@@ -8,6 +8,7 @@ import {
   STATUS_OPTIONS,
 } from "../../utlis/renderStatus";
 import PropTypes from "prop-types";
+import { formatDateTime } from "../../utlis/DateFun";
 
 export default function ReservationTable({
   appointments,
@@ -57,7 +58,7 @@ export default function ReservationTable({
       headerName: "Ngày Khám",
       width: 150,
       renderCell: (params) =>
-        new Date(params.row.date).toLocaleDateString("vi-VN"),
+        formatDateTime(params.row.date, "vi", "long") || "Chưa có",
     },
     {
       field: "appointmentTime",

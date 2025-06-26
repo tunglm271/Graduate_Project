@@ -15,6 +15,7 @@ use Exception;
 use App\Services\NotificationService;
 use Carbon\Carbon;
 use App\Models\HealthProfileIndicator;
+use Illuminate\Support\Facades\Log;
 
 class AppointmentController extends Controller
 {

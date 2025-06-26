@@ -496,7 +496,8 @@
       "add_doctor": "Thêm bác sĩ",
       "doctors": "Bác sĩ"
     },
-    "no_doctors": "Không tìm thấy bác sĩ nào"
+    "no_doctors": "Không tìm thấy bác sĩ nào",
+    "delete_success": "Xóa bác sĩ thành công"
   },
   "patient": {
     "table": {

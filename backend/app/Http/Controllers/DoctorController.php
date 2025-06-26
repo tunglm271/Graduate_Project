@@ -94,7 +94,9 @@ class DoctorController extends Controller
      */
     public function destroy(Doctor $doctor)
     {
-        //
+        $doctor->user->delete();
+        $doctor->delete();
+        return response()->json(['message' => 'Doctor deleted successfully']);
     }
 
     public function getDoctorSchedule(Request $request) {
