@@ -67,6 +67,8 @@
 
 .google-login-wrapper {
     margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
 .collaborator-form {
