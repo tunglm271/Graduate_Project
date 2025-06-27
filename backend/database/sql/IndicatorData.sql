@@ -14,6 +14,7 @@ INSERT INTO indicator_groups (id, name) VALUES
 (12, 'Miễn dịch'),
 (13, 'Đông máu');
 
+
 -- Insert Indicator Types
 INSERT INTO indicator_types (indicator_group_id, name, unit) VALUES
 -- Huyết học (Hematology)
@@ -191,3 +192,16 @@ INSERT INTO indicator_types (indicator_group_id, name, unit) VALUES
 (13, 'Protein S', '%'),
 (13, 'Thời gian chảy máu', 'phút'),
 (13, 'Thời gian đông máu', 'phút');
+
+-- Thêm nhóm chỉ số tổng quát cơ bản
+INSERT INTO indicator_groups (id, name) VALUES
+(14, 'Chỉ số tổng quát cơ bản');
+
+-- Thêm các chỉ số tổng quát cơ bản
+INSERT INTO indicator_types (indicator_group_id, name, unit) VALUES
+(14, 'Chiều cao', 'cm'),
+(14, 'Cân nặng', 'kg'),
+(14, 'BMI', 'kg/m²'),
+(14, 'Huyết áp', 'mmHg'),
+(14, 'Nhịp tim', 'lần/phút'),
+

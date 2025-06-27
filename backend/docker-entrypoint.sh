@@ -47,6 +47,11 @@ echo "Starting Laravel queue worker..."
 php artisan queue:work --tries=3 --timeout=90 &
 QUEUE_PID=$!
 
+# Start Reverb server in the background
+echo "Starting Laravel Reverb WebSocket server..."
+php artisan reverb:start &
+REVERB_PID=$!
+
 # Start the application
 echo "Starting Laravel application..."
 php artisan serve --host=0.0.0.0 --port=8000 &
@@ -56,6 +61,7 @@ SERVER_PID=$!
 cleanup() {
     echo "Shutting down..."
     kill $QUEUE_PID
+    kill $REVERB_PID
     kill $SERVER_PID
     exit 0
 }
@@ -63,5 +69,4 @@ cleanup() {
 # Trap SIGTERM and SIGINT
 trap cleanup SIGTERM SIGINT
 
-# Wait for both processes
-wait $QUEUE_PID $SERVER_PID 
+wait $QUEUE_PI $REVERB_PID $SERVER_PID 

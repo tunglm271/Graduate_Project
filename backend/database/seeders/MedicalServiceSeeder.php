@@ -103,14 +103,44 @@ class MedicalServiceSeeder extends Seeder
                 'category' => 'Dự phòng',
                 'duration' => 25,
                 'description' => 'Dịch vụ tiêm chủng với các loại vắc xin phòng ngừa bệnh truyền nhiễm như viêm gan B, sởi, rubella, cúm mùa, uốn ván... Đảm bảo an toàn, đúng lịch và được tư vấn kỹ càng trước khi tiêm.'
-            ]
+            ],
+            [
+                'name' => 'Chụp CT Scan',
+                'category' => 'Chẩn đoán hình ảnh',
+                'duration' => 30,
+                'description' => 'Chụp cắt lớp vi tính giúp đánh giá chi tiết tổn thương não, phổi, bụng, xương...'
+            ],
+            [
+                'name' => 'Chụp MRI',
+                'category' => 'Chẩn đoán hình ảnh',
+                'duration' => 45,
+                'description' => 'Cộng hưởng từ không dùng tia X, kiểm tra thần kinh trung ương, cột sống, cơ - khớp...'
+            ],
+            [
+                'name' => 'Vật lý trị liệu',
+                'category' => 'Vật lý trị liệu',
+                'duration' => 60,
+                'description' => 'Phục hồi chức năng sau chấn thương, tai biến, thoái hóa qua sóng siêu âm, điện kích...'
+            ],
+            [
+                'name' => 'Nha khoa tổng quát',
+                'category' => 'Nha khoa',
+                'duration' => 30,
+                'description' => 'Vệ sinh răng miệng, kiểm tra khoang miệng, đánh bóng, kiểm soát cao răng và tư vấn.'
+            ],
+            [
+                'name' => 'Tư vấn sức khỏe sinh sản nam',
+                'category' => 'Sản - phụ khoa',
+                'duration' => 45,
+                'description' => 'Tư vấn và xét nghiệm sức khỏe sinh sản nam: tinh dịch đồ, tuyến tiền liệt, rối loạn cương dương.'
+            ],
         ];
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             foreach ($services as $index => $service) {
             $medicalService = MedicalService::create([
                 'name' => $service['name'],
                 'description' => $service['description'],
-                'thumbnail' => $this->getImgUrl(rand(1,5)),
+                'thumbnail' => $this->getImgUrl(rand(1,7)),
                 'category' => $service['category'],
                 'price' => rand(300, 1000) * 1000,
                 'duration' => $service['duration'],
